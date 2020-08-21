@@ -18,14 +18,14 @@ namespace Lasm.UAlive
 
         protected override EditorTexture DefaultIcon()
         {
-            if (ReturnEventDescriptor.icon == null) ReturnEventDescriptor.icon = AssetDatabase.LoadAssetAtPath<Texture2D>(RootPathFinder.rootPath + "UAlive/Extensions/ReturnEvent/Editor/Resources/Lasm.BoltExtensions.ReturnEvent@32x.png");
-            return EditorTexture.Single(ReturnEventDescriptor.icon);
+            Images.Cache();
+            return EditorTexture.Single(Images.return_event_32);
         }
 
         protected override EditorTexture DefinedIcon()
         {
-            if (ReturnEventDescriptor.icon == null) ReturnEventDescriptor.icon = AssetDatabase.LoadAssetAtPath<Texture2D>(RootPathFinder.rootPath + "UAlive/Extensions/ReturnEvent/Editor/Resources/Lasm.BoltExtensions.ReturnEvent@32x.png");
-            return EditorTexture.Single(ReturnEventDescriptor.icon);
+            Images.Cache();
+            return EditorTexture.Single(Images.return_event_32);
         }
     }
 }

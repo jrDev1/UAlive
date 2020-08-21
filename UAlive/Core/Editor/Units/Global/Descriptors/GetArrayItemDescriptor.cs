@@ -27,7 +27,6 @@ namespace Lasm.UAlive
         protected override EditorTexture DefinedIcon()
         {
             Images.Cache();
-            Debug.Log(Images.multi_array_32);
             return EditorTexture.Single(Images.multi_array_32);
         }
     }
