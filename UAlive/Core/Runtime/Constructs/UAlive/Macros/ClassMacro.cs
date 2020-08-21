@@ -20,9 +20,6 @@ namespace Lasm.UAlive
         public Variables variables = new Variables();
 
 #if UNITY_EDITOR
-        [SerializeField]
-        private bool firstTime = true;
-
         public bool customOpen;
         public bool overridesOpen;
         public bool customVariablesOpen;
