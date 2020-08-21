@@ -10,6 +10,8 @@ namespace Lasm.UAlive
     public class InvokeUnitWidget : UnitWidget<InvokeUnit>
     {
         private bool onChangedSet;
+        private float buttonPadding => 8;
+        private bool missingContent => unit.macro == null && unit.method == null;
 
         public InvokeUnitWidget(FlowCanvas canvas, InvokeUnit unit) : base(canvas, unit)
         {
@@ -24,7 +26,7 @@ namespace Lasm.UAlive
 
         protected override float GetHeaderAddonWidth()
         {
-            return 120;
+            return Mathf.Clamp(GUI.skin.label.CalcSize(new GUIContent(unit.method == null ? "   (None Selected)   " : unit.macro?.title + "." + unit.method?.name)).x + buttonPadding, base.GetHeaderAddonWidth(), 400);
         }
 
         public override bool foregroundRequiresInput => true;
@@ -37,7 +39,7 @@ namespace Lasm.UAlive
                 buttonText = unit.macro.title + "." + unit.method.name;
             }
 
-            if (GUI.Button(position.Add().X(42).Add().Y(23).Set().Height(20).Subtract().Width(51), buttonText))
+            if (GUI.Button(position.Add().X(42).Add().Y(23).Set().Height(20).Set().Width(missingContent ? 120 : GUI.skin.label.CalcSize(new GUIContent(unit.macro?.title + "." + unit.method?.name)).x + buttonPadding), buttonText))
             {
                 var classes = HUMAssets.Find().Assets().OfType<ClassMacro>();
 
@@ -45,16 +47,16 @@ namespace Lasm.UAlive
 
                 for (int i = 0; i < classes.Count; i++)
                 {
-                    for (int j = 0; j < classes[i].methods.Count; j++)
+                    for (int j = 0; j < classes[i].methods.custom.Count; j++)
                     {
-                        menu.AddItem(new GUIContent(classes[i].title + "/" + classes[i].methods[j].name), false, (data) =>
+                        menu.AddItem(new GUIContent(classes[i].title + "/" + classes[i].methods.custom[j].name), false, (data) =>
                         {
                             var tuple = (ValueTuple<ClassMacro, Method>)data;
                             unit.macro = tuple.Item1;
                             unit.memberName = tuple.Item2.name;
                             unit.method = tuple.Item2;
                             unit.Define();
-                        }, (classes[i], classes[i].methods[j]));
+                        }, (classes[i], classes[i].methods.custom[j]));
                     }
                 }
 

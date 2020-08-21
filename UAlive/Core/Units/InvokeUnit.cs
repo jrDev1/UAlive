@@ -57,7 +57,7 @@ namespace Lasm.UAlive
                     parameterList.Add(flow.GetValue(parameters[i]));
                 }
 
-                method.nest.Invoke(_target, (obj) => { returnValue = obj; }, parameterList.ToArray());
+                method.Invoke(_target, (obj) => { returnValue = obj; }, parameterList.ToArray());
                 return exit;
             });
 
@@ -65,9 +65,9 @@ namespace Lasm.UAlive
              
             if (method != null)   
             {
-                if (method.nest.returnType != typeof(Void)) result = ValueOutput(method.nest.returnType, "result", (flow)=> { return returnValue; });
+                if (method.returnType != typeof(Void)) result = ValueOutput(method.returnType, "result", (flow)=> { return returnValue; });
 
-                var _parameters = method?.nest?.macro?.entry?.parameters;
+                var _parameters = method.macro?.entry?.parameters;
                 var keys = _parameters?.KeysToArray();
 
                 for (int i = 0; i < keys?.Length; i++)
@@ -75,9 +75,9 @@ namespace Lasm.UAlive
                     parameters.Add(ValueInput(_parameters[keys[i]], keys[i])); 
                 }
 
-                if (method.nest?.macro?.entry != null)
+                if (method.macro?.entry != null)
                 {
-                    if (!method.nest.macro.entry.invokes.Contains(this)) method.nest.macro.entry.invokes.Add(this);
+                    if (!method.macro.entry.invokes.Contains(this)) method.macro.entry.invokes.Add(this);
                 }
             }
         }

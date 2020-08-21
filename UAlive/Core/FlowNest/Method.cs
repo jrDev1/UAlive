@@ -9,11 +9,11 @@ namespace Lasm.UAlive
     /// A nested graph that is invokable without a GameObject. Can be used in custom scripts, has a Property Drawer, and Bolt Inspector.
     /// </summary>
     [Serializable]
-    public sealed class FlowNest
+    public sealed class Method
     {
         #region Variables
         [Serialize]
-        public FlowNestMacro macro;
+        public MethodMacro macro;
         [Serialize]
         public bool isInitialized;
         [Serialize]
@@ -42,7 +42,8 @@ namespace Lasm.UAlive
         [Serialize]
         public MethodModifier modifier;
         [Serialize]
-        public string name;
+        private string _name;
+        public string name { get => _name; set { _name = value; macro.name = value; } }
         [Serialize]
         public bool showLabel = true;
         [Serialize]
@@ -64,6 +65,11 @@ namespace Lasm.UAlive
 
         public event Action onChanged = () => { };
 
+        public void Changed()
+        {
+            onChanged?.Invoke();
+        }
+
 #if UNITY_EDITOR
         public Texture2D icon;
 #endif
@@ -74,13 +80,13 @@ namespace Lasm.UAlive
         /// Initialized a new Flow Nest with a Flow Graph and an Entry Unit, can be a Macro or an Embed as the source.
         /// </summary>
         /// <param name="source"></param>
-        public static void New(FlowNest nest)
+        public static void New(Method nest)
         {
-            if (nest.macro == null) nest.macro = ScriptableObject.CreateInstance<FlowNestMacro>();
+            if (nest.macro == null) nest.macro = ScriptableObject.CreateInstance<MethodMacro>();
             nest.macro.returnMethod = nest.returnMethod;
         }
         
-        public static void SetReturnMethod(FlowNest nest)
+        public static void SetReturnMethod(Method nest)
         {
             if (nest.macro != null)
             {

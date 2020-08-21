@@ -8,7 +8,7 @@ using Lasm.OdinSerializer;
 namespace Lasm.UAlive
 {
     [CreateAssetMenu(fileName = "Flow Nest Macro", menuName = "Bolt/Extensions/Flow Nest Macro")]
-    public class FlowNestMacro : Macro<FlowGraph>
+    public class MethodMacro : Macro<FlowGraph>
     {
         [NonSerialized][OdinSerialize]
         public List<Type> constraints;

@@ -13,14 +13,14 @@ namespace Lasm.UAlive
 
         protected override float GetInspectorHeight(float width)
         {
-            if (!((FlowNestMacro)metadata["macro"].value).hasOverride) return base.GetInspectorHeight(width);
+            if (!((MethodMacro)metadata["macro"].value).hasOverride) return base.GetInspectorHeight(width);
             return 0;
         }
 
         protected override void OnInspectorGUI(Rect position)
         {
             BeginBlock(metadata, position, GUIContent.none);
-            if (!((FlowNestMacro)metadata["macro"].value).hasOverride) base.OnInspectorGUI(position);
+            if (!((MethodMacro)metadata["macro"].value).hasOverride) base.OnInspectorGUI(position);
             if (EndBlock(metadata))
             {
                 ((EntryUnit)unit).Define();

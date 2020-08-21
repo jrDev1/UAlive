@@ -20,7 +20,7 @@ namespace Lasm.UAlive
 
         public static void Invoke(IUAClass @class, string name, Action<object> returnMethod, params object[] parameters)
         {
-            @class.Class.macro.overrideMethods[name].Invoke(@class, returnMethod, parameters);
+            @class.Class.macro.methods.overrides[name].Invoke(@class, returnMethod, parameters);
         }
     }
 }

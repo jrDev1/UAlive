@@ -76,12 +76,6 @@ namespace Lasm.UAlive
         {
         }
 
-#if UNITY_EDITOR
-        protected TypeMacro GetRootAsset()
-        {
-            return AssetDatabase.LoadAssetAtPath<TypeMacro>(AssetDatabase.GUIDToAssetPath(HUMAssets.GetGUID(this)));
-        }
-#endif
 
         protected string GetDefaultName()
         {

@@ -12,7 +12,7 @@ namespace Lasm.UAlive
     public class EntryUnit : Unit
     {
         [Serialize]
-        public FlowNestMacro macro;
+        public MethodMacro macro;
         [Inspectable]
         public Dictionary<string, Type> parameters = new Dictionary<string, Type>();
         public List<object> assignedValues = new List<object>();
@@ -67,7 +67,6 @@ namespace Lasm.UAlive
             }
 
             DefineReturns();
-            DefineInvokes();
         }
 
         public void DefineInvokes()

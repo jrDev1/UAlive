@@ -4,17 +4,17 @@ using Ludiq;
 
 namespace Lasm.UAlive
 {
-    [Inspector(typeof(FlowNest))]
-    public sealed class FlowNestInspector : Inspector
+    [Inspector(typeof(Method))]
+    public sealed class MethodInspector : Inspector
     {
         #region Variables
         Texture2D icon;
         Metadata source, macro, prop;
-        FlowNest nest;
+        Method nest;
         Rect backgroundRect, labelRect, typeRect, iconRect, editRect, toggleRect;
         #endregion
 
-        public FlowNestInspector(Metadata metadata) : base(metadata)
+        public MethodInspector(Metadata metadata) : base(metadata)
         {
         }
 
@@ -28,7 +28,7 @@ namespace Lasm.UAlive
             if (macro == null) macro = metadata["macro"];
 
             prop = metadata;
-            nest = (FlowNest)metadata.value;
+            nest = (Method)metadata.value;
         }
 
         private void CreateRects(Rect position, GUIContent label)
@@ -107,7 +107,7 @@ namespace Lasm.UAlive
         {
             if (GUI.Button(position, "Edit"))
             {
-                GraphWindow.OpenActive(GraphReference.New((FlowNestMacro)macro.value, true));
+                GraphWindow.OpenActive(GraphReference.New((MethodMacro)macro.value, true));
             }
         }
     }

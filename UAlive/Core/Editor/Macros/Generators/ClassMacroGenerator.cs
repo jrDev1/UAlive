@@ -1,8 +1,6 @@
 ﻿using Ludiq;
 using System;
-using UnityEditor;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Lasm.UAlive
 {
@@ -21,7 +19,7 @@ namespace Lasm.UAlive
                 RootAccessModifier.Public,
                 ClassModifier.None,
                 NoSpace(decorated.title),
-                decorated.inherits);
+                decorated.inheritance.type);
             var att = AttributeGenerator.Attribute<IncludeInSettingsAttribute>().AddParameter(true);
             @class.AddAttribute(att);
             @class.AddInterface(typeof(IUAClass));
@@ -30,10 +28,8 @@ namespace Lasm.UAlive
 
         protected override void AfterLiveGeneration()
         {
-            //var macroId = PropertyGenerator.Property(AccessModifier.Public, PropertyModifier.Static, typeof(string), "macroID", false).SingleStatementGetter(AccessModifier.Public, guid.As().Code(false));
             var uaClass = FieldGenerator.Field(AccessModifier.Private, FieldModifier.None, typeof(UAClass), "data").CustomDefault("new UAClass(" + guid.As().Code(false) + ");");
             var interfaceUAClass = PropertyGenerator.Property(AccessModifier.Public, PropertyModifier.None, typeof(UAClass), "Class", false).SingleStatementGetter(AccessModifier.Public, "data");
-            //@class.AddProperty(macroId);
             @class.AddField(uaClass);
             @class.AddProperty(interfaceUAClass);
 
@@ -50,7 +46,7 @@ namespace Lasm.UAlive
 
         protected override void DefineLiveCode()
         {
-            var keys = decorated.overrideMethods.KeysToArray();
+            var keys = decorated.methods.overrides.KeysToArray();
 
             // FORCE COMPILE SHELL
             //HUMQuery.For(keys, (list, index) => 
@@ -64,9 +60,9 @@ namespace Lasm.UAlive
             //    }
             //});
 
-            for (int i = 0; i < decorated.overrideMethods.Count; i++)
+            for (int i = 0; i < keys.Length; i++)
             { 
-                var nest = decorated.overrideMethods[keys[i]];
+                var nest = decorated.methods.overrides[keys[i]]; 
                 if (CanAddMethod(nest))
                 {
                     var method = nest.returnType.Is().Void() ? Method(nest.name, nest.scope, nest.modifier, nest) : Method(nest.name, nest.scope, nest.modifier, nest.returnType);
@@ -80,16 +76,16 @@ namespace Lasm.UAlive
         {
             var method = MethodGenerator.Method(scope, modifier, returnType, key.Replace(" ", string.Empty));
             var line1 = CodeBuilder.InitializeVariable("val", returnType);
-            var line2 = CodeExtensions.Invoke(key, returnType, parameters);
+            var line2 = CodeExtensions.Invoke(key, returnType, modifier == MethodModifier.Override, parameters);
             var line3 = CodeBuilder.NullVoidOrNot(returnType, string.Empty, "\n" + CodeBuilder.Return("val"));
             method.Body(line1 + line2 + line3);
             return method;
         }
 
-        private MethodGenerator Method(string key, AccessModifier scope, MethodModifier modifier, FlowNest nest)
+        private MethodGenerator Method(string key, AccessModifier scope, MethodModifier modifier, Method nest)
         {
             var method = MethodGenerator.Method(scope, modifier, typeof(Lasm.UAlive.Void), key.Replace(" ", string.Empty));
-            method.Body(CodeExtensions.Invoke(key, typeof(Lasm.UAlive.Void), GetParameters(method, nest)));
+            method.Body(CodeExtensions.Invoke(key, typeof(Lasm.UAlive.Void), modifier == MethodModifier.Override, GetParameters(method, nest)));
             return method;
         }
 
@@ -103,12 +99,12 @@ namespace Lasm.UAlive
             
         }
 
-        private bool CanAddMethod(FlowNest nest)
+        private bool CanAddMethod(Method nest)
         {
             return nest.isOverridden && nest.hasOptionalOverride || !nest.hasOptionalOverride;
         }
 
-        private void AddParameters(MethodGenerator method, FlowNest nest)
+        private void AddParameters(MethodGenerator method, Method nest)
         {
             foreach (KeyValuePair<string, Type> pair in nest.macro.entry.parameters)
             {
@@ -116,7 +112,7 @@ namespace Lasm.UAlive
             }
         }
 
-        private string GetParameters(MethodGenerator method, FlowNest nest)
+        private string GetParameters(MethodGenerator method, Method nest)
         {
             var parameters = new List<ParameterGenerator>();
 
@@ -131,66 +127,6 @@ namespace Lasm.UAlive
         private string NoSpace(string str)
         {
             return str.Replace(" ", string.Empty);
-        }
-    }
-
-    public sealed class UATools : EditorWindow
-    {
-        public static UATools current;
-        [SerializeField]
-        private bool compilationIsOpen;
-        [SerializeField]
-        private bool searchIsOpen;
-        [SerializeField]
-        private bool explorerIsOpen;
-
-        [MenuItem("Window/UAlive/Tools")]
-        public static void Open()
-        {
-            current = GetWindow<UATools>();
-            current.titleContent = new UnityEngine.GUIContent("UA Tools");
-        }
-
-        private void OnGUI()
-        {
-            Images.Cache();
-
-            compilationIsOpen = HUMEditor.Foldout(compilationIsOpen, new GUIContent("Compilation", Images.compilation_16), Styles.backgroundColor, Styles.borderColor, 1, () =>
-            {
-                HUMEditor.Vertical().Box(Styles.backgroundColor.Brighten(0.06f), Styles.borderColor, new RectOffset(6, 6, 6, 6), new RectOffset(1, 1, 0, 1), () => { LiveStatus(); });
-            });
-
-            searchIsOpen = HUMEditor.Foldout(searchIsOpen, new GUIContent("Search", Images.search_16), Styles.backgroundColor, Styles.borderColor, 1, () =>
-            {
-                EditorGUILayout.HelpBox("The search and replace functionality is not available at this time.", MessageType.Info);
-            });
-
-            explorerIsOpen = HUMEditor.Foldout(explorerIsOpen, new GUIContent("Explorer", Images.explorer_16), Styles.backgroundColor, Styles.borderColor, 1, () =>
-            {
-                EditorGUILayout.HelpBox("The project explorer is not available at this time.", MessageType.Info);
-            });
-        }
-
-        private void LiveStatus()
-        {
-            var isLive = false;
-
-            HUMEditor.Horizontal(() =>
-            {
-                if (EditorPrefs.HasKey("UAlive_Global_IsLive"))
-                {
-                    isLive = EditorPrefs.GetBool("UAlive_Global_IsLive");
-                }
-
-                isLive = GUILayout.Toggle(isLive, "Live");
-
-                EditorPrefs.SetBool("UAlive_Global_IsLive", isLive);
-
-                if (GUILayout.Button("Compile"))
-                {
-
-                }
-            });
         }
     }
 }

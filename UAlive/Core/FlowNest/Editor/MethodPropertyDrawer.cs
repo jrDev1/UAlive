@@ -7,13 +7,13 @@ using Bolt;
 
 namespace Lasm.UAlive
 {
-    [CustomPropertyDrawer(typeof(FlowNest))]
-    public class FlowNestPropertyDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(Method))]
+    public class MethodPropertyDrawer : PropertyDrawer
     {
         #region Variables
         Texture2D icon;
         SerializedProperty source, macro, embed, hidden, prop;
-        FlowNest nest;
+        Method nest;
         GUIStyle iconStyle;
         Rect backgroundRect, labelRect, iconRect, editRect;
         #endregion
@@ -28,7 +28,7 @@ namespace Lasm.UAlive
             if (macro == null) macro = property.FindPropertyRelative("macro");
 
             prop = property;
-            nest = (FlowNest)fieldInfo.GetValue(prop.serializedObject.targetObject);
+            nest = (Method)fieldInfo.GetValue(prop.serializedObject.targetObject);
 
             if (icon == null)
             {
@@ -86,7 +86,7 @@ namespace Lasm.UAlive
         {
             if (GUI.Button(position, "Edit"))
             {
-                GraphWindow.OpenActive(GraphReference.New((FlowNestMacro)macro.objectReferenceValue, true));
+                GraphWindow.OpenActive(GraphReference.New((MethodMacro)macro.objectReferenceValue, true));
             }
         }
 

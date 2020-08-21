@@ -28,10 +28,9 @@ namespace Lasm.UAlive
                     this.value = value.Default();
                     getter.macro.entry.Define();
                     setter.macro.entry.Define();
+                    onChanged?.Invoke();
                 }
 
-                DefineGet();
-                DefineSet(); 
                 _type = value;
             }
         }
@@ -39,24 +38,14 @@ namespace Lasm.UAlive
         [Inspectable][Serialize]
         public object value = 0;
 
-        public FlowNest getter = new FlowNest();
+        public Method getter = new Method();
+        public Method setter = new Method();
 
-        public FlowNest setter = new FlowNest();
+        public event Action onChanged = () => { };
 
-        public void DefineGet()
+        public void Changed()
         {
-            for (int i = 0; i < getUnits.Count; i++)
-            {
-                getUnits[i].Define();
-            }
-        }
-
-        public void DefineSet()
-        {
-            for (int i = 0; i < setUnits.Count; i++)
-            {
-                setUnits[i].Define();
-            }
+            onChanged?.Invoke();
         }
     }
 }

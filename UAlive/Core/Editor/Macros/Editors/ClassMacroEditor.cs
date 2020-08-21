@@ -13,7 +13,7 @@ namespace Lasm.UAlive
         private ClassMacroGenerator generator;
         private ClassMacro _target;
         private List<SerializedProperty> props = new List<SerializedProperty>();
-        private Dictionary<string, FlowNest> tempOverrides = new Dictionary<string, FlowNest>();
+        private Dictionary<string, Method> tempOverrides = new Dictionary<string, Method>();
         private string focusedControl;
         private string lastTitle;
         private int ticks;
@@ -68,7 +68,7 @@ namespace Lasm.UAlive
                 _target.@namespace = EditorGUILayout.TextField(new GUIContent("Namespace"), _target.@namespace);
 
                 BeginBlock(metadata, position, GUIContent.none);
-                LudiqGUI.InspectorLayout(metadata["inherits"]);
+                LudiqGUI.InspectorLayout(metadata["inheritance"]["type"]);
                 if (EndBlock(metadata))
                 {
                     _target.Define();
@@ -95,13 +95,13 @@ namespace Lasm.UAlive
                     {
                         HUMEditor.Vertical().Box(Styles.backgroundColor.Brighten(0.025f), Styles.borderColor, new RectOffset(4, 4, 4, 2), new RectOffset(1, 1, 0, 1), () =>
                         {
-                            var overrides = metadata["overrideMethods"];
+                            var overrides = metadata["methods"]["overrides"];
 
                             tempOverrides.Clear();
 
                             for (int i = 0; i < overrides.Count; i++)
                             {
-                                var nest = (FlowNest)overrides.ValueMetadata(i).value;
+                                var nest = ((Method)overrides.ValueMetadata(i).value);
                                 if (!nest.isSpecial || (nest.isSpecial && nest.isOverridden))
                                 {
                                     var _name = nest.name;
@@ -113,11 +113,11 @@ namespace Lasm.UAlive
                                         }
                                     }
 
-                                    LudiqGUI.InspectorLayout(metadata["overrideMethods"].ValueMetadata(i), new GUIContent(_name));
+                                    LudiqGUI.InspectorLayout(overrides.ValueMetadata(i), new GUIContent(_name));
                                 }
                                 else
                                 {
-                                    var temp = ((KeyValuePair<string, FlowNest>)overrides[i].value);
+                                    var temp = ((KeyValuePair<string, Method>)overrides[i].value);
                                     tempOverrides.Add(temp.Key, temp.Value);
                                 }
                             }
@@ -167,25 +167,24 @@ namespace Lasm.UAlive
             {
                 HUMEditor.Vertical().Box(Styles.backgroundColor.Brighten(0.025f), Styles.borderColor, new RectOffset(4, 4, 4, 2), new RectOffset(1, 1, 0, 1), () =>
                 {
-                    var methods = metadata["methods"];
-                    var methodsVal = (List<Method>)metadata["methods"].value;
+                    var methods = metadata["methods"]["custom"];
+                    var methodsVal = (List<Method>)metadata["methods"]["custom"].value;
 
                     for (int i = 0; i < methodsVal.Count; i++)
                     {
                         if (i != 0) GUILayout.Space(2);
-
+                         
                         HUMEditor.Vertical().Box(Styles.backgroundColor.Brighten(0.075f), Styles.borderColor, new RectOffset(4, 4, 4, 2), new RectOffset(1, 1, 1, 1), () =>
                         {
                             var meth = methodsVal[i];
                             meth.name = GUILayout.TextField(meth.name);
-                            meth.nest.name = meth.name;
-                            meth.nest.macro.name = meth.name;
+                            meth.macro.name = meth.name;
 
                             HUMEditor.Horizontal(() =>
                             {
                                 HUMEditor.Vertical(() =>
                                 {
-                                    LudiqGUI.InspectorLayout(metadata["methods"][i]["nest"], GUIContent.none);
+                                    LudiqGUI.InspectorLayout(methods[i], GUIContent.none);
                                 });
 
                                 BeginBlock(methods, position, GUIContent.none);
@@ -193,7 +192,7 @@ namespace Lasm.UAlive
                                 if (GUILayout.Button("-", GUILayout.Width(16), GUILayout.Height(18)))
                                 {
                                     methodsVal.Remove(meth);
-                                    AssetDatabase.RemoveObjectFromAsset(meth.nest.macro);
+                                    AssetDatabase.RemoveObjectFromAsset(meth.macro);
                                     AssetDatabase.SaveAssets();
                                     AssetDatabase.Refresh();
                                 }
@@ -211,10 +210,10 @@ namespace Lasm.UAlive
                     if (GUILayout.Button("+ New Method"))
                     {
                         var meth = new Method();
-                        meth.nest.Initialize();
-                        meth.nest.showLabel = false;
+                        meth.Initialize();
+                        meth.showLabel = false;
                         meth.name = string.Empty;
-                        AssetDatabase.AddObjectToAsset(meth.nest.macro, _target);
+                        AssetDatabase.AddObjectToAsset(meth.macro, _target);
                         methodsVal.Add(meth);
                         AssetDatabase.SaveAssets();
                         AssetDatabase.Refresh();
@@ -267,8 +266,7 @@ namespace Lasm.UAlive
                                         LudiqGUI.InspectorLayout(variable["type"], GUIContent.none);
                                         if (EndBlock(variable["type"]))
                                         {
-                                            variablesVal.variables[i].DefineGet();
-                                            variablesVal.variables[i].DefineSet();
+                                            variablesVal.variables[i].Changed();
                                             AssetDatabase.SaveAssets();
                                             AssetDatabase.Refresh();
                                         }

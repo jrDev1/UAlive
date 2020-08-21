@@ -10,7 +10,8 @@ namespace Lasm.UAlive
     public class SetClassVariableUnitWidget : UnitWidget<SetClassVariableUnit>
     {
         private bool onChangedSet;
-        private Variable previous;
+        private float buttonPadding => 8;
+        private bool missingContent => unit.macro == null && unit.variable == null;
 
         public SetClassVariableUnitWidget(FlowCanvas canvas, SetClassVariableUnit unit) : base(canvas, unit)
         {
@@ -20,6 +21,11 @@ namespace Lasm.UAlive
         protected override float GetHeaderAddonHeight(float width)
         {
             return 20;
+        }
+
+        protected override float GetHeaderAddonWidth()
+        {
+            return Mathf.Clamp(missingContent ? 120 : GUI.skin.label.CalcSize(new GUIContent(unit.variable == null ? "   (None Selected)   " : unit.macro.title + "." + unit.variable?.name)).x + buttonPadding, base.GetHeaderAddonWidth(), 400);
         }
 
         protected override NodeColorMix color => NodeColorMix.TealReadable;
@@ -34,7 +40,7 @@ namespace Lasm.UAlive
                 buttonText = unit.macro.title + "." + unit.variable.name;
             }
 
-            if (GUI.Button(position.Add().X(42).Add().Y(23).Set().Height(20).Subtract().Width(51), buttonText))
+            if (GUI.Button(position.Add().X(42).Add().Y(23).Set().Height(20).Set().Width(missingContent ? 120 : GUI.skin.label.CalcSize(new GUIContent(unit.macro?.title + "." + unit.variable?.name)).x + buttonPadding), buttonText))
             {
                 var classes = HUMAssets.Find().Assets().OfType<ClassMacro>();
 
@@ -49,10 +55,8 @@ namespace Lasm.UAlive
                             var tuple = (ValueTuple<ClassMacro, Variable>)data;
                             unit.macro = tuple.Item1;
                             unit.memberName = tuple.Item2.name;
-                            previous = unit.variable;
                             unit.variable = tuple.Item2;
-                            unit.variable.DefineGet();
-                            unit.variable.DefineSet();
+                            unit.variable.Changed();
                             unit.Define();
 
                         }, (classes[i], classes[i].variables.variables[j]));
