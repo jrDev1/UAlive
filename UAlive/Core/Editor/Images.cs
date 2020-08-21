@@ -30,6 +30,12 @@ namespace Lasm.UAlive
         public static Texture2D foldout_closed;
         public static Texture2D foldout_open;
 
+        public static Texture2D return_event_32;
+        public static Texture2D binary_save_32;
+        public static Texture2D multi_array_32;
+        public static Texture2D value_reroute_32;
+        public static Texture2D flow_reroute_32;
+
         private static bool cached;
 
         public static void Cache()
@@ -58,6 +64,13 @@ namespace Lasm.UAlive
                 Icons("explorer_16", out explorer_16);
                 Icons("void_32", out void_32);
                 Icons("this_32", out this_32);
+
+                Icons("return_event_32", out return_event_32);
+                Icons("binary_save_32", out binary_save_32);
+                Icons("multi_array_32", out multi_array_32);
+                Icons("value_reroute_32", out value_reroute_32);
+                Icons("flow_reroute_32", out flow_reroute_32);
+
                 cached = true;
             }
         }
