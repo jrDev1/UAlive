@@ -2,7 +2,6 @@
     "name": "com.lasm.ualive",
     "displayName": "UAlive",
     "version": "1.0.0",
-    "unity": "2020.1",
     "description": "UAlive bring C# inheritance, full C# constructs and generation to Bolt. Create classes and structs while live coding, compile down enums and interfaces, and unlock Unitys full potential.",
     "keywords": ["Bolt", "Visual", "Scripting", "Tools"],
     "category": "Visual Scripting"
