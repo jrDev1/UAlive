@@ -213,6 +213,7 @@ namespace Lasm.UAlive
                         meth.Initialize();
                         meth.showLabel = false;
                         meth.name = string.Empty;
+                        meth.macro.hideFlags = HideFlags.HideInHierarchy;
                         AssetDatabase.AddObjectToAsset(meth.macro, _target);
                         methodsVal.Add(meth);
                         AssetDatabase.SaveAssets();
