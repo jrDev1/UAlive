@@ -107,6 +107,8 @@ namespace Lasm.UAlive
                         _method.macro.entry.returnType = returnType;
                         _method.macro.entry.DefineReturns();
                     }
+
+                    _method.macro.hideFlags = HideFlags.HideInHierarchy;
                 }
 
                 return _method;
@@ -126,6 +128,8 @@ namespace Lasm.UAlive
                     {
                         _method.macro.entry.returnType = returnType;
                     }
+
+                    _method.macro.hideFlags = HideFlags.HideInHierarchy;
 
                     _method.macro.entry.Define();
                 }

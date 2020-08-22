@@ -311,6 +311,8 @@ namespace Lasm.UAlive
                         variable.setter.showLabel = false;
                         variable.getter.name = string.Empty;
                         variable.setter.name = string.Empty;
+                        variable.getter.macro.hideFlags = HideFlags.HideInHierarchy;
+                        variable.setter.macro.hideFlags = HideFlags.HideInHierarchy;
                         AssetDatabase.AddObjectToAsset(variable.getter.macro, _target);
                         AssetDatabase.AddObjectToAsset(variable.setter.macro, _target);
                         variablesVal.variables.Add(variable);
