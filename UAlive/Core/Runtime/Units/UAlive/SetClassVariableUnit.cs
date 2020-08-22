@@ -44,7 +44,8 @@ namespace Lasm.UAlive
                 return exit;
             });
             exit = ControlOutput("exit");
-            value = ValueInput(variable == null ? typeof(object) : variable.type, "value");
+
+            if (variable != null) value = ValueInput(variable.type, "value");
 
             if (variable != null)
             {
