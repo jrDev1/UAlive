@@ -50,6 +50,9 @@ namespace Lasm.UAlive
             {
                 if (!variable.setUnits.Contains(this)) variable.setUnits.Add(this);
             }
+
+            Requirement(target, enter);
+            Succession(enter, exit);
         }
     }
 }

@@ -80,6 +80,14 @@ namespace Lasm.UAlive
                     if (!method.macro.entry.invokes.Contains(this)) method.macro.entry.invokes.Add(this);
                 }
             }
+
+            Requirement(target, enter);
+            if (method.returnType != typeof(Void)) Requirement(target, result);
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                Requirement(parameters[i], enter);
+            }
+            Succession(enter, exit);
         }
     }
 }

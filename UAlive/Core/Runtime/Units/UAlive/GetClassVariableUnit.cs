@@ -43,6 +43,8 @@ namespace Lasm.UAlive
             {
                 if (!variable.getUnits.Contains(this)) variable.getUnits.Add(this);
             }
+
+            Requirement(target, value);
         }
     }
 }
