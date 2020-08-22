@@ -62,7 +62,7 @@ namespace Lasm.UAlive
 
         public override void BeforeRemove()
         {
-            if (entry.returns != null && entry.returns.Contains(this)) entry.returns.Remove(this);
+            if (entry?.returns != null && entry.returns.Contains(this)) entry.returns.Remove(this);
             base.BeforeRemove();
         }
     }
