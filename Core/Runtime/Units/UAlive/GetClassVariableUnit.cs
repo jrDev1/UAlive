@@ -10,6 +10,7 @@ namespace Lasm.UAlive
 {
     [UnitTitle("Get Class Variable")]
     [UnitCategory("Variables")]
+    [UnitOrder(100)]
     [TypeIcon(typeof(ClassMacro))]
     public sealed class GetClassVariableUnit : ClassVariableUnit
     {

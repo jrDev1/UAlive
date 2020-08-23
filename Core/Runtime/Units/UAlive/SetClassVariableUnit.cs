@@ -5,6 +5,7 @@ using System.Linq;
 namespace Lasm.UAlive
 {
     [UnitTitle("Set Class Variable")]
+    [UnitOrder(100)]
     [UnitCategory("Variables")]
     public sealed class SetClassVariableUnit : ClassVariableUnit
     {
