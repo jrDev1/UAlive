@@ -2,6 +2,7 @@
 using Ludiq;
 using Bolt;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace Lasm.UAlive
 {
@@ -48,31 +49,28 @@ namespace Lasm.UAlive
         public bool showLabel = true;
         [Serialize]
         private Type _type = typeof(Lasm.UAlive.Void);
+        [Inspectable]
         public Type returnType
         {
             get => _type;
             set
             {
+                if (macro?.entry != null)
+                {
+                    macro.entry.returnType = value;
+                    macro.entry.Changed();
+                }
                 _type = value;
-                if (macro?.entry != null) macro.entry.returnType = value;
-                onChanged?.Invoke();
             }
-        }
+        } 
 
         [Serialize]
         public Action<object> returnMethod;
         #endregion
 
-        public event Action onChanged = () => { };
-
-        public void Changed()
-        {
-            onChanged?.Invoke();
-        }
-
 #if UNITY_EDITOR
         public Texture2D icon;
-#endif
+#endif 
 
         public void Initialize() { New(this); isInitialized = true; }
 

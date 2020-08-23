@@ -1,11 +1,12 @@
 ﻿using Ludiq;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Lasm.UAlive
 {
     [Serializable][Inspectable]
-    public sealed class Variable
+    public sealed class Variable 
     {
         [Inspectable]
         public string name;
@@ -17,18 +18,15 @@ namespace Lasm.UAlive
 
         [Serialize]
         private Type _type = typeof(int);
-        [Inspectable]
         public Type type
         {
             get => _type;
             set
             {
-                if (_type != value || this.value == null || this.value.GetType() != value)
+                if (_type != value)
                 {
                     this.value = value.Default();
-                    getter.macro.entry.Define();
-                    setter.macro.entry.Define();
-                    onChanged?.Invoke();
+                    Changed();
                 }
 
                 _type = value;
@@ -42,10 +40,22 @@ namespace Lasm.UAlive
         public Method setter = new Method();
 
         public event Action onChanged = () => { };
-
+         
         public void Changed()
         {
-            onChanged?.Invoke();
+            for (int i = 0; i < getUnits.Count; i++)
+            {
+                getUnits[i].Define();
+            }
+        }
+
+        public void OnBeforeSerialize()
+        {
+            getUnits.Clear();
+        }
+
+        public void OnAfterDeserialize()
+        {
         }
     }
 }

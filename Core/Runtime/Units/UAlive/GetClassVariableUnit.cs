@@ -11,40 +11,44 @@ namespace Lasm.UAlive
     [TypeIcon(typeof(ClassMacro))]
     public sealed class GetClassVariableUnit : ClassVariableUnit
     {
-        [Serialize]
+        [Serialize][Inspectable]
         public Variable variable;
 
         [DoNotSerialize][PortLabelHidden]
         public ValueOutput value;
 
-        private bool justDefined;
+        public bool bound;
 
+        public override bool canDefine => true;
         protected override void Definition()
         {
             base.Definition();
 
-            value = ValueOutput(variable == null ? typeof(object) : variable.type, "value", (flow)=> 
-            {
-                IUAClass _target;
-
-                if (target.hasValidConnection)
-                { 
-                    _target = flow.GetValue<IUAClass>(target);
-                }
-                else
-                {
-                    _target = (IUAClass)flow.variables.Get("#secret_uaclass_instance");
-                }
-
-                return _target.Class.Get(variable.name);
-            });
-
             if (variable != null)
             {
-                if (!variable.getUnits.Contains(this)) variable.getUnits.Add(this);
+                value = ValueOutput(variable.type, "value", (flow) =>
+                {
+                     IUAClass _target;
+                     
+                     if (target.hasValidConnection)
+                     {
+                         _target = flow.GetValue<IUAClass>(target);
+                     }
+                     else
+                     {
+                         _target = (IUAClass)flow.variables.Get("#secret_uaclass_instance");
+                     }
+
+                     return _target.Class.Get(variable.name);
+                });
+
+                if (!variable.getUnits.Contains(this))
+                {
+                    variable.getUnits.Add(this);
+                }
             }
 
-            Requirement(target, value);
+            if (variable != null) Requirement(target, value);
         }
     }
 }

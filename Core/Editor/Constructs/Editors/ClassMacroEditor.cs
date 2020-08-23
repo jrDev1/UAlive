@@ -124,8 +124,6 @@ namespace Lasm.UAlive
 
                             GUILayout.Space(6);
 
-                            BeginBlock(metadata, position, GUIContent.none);
-
                             if (GUILayout.Button("+ Message"))
                             {
                                 GenericMenu menu = new GenericMenu();
@@ -139,16 +137,11 @@ namespace Lasm.UAlive
                                         startSeparator = false;
                                     }
                                     var key = keys[i];
-                                    menu.AddItem(new GUIContent(key), false, (obj) => { tempOverrides[(string)obj].isOverridden = true; }, key);
+                                    menu.AddItem(new GUIContent(key), false, (obj) => { tempOverrides[(string)obj].isOverridden = true; _target.Define(); }, key);
                                     if (keys[i] == "OnGUI") startSeparator = true;
                                 }
 
                                 menu.ShowAsContext();
-                            }
-
-                            if (EndBlock(metadata))
-                            {
-                                _target.Define();
                             }
                         });
                     });
@@ -187,25 +180,17 @@ namespace Lasm.UAlive
                                     LudiqGUI.InspectorLayout(methods[i], GUIContent.none);
                                 });
 
-                                BeginBlock(methods, position, GUIContent.none);
-
                                 if (GUILayout.Button("-", GUILayout.Width(16), GUILayout.Height(18)))
                                 {
                                     methodsVal.Remove(meth);
                                     AssetDatabase.RemoveObjectFromAsset(meth.macro);
                                     AssetDatabase.SaveAssets();
                                     AssetDatabase.Refresh();
-                                }
-
-                                if (EndBlock(methods))
-                                {
                                     _target.Define();
                                 }
                             });
                         });
                     }
-
-                    BeginBlock(metadata, position, GUIContent.none);
 
                     if (GUILayout.Button("+ New Method"))
                     {
@@ -216,13 +201,9 @@ namespace Lasm.UAlive
                         meth.macro.hideFlags = HideFlags.HideInHierarchy;
                         AssetDatabase.AddObjectToAsset(meth.macro, _target);
                         methodsVal.Add(meth);
+                        _target.Define();
                         AssetDatabase.SaveAssets();
                         AssetDatabase.Refresh();
-                    }
-
-                    if (EndBlock(metadata))
-                    {
-                        _target.Define();
                     }
                 });
             });
@@ -262,18 +243,9 @@ namespace Lasm.UAlive
                                     GUILayout.Label(GUIContent.none, new GUIStyle() { fixedWidth = 4 });
 
                                     HUMEditor.Vertical(() =>
-                                    { 
-                                        BeginBlock(variable["type"], position, GUIContent.none);
+                                    {
                                         LudiqGUI.InspectorLayout(variable["type"], GUIContent.none);
-                                        if (EndBlock(variable["type"]))
-                                        {
-                                            variablesVal.variables[i].Changed();
-                                            AssetDatabase.SaveAssets();
-                                            AssetDatabase.Refresh();
-                                        }
                                     });
-
-                                    BeginBlock(metadata, position, GUIContent.none);
 
                                     if (GUILayout.Button("-", GUILayout.Width(16), GUILayout.Height(14)))
                                     {
@@ -282,19 +254,21 @@ namespace Lasm.UAlive
                                         AssetDatabase.RemoveObjectFromAsset(variableVal.setter.macro);
                                         AssetDatabase.SaveAssets();
                                         AssetDatabase.Refresh();
-                                    }
-
-                                    if (EndBlock(metadata))
-                                    {
                                         _target.Define();
-                                    }
+                                    } 
                                 });
 
                                 GUILayout.Space(2);
 
                                 HUMEditor.Vertical(() =>
                                 {
+                                    BeginBlock(metadata, position, GUIContent.none);
                                     LudiqGUI.InspectorLayout(variable["value"].Cast(variableVal.type), GUIContent.none);
+                                    if (EndBlock(metadata))
+                                    {
+                                        variableVal.Changed();
+                                        _target.Define();
+                                    }
                                 });
                             });
 

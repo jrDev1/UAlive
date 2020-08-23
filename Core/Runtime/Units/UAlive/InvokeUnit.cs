@@ -3,6 +3,7 @@ using Lasm.OdinSerializer;
 using Ludiq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -26,20 +27,20 @@ namespace Lasm.UAlive
         [DoNotSerialize]
         public List<ValueInput> parameters = new List<ValueInput>();
 
-        [DoNotSerialize][PortLabelHidden]
+        [DoNotSerialize]
+        [PortLabelHidden]
         public ValueOutput result;
 
-        private object returnValue; 
+        private object returnValue;
 
         protected override void Definition()
         {
             base.Definition();
 
             parameters.Clear();
-
             enter = ControlInput("enter", (flow) =>
             {
-                IUAClass _target; 
+                IUAClass _target;
 
                 if (target.hasValidConnection)
                 {
@@ -61,34 +62,59 @@ namespace Lasm.UAlive
                 return exit;
             });
 
-            exit = ControlOutput("exit"); 
-             
-            if (method != null)   
+            exit = ControlOutput("exit");
+
+            if (method != null)
             {
-                if (method.returnType != typeof(Void)) result = ValueOutput(method.returnType, "result", (flow)=> { return returnValue; });
+                if (method.returnType != typeof(Void)) result = ValueOutput(method.macro.entry.returnType, "result", (flow) => { return returnValue; });
 
-                var _parameters = method.macro?.entry?.parameters;
-                var keys = _parameters?.KeysToArray();
-
-                for (int i = 0; i < keys?.Length; i++)
+                if (method.macro != null && method.macro.entry != null)
                 {
-                    parameters.Add(ValueInput(_parameters[keys[i]], keys[i])); 
+                    var _parameters = method.macro.entry.parameters;
+
+                    if (_parameters.Count > 0)
+                    {
+                        var keys = _parameters.KeysToArray();
+
+                        for (int i = 0; i < keys.Length; i++)
+                        {
+                            parameters.Add(ValueInput(_parameters[keys[i]], keys[i]));
+                        }
+                    }
+
+                    if (method.macro.entry != null)
+                    {
+                        if (!method.macro.entry.invokes.Contains(this)) method.macro.entry.invokes.Add(this);
+                    }
+
+                    if (method.returnType != null && method.returnType != typeof(void) && method.returnType != typeof(Void)) Requirement(target, result);
                 }
 
-                if (method.macro?.entry != null)
-                { 
-                    if (!method.macro.entry.invokes.Contains(this)) method.macro.entry.invokes.Add(this);
+                Requirement(target, enter);
+                for (int i = 0; i < parameters.Count; i++)
+                {
+                    Requirement(parameters[i], enter);
                 }
-
-                if (method.returnType != null && method.returnType != typeof(void) && method.returnType != typeof(Void)) Requirement(target, result);
+                Succession(enter, exit); 
             }
-
-            Requirement(target, enter);
-            for (int i = 0; i < parameters.Count; i++)
+        }
+         
+        protected override void AfterDefine()
+        {
+            if (method?.macro?.entry != null)
             {
-                Requirement(parameters[i], enter);
+                method.macro.entry.onChanged += Define;
+                method.macro.entry.invokes.Add(this);
             }
-            Succession(enter, exit);
+        }
+
+        protected override void BeforeUndefine()
+        {  
+            if (method?.macro?.entry != null)
+            {
+                method.macro.entry.onChanged -= Define;
+                method.macro.entry.invokes.Remove(this);
+            }
         }
     }
 }

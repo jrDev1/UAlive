@@ -32,13 +32,20 @@ namespace Lasm.UAlive
             set
             {
                 _type = value;
-                Define();
+                onChanged?.Invoke();
             }
         }
 
         [Serialize]
         public List<InvokeUnit> invokes = new List<InvokeUnit>();
-        
+
+        public event Action onChanged = () => { };
+
+        public void Changed()
+        {
+            onChanged?.Invoke();
+        }
+
         protected override void Definition()
         {
             isControlRoot = true;
@@ -63,10 +70,11 @@ namespace Lasm.UAlive
                             _outputs.Add(output);
                         }
                     }
-                }
+                } 
             }
 
             DefineReturns();
+            onChanged?.Invoke();
         }
 
         public void DefineInvokes()
