@@ -5,7 +5,7 @@ namespace Lasm.UAlive
     public sealed class MenuCommands
     {
         [MenuItem("Tools/UAlive/Generate Live Code")]
-        internal static void GenerateLive()
+        public static void GenerateLive()
         {
             var assets = HUMAssets.Find().Assets().OfType<ClassMacro>();
             for (int i = 0; i < assets.Count; i++)

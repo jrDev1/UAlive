@@ -57,7 +57,7 @@ namespace Lasm.UAlive
 
                 if (GUILayout.Button("Compile"))
                 {
-
+                    MenuCommands.GenerateLive();
                 }
             });
         }
