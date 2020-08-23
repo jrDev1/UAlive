@@ -14,10 +14,12 @@ namespace Lasm.UAlive
     {
         #region Variables
         [Serialize]
+        public int id = new object().GetHashCode();
+        [Serialize]
         public MethodMacro macro;
         [Serialize]
         public bool isInitialized;
-        [Serialize]
+        [Serialize]  
         public bool hasOptionalOverride
         {
             get

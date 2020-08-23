@@ -16,7 +16,7 @@ namespace Lasm.UAlive
         [Serialize]
         public MethodCollection methods = new MethodCollection();
 
-        [Inspectable]
+        [Serialize]
         public Variables variables = new Variables();
 
 #if UNITY_EDITOR

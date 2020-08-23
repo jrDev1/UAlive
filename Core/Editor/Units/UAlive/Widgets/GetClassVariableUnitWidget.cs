@@ -58,7 +58,7 @@ namespace Lasm.UAlive
                             unit.macro = tuple.Item1;
                             unit.memberName = tuple.Item2.name;
                             unit.variable = tuple.Item2;
-                            if (!unit.variable.getUnits.Contains(unit)) unit.variable.getUnits.Add(unit);
+                            unit.id = tuple.Item2.id; 
                             unit.Define();
 
                         }, (classes[i], classes[i].variables.variables[j]));

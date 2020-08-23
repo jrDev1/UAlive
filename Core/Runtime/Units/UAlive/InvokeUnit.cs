@@ -62,29 +62,28 @@ namespace Lasm.UAlive
                 return exit;
             });
 
-            exit = ControlOutput("exit");
+            exit = ControlOutput("exit"); 
 
             if (method != null)
             {
-                if (method.returnType != typeof(Void)) result = ValueOutput(method.macro.entry.returnType, "result", (flow) => { return returnValue; });
-
+                id = method.id;
+                 
+                method = macro.methods.custom.Single((meth) => { return meth.id == id; });
+                
                 if (method.macro != null && method.macro.entry != null)
                 {
+                    if (method.returnType != typeof(Void)) result = ValueOutput(method.macro.entry.returnType, "result", (flow) => { return returnValue; });
+
                     var _parameters = method.macro.entry.parameters;
 
                     if (_parameters.Count > 0)
                     {
-                        var keys = _parameters.KeysToArray();
+                        var keys = _parameters.KeysToArray(); 
 
                         for (int i = 0; i < keys.Length; i++)
                         {
                             parameters.Add(ValueInput(_parameters[keys[i]], keys[i]));
                         }
-                    }
-
-                    if (method.macro.entry != null)
-                    {
-                        if (!method.macro.entry.invokes.Contains(this)) method.macro.entry.invokes.Add(this);
                     }
 
                     if (method.returnType != null && method.returnType != typeof(void) && method.returnType != typeof(Void)) Requirement(target, result);
@@ -104,7 +103,6 @@ namespace Lasm.UAlive
             if (method?.macro?.entry != null)
             {
                 method.macro.entry.onChanged += Define;
-                method.macro.entry.invokes.Add(this);
             }
         }
 
@@ -113,7 +111,6 @@ namespace Lasm.UAlive
             if (method?.macro?.entry != null)
             {
                 method.macro.entry.onChanged -= Define;
-                method.macro.entry.invokes.Remove(this);
             }
         }
     }

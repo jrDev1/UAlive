@@ -5,13 +5,10 @@ using System.Collections.Generic;
 namespace Lasm.UAlive
 {
     [Serializable]
-    [Inspectable]
     [IncludeInSettings(false)]
     public class Variables
     {
         [Serialize]
-        [Inspectable]
-        [InspectorWide][InspectorLabel(null)]
         public List<Variable> variables = new List<Variable>();
 
         public T Get<T>(string name)
@@ -19,7 +16,7 @@ namespace Lasm.UAlive
             for (int i = 0; i < variables.Count; i++)
             {
                 if (variables[i].name == name) return (T)variables[i].value;
-            }
+            } 
 
             return default(T);
         }

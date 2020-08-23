@@ -5,16 +5,13 @@ using UnityEngine;
 
 namespace Lasm.UAlive
 {
-    [Serializable][Inspectable]
+    [Serializable]
     public sealed class Variable 
     {
-        [Inspectable]
         public string name;
 
         [Serialize]
-        public List<GetClassVariableUnit> getUnits = new List<GetClassVariableUnit>();
-        [Serialize]
-        public List<SetClassVariableUnit> setUnits = new List<SetClassVariableUnit>();
+        public int id = new object().GetHashCode();
 
         [Serialize]
         private Type _type = typeof(int);
@@ -23,39 +20,27 @@ namespace Lasm.UAlive
             get => _type;
             set
             {
-                if (_type != value)
+                var changed = _type != value;
+                _type = value;
+                if (changed)
                 {
                     this.value = value.Default();
-                    Changed();
+                    onChanged?.Invoke();
                 }
-
-                _type = value;
             }
         }
 
-        [Inspectable][Serialize]
+        [Serialize]
         public object value = 0;
 
         public Method getter = new Method();
         public Method setter = new Method();
 
-        public event Action onChanged = () => { };
-         
+        public event Action onChanged = new Action(() => { });
+
         public void Changed()
         {
-            for (int i = 0; i < getUnits.Count; i++)
-            {
-                getUnits[i].Define();
-            }
-        }
-
-        public void OnBeforeSerialize()
-        {
-            getUnits.Clear();
-        }
-
-        public void OnAfterDeserialize()
-        {
+            onChanged?.Invoke();
         }
     }
 }

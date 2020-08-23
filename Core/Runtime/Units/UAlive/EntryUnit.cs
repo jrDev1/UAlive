@@ -8,7 +8,7 @@ namespace Lasm.UAlive
 {
     [TypeIcon(typeof(Flow))]
     [UnitTitle("Entry")]
-    [SpecialUnit]
+    [SpecialUnit][Serializable]
     public class EntryUnit : Unit
     {
         [Serialize]
@@ -36,9 +36,6 @@ namespace Lasm.UAlive
             }
         }
 
-        [Serialize]
-        public List<InvokeUnit> invokes = new List<InvokeUnit>();
-
         public event Action onChanged = () => { };
 
         public void Changed()
@@ -53,6 +50,8 @@ namespace Lasm.UAlive
             invoke = ControlOutput("invoke");
 
             _outputs.Clear();
+
+            if (macro != null) macro.entry = this;
 
             if (parameters.Keys != null)
             {
@@ -75,14 +74,6 @@ namespace Lasm.UAlive
 
             DefineReturns();
             onChanged?.Invoke();
-        }
-
-        public void DefineInvokes()
-        {
-            for (int i = 0; i < invokes.Count; i++)
-            {
-                invokes[i].Define();
-            }
         }
 
         public void DefineReturns()

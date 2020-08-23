@@ -9,7 +9,7 @@ namespace Lasm.UAlive
 {
     [Serializable]
     public abstract class ClassMemberUnit : Unit
-    {
+    {  
         [DoNotSerialize]
         [AllowsNull]
         public ValueInput target;
@@ -17,6 +17,8 @@ namespace Lasm.UAlive
         public ClassMacro macro;
         [Serialize]
         public string memberName;
+        [Serialize]
+        public int id;
 
         protected override void Definition()
         {

@@ -1,7 +1,9 @@
 ﻿using Bolt;
 using Ludiq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Lasm.UAlive
@@ -11,21 +13,23 @@ namespace Lasm.UAlive
     [TypeIcon(typeof(ClassMacro))]
     public sealed class GetClassVariableUnit : ClassVariableUnit
     {
-        [Serialize][Inspectable]
+        [Serialize]
         public Variable variable;
 
         [DoNotSerialize][PortLabelHidden]
         public ValueOutput value;
 
         public bool bound;
-
-        public override bool canDefine => true;
+        
         protected override void Definition()
         {
             base.Definition();
 
             if (variable != null)
             {
+                id = variable.id;
+                variable = macro.variables.variables.Single((v) => { return v.id == id; });
+
                 value = ValueOutput(variable.type, "value", (flow) =>
                 {
                      IUAClass _target;
@@ -41,14 +45,28 @@ namespace Lasm.UAlive
 
                      return _target.Class.Get(variable.name);
                 });
-
-                if (!variable.getUnits.Contains(this))
-                {
-                    variable.getUnits.Add(this);
-                }
             }
 
-            if (variable != null) Requirement(target, value);
+            if (variable != null)
+            {
+                Requirement(target, value);
+            }
+        }
+        
+        protected override void AfterDefine()
+        {
+            if (variable != null)
+            {
+                variable.onChanged += Define;
+            }
+        }
+
+        protected override void BeforeUndefine()
+        {
+            if (variable != null)
+            {
+                variable.onChanged -= Define;
+            }
         }
     }
 }

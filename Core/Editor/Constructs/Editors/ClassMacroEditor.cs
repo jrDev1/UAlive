@@ -266,7 +266,6 @@ namespace Lasm.UAlive
                                     LudiqGUI.InspectorLayout(variable["value"].Cast(variableVal.type), GUIContent.none);
                                     if (EndBlock(metadata))
                                     {
-                                        variableVal.Changed();
                                         _target.Define();
                                     }
                                 });

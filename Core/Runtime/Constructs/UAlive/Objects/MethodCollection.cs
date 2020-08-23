@@ -16,6 +16,7 @@ namespace Lasm.UAlive
         [Serialize]
         public Dictionary<string, Method> overrides = new Dictionary<string, Method>();
 
+        [Serialize]
         public List<Method> custom = new List<Method>(); 
          
 #if UNITY_EDITOR
@@ -49,14 +50,6 @@ namespace Lasm.UAlive
             AssetDatabase.Refresh();
         }
 #endif
-        public void Define(ClassMacro instance, string title)
-        {
-            foreach (Method method in custom)
-            {
-                New(instance, method.name, AccessModifier.Public, MethodModifier.None, method.returnType, new ParameterDeclaration[] { });
-            }
-        }
-
         public Method New(ClassMacro instance, string name, AccessModifier scope, MethodModifier modifier, Type returnType, ParameterDeclaration[] parameters, bool isMagic = false)
         {
             var asset = GetRootAsset(instance);
@@ -123,14 +116,8 @@ namespace Lasm.UAlive
                     _method.returnType = returnType;
                     _method.name = name;
                     _method.isSpecial = false;
-
-                    if (_method.macro.entry.returnType != returnType)
-                    {
-                        _method.macro.entry.returnType = returnType;
-                    }
-
+                    _method.macro.entry.returnType = returnType;
                     _method.macro.hideFlags = HideFlags.HideInHierarchy;
-
                     _method.macro.entry.Define();
                 }
 
