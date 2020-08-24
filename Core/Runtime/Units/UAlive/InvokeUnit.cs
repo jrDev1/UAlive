@@ -89,7 +89,7 @@ namespace Lasm.UAlive
                         }
                     }
 
-                    if (method.returnType != null && method.returnType != typeof(void) && method.returnType != typeof(Void)) Requirement(target, result);
+                    if (method.macro.entry.returnType != null && method.macro.entry.returnType != typeof(void) && method.macro.entry.returnType != typeof(Void)) Requirement(target, result);
                 }
 
                 Requirement(target, enter);
