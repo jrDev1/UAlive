@@ -38,10 +38,10 @@ namespace Lasm.UAlive
         {
             if (entry?.macro != null)
             {
-                entry.returnMethod(flow.GetValue<object>(value));
+                if (entry.returnMethod != null) entry.returnMethod(flow.GetValue<object>(value));
             }
 
-            return null;
+            return null;  
         }
 
         public override void AfterAdd()

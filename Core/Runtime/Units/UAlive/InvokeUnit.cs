@@ -66,12 +66,12 @@ namespace Lasm.UAlive
 
             if (method != null)
             {
-                id = method.id;
+                id = method.id; 
                  
-                method = macro.methods.custom.Single((meth) => { return meth.id == id; });
-                
                 if (method.macro != null && method.macro.entry != null)
                 {
+                    if (macro.methods.custom.Any((meth) => { return meth.id == id; })) method = macro.methods.custom.Single((meth) => { return meth.id == id; });
+
                     if (method.macro.entry.returnType != typeof(Lasm.UAlive.Void) && method.macro.entry.returnType != typeof(void) && method.macro.entry.returnType != null)
                     {
                         result = ValueOutput(method.macro.entry.returnType, "result", (flow) => { return returnValue; });
