@@ -72,7 +72,10 @@ namespace Lasm.UAlive
                 
                 if (method.macro != null && method.macro.entry != null)
                 {
-                    if (method.returnType != typeof(Void)) result = ValueOutput(method.macro.entry.returnType, "result", (flow) => { return returnValue; });
+                    if (method.macro.entry.returnType != typeof(Lasm.UAlive.Void) && method.macro.entry.returnType != typeof(void) && method.macro.entry.returnType != null)
+                    {
+                        result = ValueOutput(method.macro.entry.returnType, "result", (flow) => { return returnValue; });
+                    }
 
                     var _parameters = method.macro.entry.parameters;
 
