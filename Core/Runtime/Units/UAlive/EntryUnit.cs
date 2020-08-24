@@ -33,6 +33,7 @@ namespace Lasm.UAlive
             {
                 _type = value;
                 onChanged?.Invoke();
+                Define();
             }
         }
 
