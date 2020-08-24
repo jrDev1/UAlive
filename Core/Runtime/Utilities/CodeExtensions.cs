@@ -14,7 +14,7 @@ namespace Lasm.UAlive
             var _parameters = CodeBuilder.NullAsEmptyOr(parameters, CodeBuilder.Comma() + parameters);
             var bodyClose = CodeBuilder.End();
 
-            output += bodyOpen + instance + _key + callback + _parameters + bodyClose;
+            output += bodyOpen + instance + _key + callback + ", " + isOverride.As().Code(false) + _parameters + bodyClose;
             return output;
         }
     }

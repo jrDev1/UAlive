@@ -65,27 +65,27 @@ namespace Lasm.UAlive
                 var nest = decorated.methods.overrides[keys[i]]; 
                 if (CanAddMethod(nest))
                 {
-                    var method = nest.returnType.Is().Void() ? Method(nest.name, nest.scope, nest.modifier, nest) : Method(nest.name, nest.scope, nest.modifier, nest.returnType);
-                    if (!nest.returnType.Is().Void()) AddParameters(method, nest);
+                    var method = nest.returnType.Is().Void() ? Method(nest.name, nest.scope, nest.modifier, nest.returnType, true) : Method(nest.name, nest.scope, nest.modifier, nest.returnType, true);
+                    AddParameters(method, nest);
                     @class.AddMethod(method);
                 }
             };
         }
 
-        protected MethodGenerator Method(string key, AccessModifier scope, MethodModifier modifier, Type returnType, string parameters = null)
+        protected MethodGenerator Method(string key, AccessModifier scope, MethodModifier modifier, Type returnType, bool isOverride, string parameters = null)
         {
             var method = MethodGenerator.Method(scope, modifier, returnType, key.Replace(" ", string.Empty));
             var line1 = CodeBuilder.InitializeVariable("val", returnType);
-            var line2 = CodeExtensions.Invoke(key, returnType, modifier == MethodModifier.Override, parameters);
+            var line2 = CodeExtensions.Invoke(key, returnType, isOverride, parameters);
             var line3 = CodeBuilder.NullVoidOrNot(returnType, string.Empty, "\n" + CodeBuilder.Return("val"));
             method.Body(line1 + line2 + line3);
             return method;
         }
 
-        private MethodGenerator Method(string key, AccessModifier scope, MethodModifier modifier, Method nest)
+        private MethodGenerator Method(string key, AccessModifier scope, MethodModifier modifier, bool isOverride, Method nest)
         {
             var method = MethodGenerator.Method(scope, modifier, typeof(Lasm.UAlive.Void), key.Replace(" ", string.Empty));
-            method.Body(CodeExtensions.Invoke(key, typeof(Lasm.UAlive.Void), modifier == MethodModifier.Override, GetParameters(method, nest)));
+            method.Body(CodeExtensions.Invoke(key, typeof(Lasm.UAlive.Void), isOverride, GetParameters(method, nest)));
             return method;
         }
 

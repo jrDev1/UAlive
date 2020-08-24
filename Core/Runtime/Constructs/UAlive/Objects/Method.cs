@@ -117,7 +117,7 @@ namespace Lasm.UAlive
                 }
             }
 
-            flow.Invoke(macro.entry.invoke);
+            flow.Invoke(macro?.entry?.invoke);
         }
     }
 }

@@ -23,10 +23,10 @@ namespace Lasm.UAlive
             ClassExtensions.GetClass(ref macro, GUID);
         }
 
-        public void Invoke(IUAClass @class, string name, Action<object> returnMethod, params object[] parameters)
+        public void Invoke(IUAClass @class, string name, Action<object> returnMethod, bool isOverride = false, params object[] parameters)
         {
             EnsureInitialized(GUID);
-            ClassExtensions.Invoke(@class, name, returnMethod, parameters);
+            ClassExtensions.Invoke(@class, name, returnMethod, isOverride, parameters);
         }
 
         public T Get<T>(string name)

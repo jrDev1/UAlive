@@ -18,9 +18,24 @@ namespace Lasm.UAlive
             return macro;
         }
 
-        public static void Invoke(IUAClass @class, string name, Action<object> returnMethod, params object[] parameters)
+        public static void Invoke(IUAClass @class, string name, Action<object> returnMethod, bool isOverride = false, params object[] parameters)
         {
-            @class.Class.macro.methods.overrides[name].Invoke(@class, returnMethod, parameters);
+            if (isOverride)
+            {
+                @class.Class.macro.methods.overrides[name].Invoke(@class, returnMethod, parameters);
+                return;
+            }
+
+            for (int i = 0; i < @class.Class.macro.methods.custom.Count; i++)
+            {
+                var instance = @class.Class.macro.methods.custom[i];
+                if (instance.name == name)
+                {
+                    instance.Invoke(@class, returnMethod, parameters);
+                    return;
+                }
+            }
+            
         }
     }
 }

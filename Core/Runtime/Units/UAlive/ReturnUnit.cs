@@ -38,7 +38,7 @@ namespace Lasm.UAlive
         {
             if (entry?.macro != null)
             {
-                if (entry.returnMethod != null) entry.returnMethod(flow.GetValue<object>(value));
+                if (entry.returnType != null && entry.returnType != typeof(Lasm.UAlive.Void) && entry.returnType != typeof(void)) entry.returnMethod(flow.GetValue<object>(value));
             }
 
             return null;  
