@@ -10,6 +10,12 @@ namespace Lasm.UAlive
         {
         }
 
+        protected override void DefinedPort(IUnitPort port, UnitPortDescription description)
+        {
+            base.DefinedPort(port, description);
+            if (port.key == "chain" || port.key == "target") description.showLabel = false;
+        }
+
         protected override EditorTexture DefaultIcon()
         {
             Images.Cache();

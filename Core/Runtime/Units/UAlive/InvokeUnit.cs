@@ -12,7 +12,11 @@ namespace Lasm.UAlive
     [UnitTitle("Invoke")]
     [UnitCategory("Control")]
     public sealed class InvokeUnit : ClassMemberUnit
-    { 
+    {
+        [Serialize]
+        [Inspectable]
+        public bool chain;
+
         [DoNotSerialize]
         public Method method;
 
@@ -31,6 +35,10 @@ namespace Lasm.UAlive
         [PortLabelHidden]
         public ValueOutput result;
 
+        [DoNotSerialize]
+        [PortLabelHidden]
+        public ValueOutput chainTarget;
+
         private object returnValue;
 
         protected override void Definition()
@@ -41,49 +49,28 @@ namespace Lasm.UAlive
 
             enter = ControlInput("enter", (flow) =>
             {
-                IUAClass _target;
-
-                if (target.hasValidConnection)
-                {
-                    _target = flow.GetValue<IUAClass>(target);
-                }
-                else
-                {
-                    _target = (IUAClass)flow.variables.Get("#secret_uaclass_instance");
-                }
-
-                var parameterList = new List<object>();
-
-                for (int i = 0; i < parameters.Count; i++)  
-                {
-                    parameterList.Add(flow.GetValue(parameters[i]));
-                }
-
-                method.Invoke(_target, (obj) => { returnValue = obj; }, parameterList.ToArray());
+                IUAClass _target = null;
+                Invoke(ref _target, flow);
                 return exit;
             });
 
             exit = ControlOutput("exit");
 
+            if (chain) chainTarget = ValueOutput<IUAClass>("chain", (flow)=> { return flow.GetValue<IUAClass>(target); });
+
             if (id != 0) method = FindWithID(id);
 
             if (method != null)
             {
-                if (method.macro.entry == null)
-                {
-                    Debug.Log(method.macro.graph.units.Count);
-                    foreach (IUnit unit in method.macro.graph.units)
-                    {
-                        Debug.Log(unit);
-                    }
-                    //method.macro.entry = method.macro.graph.units.Single((unit) => { return unit.GetType() == typeof(EntryUnit); }) as EntryUnit;
-                }   
-
                 if (method.macro != null && method.macro.entry != null)
                 {
                     if (IsValidReturnType())
                     { 
-                        result = ValueOutput(method.returnType, "result", (flow) => { return returnValue; });
+                        result = ValueOutput(method.returnType, "result", (flow) =>
+                        {
+                            IUAClass _target = null;
+                            return Invoke(ref _target, flow);
+                        });
                     } 
 
                     if (method.macro.entry.parameters.Count > 0)
@@ -108,6 +95,29 @@ namespace Lasm.UAlive
             }
         }
         
+        public object Invoke(ref IUAClass target, Flow flow)
+        {
+            if (this.target.hasValidConnection)
+            {
+                target = flow.GetValue<IUAClass>(this.target);
+            }
+            else
+            {
+                target = (IUAClass)flow.variables.Get("#secret_uaclass_instance");
+            }
+
+            var parameterList = new List<object>();
+
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                parameterList.Add(flow.GetValue(parameters[i]));
+            }
+
+            method.Invoke(target, (obj) => { returnValue = obj; }, parameterList.ToArray());
+
+            return returnValue;
+        }
+
         private bool IsValidReturnType()
         {
             return method.returnType != null && method.returnType != typeof(void) && method.returnType != typeof(Void);

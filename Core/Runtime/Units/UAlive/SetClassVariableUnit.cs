@@ -11,6 +11,10 @@ namespace Lasm.UAlive
     public sealed class SetClassVariableUnit : ClassVariableUnit
     {
         [Serialize]
+        [Inspectable]
+        public bool chain;
+
+        [Serialize]
         public Variable variable;
 
         [DoNotSerialize]
@@ -27,9 +31,17 @@ namespace Lasm.UAlive
 
         private bool justDefined;
 
+        [DoNotSerialize]
+        [PortLabelHidden]
+        public ValueOutput chainTarget;
+
+        private object returnValue;
+
         protected override void Definition()
         {
             base.Definition();
+
+            if (chain) chainTarget = ValueOutput<IUAClass>("chain", (flow) => { return flow.GetValue<IUAClass>(target); });
 
             if (id != 0)
             {
