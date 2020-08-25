@@ -47,16 +47,7 @@ namespace Lasm.UAlive
 
             parameters.Clear();
 
-            enter = ControlInput("enter", (flow) =>
-            {
-                IUAClass _target = null;
-                Invoke(ref _target, flow);
-                return exit;
-            });
-
-            exit = ControlOutput("exit");
-
-            if (chain) chainTarget = ValueOutput<IUAClass>("chain", (flow)=> { return flow.GetValue<IUAClass>(target); });
+            if (chain) chainTarget = ValueOutput<IUAClass>("chain", (flow) => { return flow.GetValue<IUAClass>(target); });
 
             if (id != 0) method = FindWithID(id);
 
@@ -65,36 +56,49 @@ namespace Lasm.UAlive
                 if (method.macro != null && method.macro.entry != null)
                 {
                     if (IsValidReturnType())
-                    { 
+                    {
                         result = ValueOutput(method.returnType, "result", (flow) =>
                         {
                             IUAClass _target = null;
                             return Invoke(ref _target, flow);
                         });
-                    } 
+                    }
 
                     if (method.macro.entry.parameters.Count > 0)
                     {
-                        var keys = method.macro.entry.parameters.KeysToArray(); 
+                        var keys = method.macro.entry.parameters.KeysToArray();
 
                         for (int i = 0; i < keys.Length; i++)
-                        { 
+                        {
                             parameters.Add(ValueInput(method.macro.entry.parameters[keys[i]], keys[i]));
-                        } 
+                        }
                     }
-                      
+
                     if (IsValidReturnType()) Requirement(target, result);
                 }
 
-                Requirement(target, enter);
                 for (int i = 0; i < parameters.Count; i++)
                 {
                     Requirement(parameters[i], enter);
                 }
-                Succession(enter, exit); 
+            }
+
+            if (method != null && method.macro?.entry != null && !method.macro.entry.pure)
+            {
+                enter = ControlInput("enter", (flow) =>
+                {
+                    IUAClass _target = null;
+                    Invoke(ref _target, flow);
+                    return exit;
+                });
+
+                exit = ControlOutput("exit");
+
+                Requirement(target, enter);
+                Succession(enter, exit);
             }
         }
-        
+
         public object Invoke(ref IUAClass target, Flow flow)
         {
             if (this.target.hasValidConnection)
@@ -132,7 +136,7 @@ namespace Lasm.UAlive
         }
 
         protected override void BeforeUndefine()
-        {  
+        {
             if (method?.macro?.entry != null)
             {
                 method.macro.entry.onChanged -= Define;

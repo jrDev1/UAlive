@@ -15,6 +15,9 @@ namespace Lasm.UAlive
         public MethodMacro macro;
 
         [Inspectable]
+        public bool pure;
+
+        [Inspectable]
         public Dictionary<string, Type> parameters = new Dictionary<string, Type>();
 
         public List<object> assignedValues = new List<object>();
