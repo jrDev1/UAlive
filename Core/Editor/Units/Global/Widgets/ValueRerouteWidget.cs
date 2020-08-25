@@ -13,6 +13,7 @@ namespace Lasm.UAlive
     {
         private static ValueReroute addedUnit = null;
         private static bool keyPressed;
+        private int connections;
 
         public ValueRerouteWidget(FlowCanvas canvas, ValueReroute unit) : base(canvas, unit)
         {
@@ -49,13 +50,20 @@ namespace Lasm.UAlive
                 unit.Define();
             }
 
-            if (addedUnit == null && keyPressed && canvas.connectionSource != null && canvas.connectionSource == unit.output)
+            if (addedUnit == null && keyPressed && SourceIsReroute())
             {
                 addedUnit = new ValueReroute();
                 addedUnit.position = canvas.mousePosition - new Vector2(14, 14);
                 ((FlowGraph)graph).units.Add(addedUnit);
                 unit.output.ValidlyConnectTo(addedUnit.input);
                 canvas.connectionSource = addedUnit.output;
+            }
+            else
+            {
+                if (addedUnit == null && HasSource() && HasConnections() && IsConnecting() && SourceIsReroute() && DestinationIsNotReroute())
+                {
+                    canvas.CancelConnection();
+                }
             }
 
             if (addedUnit != null) canvas.connectionSource = addedUnit.output;
@@ -65,7 +73,38 @@ namespace Lasm.UAlive
                 addedUnit = null;
             }
         }
-        
+
+        private bool HasSource()
+        {
+            return canvas.connectionSource != null;
+        }
+
+        public override void HandleCapture()
+        {
+            base.HandleCapture();
+            keyPressed = e.keyCode == KeyCode.Space;
+        }
+
+        private bool DestinationIsNotReroute()
+        {
+            return canvas.connectionSource.connections.Any((connection) => { return connection.destination.unit.GetType() != typeof(ValueReroute); });
+        }
+
+        private bool HasConnections()
+        {
+            return canvas.connectionSource.connections != null;
+        }
+
+        private bool SourceIsReroute()
+        {
+            return canvas.connectionSource == unit.output;
+        }
+
+        private bool IsConnecting()
+        {
+            return canvas.isCreatingConnection;
+        }
+
         public override void CachePosition()
         {
             _position.x = unit.position.x;
@@ -76,11 +115,5 @@ namespace Lasm.UAlive
             inputs[0].y = _position.y + 5;
             outputs[0].y = _position.y + 5;
         }
-
-        public override void HandleCapture()
-        {
-            base.HandleCapture();
-            keyPressed = e.keyCode == KeyCode.Space;
-        }
     }
-} 
+}

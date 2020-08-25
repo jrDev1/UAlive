@@ -2,6 +2,7 @@
 using Ludiq;
 using UnityEngine;
 using UnityEditor;
+using System.Linq;
 
 namespace Lasm.UAlive
 {
@@ -23,6 +24,58 @@ namespace Lasm.UAlive
         protected override bool showIcons => true;
         
         public override bool foregroundRequiresInput => true;
+
+        public override void Update()
+        {
+            if (addedUnit == null && keyPressed && SourceIsReroute())
+            {
+                addedUnit = new FlowReroute();
+                addedUnit.position = canvas.mousePosition - new Vector2(14, 14);
+                ((FlowGraph)graph).units.Add(addedUnit);
+                unit.output.ValidlyConnectTo(addedUnit.input);
+                canvas.connectionSource = addedUnit.output;
+            }
+            else
+            {
+                if (addedUnit == null && HasSource() && HasConnections() && IsConnecting() && SourceIsReroute() && DestinationIsNotReroute())
+                {
+                    canvas.CancelConnection();
+                }
+            }
+
+            if (addedUnit != null) canvas.connectionSource = addedUnit.output;
+
+            if (!keyPressed)
+            {
+                addedUnit = null;
+            }
+        }
+
+        private bool DestinationIsNotReroute()
+        {
+            return canvas.connectionSource.connections.Any((connection) => { return connection.destination.unit.GetType() != typeof(FlowReroute); });
+        }
+
+        private bool HasSource()
+        {
+            return canvas.connectionSource != null;
+        }
+
+        private bool HasConnections()
+        {
+            return canvas.connectionSource.connections != null;
+        }
+
+        private bool SourceIsReroute()
+        {
+            return canvas.connectionSource == unit.output;
+        }
+
+        private bool IsConnecting()
+        {
+            return canvas.isCreatingConnection;
+        }
+
         public override void CachePosition()
         {
             _position.x = unit.position.x;
@@ -38,25 +91,6 @@ namespace Lasm.UAlive
         {
             base.HandleCapture();
             keyPressed = e.keyCode == KeyCode.Space;
-        }
-
-        public override void Update()
-        {
-            if (addedUnit == null && keyPressed && canvas.connectionSource != null && canvas.connectionSource == unit.output)
-            {
-                addedUnit = new FlowReroute();
-                addedUnit.position = canvas.mousePosition - new Vector2(14, 14);
-                ((FlowGraph)graph).units.Add(addedUnit);
-                unit.output.ValidlyConnectTo(addedUnit.input);
-                canvas.connectionSource = addedUnit.output;
-            }
-
-            if (addedUnit != null) canvas.connectionSource = addedUnit.output;
-
-            if (!keyPressed)
-            {
-                addedUnit = null;
-            }
         }
     }
 } 
