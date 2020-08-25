@@ -12,13 +12,7 @@ namespace Lasm.UAlive
     {
         private ClassMacroGenerator generator;
         private ClassMacro _target;
-        private List<SerializedProperty> props = new List<SerializedProperty>();
         private Dictionary<string, Method> tempOverrides = new Dictionary<string, Method>();
-        private string focusedControl;
-        private string lastTitle;
-        private int ticks;
-        private Once titleChanged = new Once();
-        private AfterTicksCollection<Method> methodTitleChangedCollection = new AfterTicksCollection<Method>();
 
         public ClassMacroEditor(Metadata metadata) : base(metadata)
         {
@@ -166,7 +160,7 @@ namespace Lasm.UAlive
                     for (int i = 0; i < methodsVal.Count; i++)
                     {
                         if (i != 0) GUILayout.Space(2);
-                         
+
                         HUMEditor.Vertical().Box(Styles.backgroundColor.Brighten(0.075f), Styles.borderColor, new RectOffset(4, 4, 4, 2), new RectOffset(1, 1, 1, 1), () =>
                         {
                             var meth = methodsVal[i];
@@ -183,6 +177,7 @@ namespace Lasm.UAlive
                                 if (GUILayout.Button("-", GUILayout.Width(16), GUILayout.Height(18)))
                                 {
                                     methodsVal.Remove(meth);
+                                    meth.macro.entry.Define();
                                     AssetDatabase.RemoveObjectFromAsset(meth.macro);
                                     AssetDatabase.SaveAssets();
                                     AssetDatabase.Refresh();
@@ -199,10 +194,11 @@ namespace Lasm.UAlive
                         meth.showLabel = false;
                         meth.name = string.Empty;
                         meth.macro.hideFlags = HideFlags.HideInHierarchy;
+                        meth.macro.entry = (EntryUnit)meth.macro.graph.units.Single((unit) => { return unit.GetType() == typeof(EntryUnit); });
                         AssetDatabase.AddObjectToAsset(meth.macro, _target);
                         methodsVal.Add(meth);
                         _target.Define();
-                        AssetDatabase.SaveAssets();
+                        AssetDatabase.SaveAssets();   
                         AssetDatabase.Refresh();
                     }
                 });
@@ -250,10 +246,11 @@ namespace Lasm.UAlive
                                     if (GUILayout.Button("-", GUILayout.Width(16), GUILayout.Height(14)))
                                     {
                                         variablesVal.variables.Remove(variableVal);
+                                        variableVal.Changed();
                                         AssetDatabase.RemoveObjectFromAsset(variableVal.getter.macro);
                                         AssetDatabase.RemoveObjectFromAsset(variableVal.setter.macro);
                                         AssetDatabase.SaveAssets();
-                                        AssetDatabase.Refresh();
+                                        AssetDatabase.Refresh(); 
                                         _target.Define();
                                     } 
                                 });
@@ -262,13 +259,8 @@ namespace Lasm.UAlive
 
                                 HUMEditor.Vertical(() =>
                                 {
-                                    BeginBlock(metadata, position, GUIContent.none);
                                     LudiqGUI.InspectorLayout(variable["value"].Cast(variableVal.type), GUIContent.none);
-                                    if (EndBlock(metadata))
-                                    {
-                                        _target.Define();
-                                    }
-                                });
+                                }); 
                             });
 
                             GUILayout.Space(2);

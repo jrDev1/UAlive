@@ -13,17 +13,24 @@ namespace Lasm.UAlive
     {
         [Serialize]
         public MethodMacro macro;
+
         [Inspectable]
         public Dictionary<string, Type> parameters = new Dictionary<string, Type>();
+
         public List<object> assignedValues = new List<object>();
+
         [DoNotSerialize][PortLabelHidden]
-        public ControlOutput invoke;
+        public ControlOutput invoke;   
+
         [DoNotSerialize]
         public List<ValueOutput> _outputs = new List<ValueOutput>();
+
         [OdinSerializer.OdinSerialize]
         public Action<object> returnMethod;
+
         [Serialize]
         public List<ReturnUnit> returns = new List<ReturnUnit>();
+
         [Serialize]
         public Type _type;
         public Type returnType
@@ -32,7 +39,6 @@ namespace Lasm.UAlive
             set
             {
                 _type = value;
-                onChanged?.Invoke();
                 Define();
             }
         }
@@ -67,7 +73,7 @@ namespace Lasm.UAlive
 
                         if (value != null) {
                             var output = ValueOutput(value, keys[i]);
-                            _outputs.Add(output);
+                            _outputs.Add(output); 
                         }
                     }
                 } 

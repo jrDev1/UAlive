@@ -18,7 +18,7 @@ namespace Lasm.UAlive
         [Serialize]
         public string memberName;
         [Serialize]
-        public int id;
+        public int id = 0;
 
         protected override void Definition()
         {

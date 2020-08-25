@@ -12,8 +12,8 @@ namespace Lasm.UAlive
     [UnitTitle("Invoke")]
     [UnitCategory("Control")]
     public sealed class InvokeUnit : ClassMemberUnit
-    {
-        [Serialize]
+    { 
+        [DoNotSerialize]
         public Method method;
 
         [DoNotSerialize]
@@ -38,6 +38,7 @@ namespace Lasm.UAlive
             base.Definition();
 
             parameters.Clear();
+
             enter = ControlInput("enter", (flow) =>
             {
                 IUAClass _target;
@@ -53,7 +54,7 @@ namespace Lasm.UAlive
 
                 var parameterList = new List<object>();
 
-                for (int i = 0; i < parameters.Count; i++)
+                for (int i = 0; i < parameters.Count; i++)  
                 {
                     parameterList.Add(flow.GetValue(parameters[i]));
                 }
@@ -62,34 +63,40 @@ namespace Lasm.UAlive
                 return exit;
             });
 
-            exit = ControlOutput("exit"); 
+            exit = ControlOutput("exit");
+
+            if (id != 0) method = FindWithID(id);
 
             if (method != null)
             {
-                id = method.id; 
-                 
+                if (method.macro.entry == null)
+                {
+                    Debug.Log(method.macro.graph.units.Count);
+                    foreach (IUnit unit in method.macro.graph.units)
+                    {
+                        Debug.Log(unit);
+                    }
+                    //method.macro.entry = method.macro.graph.units.Single((unit) => { return unit.GetType() == typeof(EntryUnit); }) as EntryUnit;
+                }   
+
                 if (method.macro != null && method.macro.entry != null)
                 {
-                    if (macro.methods.custom.Any((meth) => { return meth.id == id; })) method = macro.methods.custom.Single((meth) => { return meth.id == id; });
+                    if (IsValidReturnType())
+                    { 
+                        result = ValueOutput(method.returnType, "result", (flow) => { return returnValue; });
+                    } 
 
-                    if (method.macro.entry.returnType != typeof(Lasm.UAlive.Void) && method.macro.entry.returnType != typeof(void) && method.macro.entry.returnType != null)
+                    if (method.macro.entry.parameters.Count > 0)
                     {
-                        result = ValueOutput(method.macro.entry.returnType, "result", (flow) => { return returnValue; });
-                    }
-
-                    var _parameters = method.macro.entry.parameters;
-
-                    if (_parameters.Count > 0)
-                    {
-                        var keys = _parameters.KeysToArray(); 
+                        var keys = method.macro.entry.parameters.KeysToArray(); 
 
                         for (int i = 0; i < keys.Length; i++)
-                        {
-                            parameters.Add(ValueInput(_parameters[keys[i]], keys[i]));
-                        }
+                        { 
+                            parameters.Add(ValueInput(method.macro.entry.parameters[keys[i]], keys[i]));
+                        } 
                     }
-
-                    if (method.macro.entry.returnType != null && method.macro.entry.returnType != typeof(void) && method.macro.entry.returnType != typeof(Void)) Requirement(target, result);
+                      
+                    if (IsValidReturnType()) Requirement(target, result);
                 }
 
                 Requirement(target, enter);
@@ -100,7 +107,12 @@ namespace Lasm.UAlive
                 Succession(enter, exit); 
             }
         }
-         
+        
+        private bool IsValidReturnType()
+        {
+            return method.returnType != null && method.returnType != typeof(void) && method.returnType != typeof(Void);
+        }
+
         protected override void AfterDefine()
         {
             if (method?.macro?.entry != null)
@@ -115,6 +127,16 @@ namespace Lasm.UAlive
             {
                 method.macro.entry.onChanged -= Define;
             }
+        }
+
+        private Method FindWithID(int id)
+        {
+            if (macro.methods.custom.Any((v) => { return v.id == id; }))
+            {
+                return macro.methods.custom.Single((v) => { return v.id == id; });
+            }
+
+            return null;
         }
     }
 }

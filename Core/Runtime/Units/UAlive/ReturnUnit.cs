@@ -34,7 +34,7 @@ namespace Lasm.UAlive
             }
         }
 
-        public ControlOutput Return(Flow flow)
+        public ControlOutput Return(Flow flow) 
         {
             if (entry?.macro != null)
             {

@@ -1,6 +1,7 @@
 ﻿using Bolt;
 using Ludiq;
 using System.Linq;
+using UnityEngine;
 
 namespace Lasm.UAlive
 {
@@ -9,6 +10,7 @@ namespace Lasm.UAlive
     [UnitCategory("Variables")]
     public sealed class SetClassVariableUnit : ClassVariableUnit
     {
+        [Serialize]
         public Variable variable;
 
         [DoNotSerialize]
@@ -19,7 +21,7 @@ namespace Lasm.UAlive
         [PortLabelHidden]
         public ControlOutput exit;
 
-        [DoNotSerialize]
+        [DoNotSerialize] 
         [PortLabelHidden]
         public ValueInput value;
 
@@ -28,10 +30,11 @@ namespace Lasm.UAlive
         protected override void Definition()
         {
             base.Definition();
-            if (variable != null)
+
+            if (id != 0)
             {
-                id = variable.id;
-                variable = macro.variables.variables.Single((v) => { return v.id == id; });
+                variable = FindWithID(id);
+                value = ValueInput(variable.type, "value");
             }
 
             enter = ControlInput("enter", (flow) =>
@@ -43,17 +46,15 @@ namespace Lasm.UAlive
                     _target = flow.GetValue<IUAClass>(target);
                 }
                 else
-                {
+                { 
                     _target = (IUAClass)flow.variables.Get("#secret_uaclass_instance");
                 }
 
-                _target.Class.Set(memberName, flow.GetValue(value, variable == null ? typeof(object) : variable.type));
+                _target.Class.Set(memberName, flow.GetValue(value, variable.type));
                 return exit;
             });
 
             exit = ControlOutput("exit");
-
-            if (variable != null) value = ValueInput(variable.type, "value");
 
             Requirement(target, enter);
             Succession(enter, exit);
@@ -61,18 +62,12 @@ namespace Lasm.UAlive
 
         protected override void AfterDefine()
         {
-            if (variable != null)
-            {
-                variable.onChanged += Define;
-            }
+            if (variable != null) variable.onChanged += Define;
         }
 
         protected override void BeforeUndefine()
         {
-            if (variable != null)
-            {
-                variable.onChanged -= Define;
-            }
+            if (variable != null) variable.onChanged -= Define;
         }
     }
 }

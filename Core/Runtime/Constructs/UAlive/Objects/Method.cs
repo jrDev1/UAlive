@@ -57,12 +57,12 @@ namespace Lasm.UAlive
             get => _type;
             set
             {
-                if (macro?.entry != null)
+                _type = value;
+
+                if (macro?.entry != null) 
                 {
                     macro.entry.returnType = value;
-                    macro.entry.Changed();
                 }
-                _type = value;
             }
         } 
 
@@ -70,7 +70,7 @@ namespace Lasm.UAlive
         public Action<object> returnMethod;
         #endregion
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR        
         public Texture2D icon;
 #endif 
 
@@ -79,10 +79,10 @@ namespace Lasm.UAlive
         /// <summary>
         /// Initialized a new Flow Nest with a Flow Graph and an Entry Unit, can be a Macro or an Embed as the source.
         /// </summary>
-        /// <param name="source"></param>
+        /// <param name="source"></param> 
         public static void New(Method nest)
         {
-            if (nest.macro == null) nest.macro = ScriptableObject.CreateInstance<MethodMacro>();
+            if (nest.macro == null) nest.macro = MethodMacro.Create();
             nest.macro.returnMethod = nest.returnMethod;
         }
         

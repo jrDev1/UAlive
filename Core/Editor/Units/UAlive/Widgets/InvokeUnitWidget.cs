@@ -51,13 +51,12 @@ namespace Lasm.UAlive
                     {
                         menu.AddItem(new GUIContent(classes[i].title + "/" + classes[i].methods.custom[j].name), false, (data) =>
                         {
-                            var tuple = (ValueTuple<ClassMacro, Method>)data;
+                            var tuple = (ValueTuple<ClassMacro, string, int>)data;
                             unit.macro = tuple.Item1;
-                            unit.memberName = tuple.Item2.name;
-                            unit.method = tuple.Item2;
-                            unit.id = tuple.Item2.id; 
+                            unit.memberName = tuple.Item2;
+                            unit.id = tuple.Item3; 
                             unit.Define();
-                        }, (classes[i], classes[i].methods.custom[j]));
+                        }, (classes[i], classes[i].methods.custom[j].name, classes[i].methods.custom[j].id));
                     }
                 }
 

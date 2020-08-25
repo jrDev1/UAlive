@@ -1,4 +1,5 @@
 ﻿using Bolt;
+using Lasm.OdinSerializer;
 using Ludiq;
 using System;
 using System.Collections;
@@ -14,22 +15,19 @@ namespace Lasm.UAlive
     [TypeIcon(typeof(ClassMacro))]
     public sealed class GetClassVariableUnit : ClassVariableUnit
     {
-        [Serialize]
+        [DoNotSerialize]
         public Variable variable;
-
+         
         [DoNotSerialize][PortLabelHidden]
         public ValueOutput value;
-
-        public bool bound;
         
         protected override void Definition()
         {
             base.Definition();
 
-            if (variable != null)
+            if (id != 0)
             {
-                id = variable.id;
-                variable = macro.variables.variables.Single((v) => { return v.id == id; });
+                variable = FindWithID(id); 
 
                 value = ValueOutput(variable.type, "value", (flow) =>
                 {
@@ -39,7 +37,7 @@ namespace Lasm.UAlive
                      {
                          _target = flow.GetValue<IUAClass>(target);
                      }
-                     else
+                     else 
                      {
                          _target = (IUAClass)flow.variables.Get("#secret_uaclass_instance");
                      }
@@ -56,18 +54,12 @@ namespace Lasm.UAlive
         
         protected override void AfterDefine()
         {
-            if (variable != null)
-            {
-                variable.onChanged += Define;
-            }
+            if (variable != null) variable.onChanged += Define;
         }
 
         protected override void BeforeUndefine()
         {
-            if (variable != null)
-            {
-                variable.onChanged -= Define;
-            }
+            if (variable != null) variable.onChanged -= Define;
         }
     }
-}
+}  

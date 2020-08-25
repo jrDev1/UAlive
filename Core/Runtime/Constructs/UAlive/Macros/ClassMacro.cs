@@ -1,5 +1,6 @@
 ﻿using Bolt;
 using Ludiq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -8,6 +9,7 @@ using UnityEngine;
 
 namespace Lasm.UAlive
 {
+    [Serializable]
     public sealed class ClassMacro : TypeMacro
     {
         [Serialize]
@@ -16,8 +18,8 @@ namespace Lasm.UAlive
         [Serialize]
         public MethodCollection methods = new MethodCollection();
 
-        [Serialize]
-        public Variables variables = new Variables();
+        [Serialize] 
+        public Variables variables = new Variables(); 
 
 #if UNITY_EDITOR
         public bool customOpen;
@@ -36,7 +38,7 @@ namespace Lasm.UAlive
             {
                 Selection.activeObject = macro;
             }
-        }
+        } 
 
         protected override void BeforeDefine()
         {

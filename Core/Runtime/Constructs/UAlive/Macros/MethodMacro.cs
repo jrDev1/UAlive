@@ -4,17 +4,16 @@ using Bolt;
 using System;
 using System.Collections.Generic;
 using Lasm.OdinSerializer;
+using UnityEditor;
 
 namespace Lasm.UAlive
 {
-    [CreateAssetMenu(fileName = "Flow Nest Macro", menuName = "Bolt/Extensions/Flow Nest Macro")]
+    [Serializable]
     public class MethodMacro : Macro<FlowGraph>
     {
-        [NonSerialized][OdinSerialize]
-        public List<Type> constraints;
-        [OdinSerialize]
+        [Serialize]
         public EntryUnit entry;
-        [OdinSerialize]
+        [Serialize]
         public Action<object> returnMethod;
         public bool hasOverride;
         public bool isSpecial;
@@ -23,23 +22,16 @@ namespace Lasm.UAlive
         {
             return new FlowGraph();
         }
-
-        public void Awake()
+         
+        public static MethodMacro Create(Action<object> returnMethod = null)
         {
-            if (graph == null) graph = new FlowGraph();
-            if (entry == null) entry = new EntryUnit();
-            if (entry.macro == null) entry.macro = this;
-            if (!graph.units.Contains(entry)) graph.units.Add(entry);
-        }
-
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-
-            if (graph == null) graph = new FlowGraph();
-            if (entry == null) entry = new EntryUnit();
-            if (entry.macro == null) entry.macro = this;
-            if (!graph.units.Contains(entry)) graph.units.Add(entry);
+            var macro = ScriptableObject.CreateInstance<MethodMacro>();
+            macro.graph = new FlowGraph();
+            macro.entry = new EntryUnit();
+            macro.entry.macro = macro;
+            macro.graph.units.Add(macro.entry);
+            macro.returnMethod = returnMethod; 
+            return macro;    
         }
     }
 }
