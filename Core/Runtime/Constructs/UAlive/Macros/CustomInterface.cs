@@ -6,8 +6,17 @@ using UnityEditor;
 namespace Lasm.UAlive
 {
     [Serializable]
-    public sealed class InterfaceMacro : TypeMacro
+    public sealed class CustomInterface : CustomType
     {
+        #region Declaration
+
+        public override string GetDefaultName()
+        {
+            return "New Custom Interface";
+        }
+
+        #endregion
+
         [Inspectable]
         [InspectorWide]
         public List<InterfacePropertyItem> properties = new List<InterfacePropertyItem>();
@@ -19,21 +28,6 @@ namespace Lasm.UAlive
 #if UNITY_EDITOR
         public bool methodsOpen;
         public bool propertiesOpen;
-
-        [MenuItem("Assets/Create/UAlive/Custom Interface", priority = 0)]
-        private static void CreateEnumMacro()
-        {
-            var macro = CreateAsset<InterfaceMacro>("Custom Interface");
-            if (macro != null)
-            {
-                Selection.activeObject = macro;
-            }
-        }
 #endif
-
-        protected override void Definition()
-        {
-
-        }
     }
 }

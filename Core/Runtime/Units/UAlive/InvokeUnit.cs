@@ -57,7 +57,7 @@ namespace Lasm.UAlive
                 {
                     if (IsValidReturnType())
                     {
-                        result = ValueOutput(method.returnType, "result", (flow) =>
+                        result = ValueOutput(method.macro.entry.returnType, "result", (flow) =>
                         {
                             IUAClass _target = null;
                             return Invoke(ref _target, flow);
@@ -124,7 +124,7 @@ namespace Lasm.UAlive
 
         private bool IsValidReturnType()
         {
-            return method.returnType != null && method.returnType != typeof(void) && method.returnType != typeof(Void);
+            return method.macro.entry.returnType != null && method.macro.entry.returnType != typeof(void) && method.macro.entry.returnType != typeof(Void);
         }
 
         protected override void AfterDefine()
@@ -133,7 +133,7 @@ namespace Lasm.UAlive
             {
                 method.macro.entry.onChanged += Define;
             }
-        }
+        } 
 
         protected override void BeforeUndefine()
         {

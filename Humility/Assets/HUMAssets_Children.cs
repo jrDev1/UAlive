@@ -79,14 +79,14 @@ namespace Lasm.UAlive
             return assetsList;
         }
 
-        public static List<T> OfType<T>(this HUMAssets.Data.Assets assets) where T : UnityEngine.Object
+        public static List<T> OfType<T>(this HUMAssets.Data.Assets assets) where T : class
         {
             var assetIds = UnityEditor.AssetDatabase.FindAssets("t:" + typeof(T).FullName);
             var assetsList = new List<T>();
 
             foreach (string assetId in assetIds)
             {
-                var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(UnityEditor.AssetDatabase.GUIDToAssetPath(assetId));
+                var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(UnityEditor.AssetDatabase.GUIDToAssetPath(assetId)) as T;
                 assetsList.Add(asset);
             }
 

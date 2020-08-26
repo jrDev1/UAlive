@@ -10,7 +10,7 @@ namespace Lasm.UAlive
         [Serialize]
         private ClassVariables variables = new ClassVariables();
         [Serialize]
-        internal ClassMacro macro;
+        internal CustomClass macro;
         private string GUID;
 
         public UAClass(string GUID)

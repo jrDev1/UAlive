@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 namespace Lasm.UAlive
 {
-    [Generator(typeof(ClassMacro))]
-    public class ClassMacroGenerator : TypeMacroGenerator<ClassMacroGenerator, ClassMacro>
+    [Generator(typeof(CustomClass))]
+    public class CustomClassGenerator : CustomTypeGenerator<CustomClassGenerator, CustomClass>
     {
         private ClassGenerator @class;
         private NamespaceGenerator @namespace;
@@ -65,7 +65,7 @@ namespace Lasm.UAlive
                 var nest = decorated.methods.overrides[keys[i]]; 
                 if (CanAddMethod(nest))
                 {
-                    var method = nest.returnType.Is().Void() ? Method(nest.name, nest.scope, nest.modifier, nest.returnType, true) : Method(nest.name, nest.scope, nest.modifier, nest.returnType, true);
+                    var method = nest.macro.entry.returnType.Is().Void() ? Method(nest.name, nest.scope, nest.modifier, nest.macro.entry.returnType, true) : Method(nest.name, nest.scope, nest.modifier, nest.macro.entry.returnType, true);
                     AddParameters(method, nest);
                     @class.AddMethod(method);
                 }
@@ -101,7 +101,7 @@ namespace Lasm.UAlive
 
         private bool CanAddMethod(Method nest)
         {
-            return nest.isOverridden && nest.hasOptionalOverride || !nest.hasOptionalOverride;
+            return nest.macro.isOverridden && nest.hasOptionalOverride || !nest.hasOptionalOverride;
         }
 
         private void AddParameters(MethodGenerator method, Method nest)

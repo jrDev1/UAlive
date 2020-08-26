@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace Lasm.UAlive
 {
-    [Generator(typeof(InterfaceMacro))]
-    public sealed class InterfaceMacroGenerator : TypeMacroGenerator<InterfaceMacroGenerator, InterfaceMacro>
+    [Generator(typeof(CustomInterface))]
+    public sealed class CustomInterfaceGenerator : CustomTypeGenerator<CustomInterfaceGenerator, CustomInterface>
     {
         private InterfaceGenerator @interface;
         private NamespaceGenerator @namespace;

@@ -13,9 +13,8 @@ namespace Lasm.UAlive
     {
         [Serialize]
         public EntryUnit entry;
-        [Serialize]
-        public Action<object> returnMethod;
         public bool hasOverride;
+        public bool isOverridden;
         public bool isSpecial;
 
         public override FlowGraph DefaultGraph()
@@ -30,7 +29,7 @@ namespace Lasm.UAlive
             macro.entry = new EntryUnit();
             macro.entry.macro = macro;
             macro.graph.units.Add(macro.entry);
-            macro.returnMethod = returnMethod; 
+            macro.entry.returnMethod = returnMethod; 
             return macro;    
         }
     }

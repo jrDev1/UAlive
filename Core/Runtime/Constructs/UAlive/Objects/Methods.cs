@@ -9,16 +9,20 @@ using UnityEngine;
 namespace Lasm.UAlive
 {
     [Serializable]
-    public sealed class MethodCollection
+    public sealed class Methods : IRefreshable
     {
+        #region Collections
+
         [Serialize]
         public Dictionary<string, Method> previousOverrides = new Dictionary<string, Method>();
         [Serialize]
         public Dictionary<string, Method> overrides = new Dictionary<string, Method>();
 
         [Serialize]
-        public List<Method> custom = new List<Method>(); 
-         
+        public List<Method> custom = new List<Method>();
+
+        #endregion
+
 #if UNITY_EDITOR
         public bool addedMethod = false;
         public bool removedMethod = false;
@@ -37,9 +41,9 @@ namespace Lasm.UAlive
             return addedMethod || removedMethod;
         }
 
-        private TypeMacro GetRootAsset(ClassMacro instance)
+        private CustomType GetRootAsset(CustomClass instance)
         {
-            return AssetDatabase.LoadAssetAtPath<TypeMacro>(AssetDatabase.GUIDToAssetPath(HUMAssets.GetGUID(instance)));
+            return AssetDatabase.LoadAssetAtPath<CustomType>(AssetDatabase.GUIDToAssetPath(HUMAssets.GetGUID(instance)));
         }
 
         public void Refresh()
@@ -50,7 +54,7 @@ namespace Lasm.UAlive
             AssetDatabase.Refresh();
         }
 #endif
-        public Method New(ClassMacro instance, string name, AccessModifier scope, MethodModifier modifier, Type returnType, ParameterDeclaration[] parameters, bool isMagic = false)
+        public Method New(CustomClass instance, string name, AccessModifier scope, MethodModifier modifier, Type returnType, ParameterDeclaration[] parameters, bool isMagic = false)
         {
             var asset = GetRootAsset(instance);
             Method _method = null;
@@ -91,8 +95,8 @@ namespace Lasm.UAlive
                 {
                     _method.scope = scope;
                     _method.modifier = modifier;
-                    _method.returnType = returnType;
-                    _method.isSpecial = isMagic;
+                    _method.macro.entry.returnType = returnType;
+                    _method.macro.isSpecial = isMagic;
                     _method.hasOptionalOverride = true;
 
                     if (_method.macro.entry.returnType != returnType)
@@ -113,11 +117,10 @@ namespace Lasm.UAlive
                 {
                     _method.scope = scope;
                     _method.modifier = modifier;
-                    _method.returnType = returnType;
                     _method.name = name;
-                    _method.isSpecial = false;
-                    _method.macro.entry.returnType = returnType;
+                    _method.macro.isSpecial = false;
                     _method.macro.hideFlags = HideFlags.HideInHierarchy;
+                    _method.macro.entry.returnType = returnType;
                     _method.macro.entry.Define();
                 }
 

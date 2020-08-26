@@ -5,16 +5,16 @@ using System.Collections.Generic;
 
 namespace Lasm.UAlive
 {
-    [Editor(typeof(InterfaceMacro))]
-    public sealed class InterfaceMacroEditor : Inspector
+    [Editor(typeof(CustomInterface))]
+    public sealed class CustomInterfaceEditor : Inspector
     {
-        private InterfaceMacroGenerator generator;
-        private InterfaceMacro _target;
+        private CustomInterfaceGenerator generator;
+        private CustomInterface _target;
         private Color borderColor => EditorGUIUtility.isProSkin ? HUMColor.Grey(0.1f) : HUMColor.Grey(0.25f);
         private Color backgroundColor => EditorGUIUtility.isProSkin ? HUMEditorColor.DefaultEditorBackground.Darken(0.1f) : HUMEditorColor.DefaultEditorBackground.Darken(0.5f);
         private List<int> indexes = new List<int>();
 
-        public InterfaceMacroEditor(Metadata metadata) : base(metadata)
+        public CustomInterfaceEditor(Metadata metadata) : base(metadata)
         {
         }
 
@@ -26,8 +26,8 @@ namespace Lasm.UAlive
         public override void Initialize()
         {
             Images.Cache();
-            _target = metadata.value as InterfaceMacro;
-            generator = InterfaceMacroGenerator.GetDecorator(_target);
+            _target = metadata.value as CustomInterface;
+            generator = CustomInterfaceGenerator.GetDecorator(_target);
         }
 
         protected override void OnGUI(Rect position, GUIContent label)

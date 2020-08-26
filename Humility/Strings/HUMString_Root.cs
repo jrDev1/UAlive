@@ -23,5 +23,13 @@ namespace Lasm.UAlive {
         {
             return new Data.Capitalize(text);
         }
+
+        public static string Nice(this string str)
+        {
+            var split = str.Add().Space().Between().Lowercase().And().Uppercase();
+            var firstLetter = split[0].ToString().ToUpper();
+            var capitalized = split.Remove(0).Insert(0, firstLetter);
+            return capitalized;
+        }
     }
 }

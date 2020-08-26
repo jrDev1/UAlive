@@ -5,16 +5,16 @@ using System.Collections.Generic;
 
 namespace Lasm.UAlive
 {
-    [Editor(typeof(EnumMacro))]
-    public sealed class EnumMacroEditor : Inspector
+    [Editor(typeof(CustomEnum))]
+    public sealed class CustomEnumEditor : Inspector
     {
-        private EnumMacroGenerator generator;
-        private EnumMacro _target;
+        private CustomEnumGenerator generator;
+        private CustomEnum _target;
         private Color borderColor => EditorGUIUtility.isProSkin ? HUMColor.Grey(0.1f) : HUMColor.Grey(0.25f);
         private Color backgroundColor => EditorGUIUtility.isProSkin ? HUMEditorColor.DefaultEditorBackground.Darken(0.1f) : HUMEditorColor.DefaultEditorBackground.Darken(0.5f);
         private List<int> indexes = new List<int>();
 
-        public EnumMacroEditor(Metadata metadata) : base(metadata)
+        public CustomEnumEditor(Metadata metadata) : base(metadata)
         {
         }
 
@@ -26,8 +26,8 @@ namespace Lasm.UAlive
         public override void Initialize()
         {
             Images.Cache();
-            _target = metadata.value as EnumMacro;
-            generator = EnumMacroGenerator.GetDecorator(_target);
+            _target = metadata.value as CustomEnum;
+            generator = CustomEnumGenerator.GetDecorator(_target);
         }
 
         protected override void OnGUI(Rect position, GUIContent label)

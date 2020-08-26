@@ -10,16 +10,18 @@ namespace Lasm.UAlive
     /// A nested graph that is invokable without a GameObject. Can be used in custom scripts, has a Property Drawer, and Bolt Inspector.
     /// </summary>
     [Serializable]
-    public sealed class Method
+    public sealed class Method 
     {
         #region Variables
         [Serialize]
         public int id = new object().GetHashCode();
         [Serialize]
+        public string parentGUID;
+        [Serialize]
         public MethodMacro macro;
         [Serialize]
         public bool isInitialized;
-        [Serialize]  
+        [Serialize]
         public bool hasOptionalOverride
         {
             get
@@ -37,9 +39,6 @@ namespace Lasm.UAlive
             }
         }
 
-        public bool isOverridden;
-        public bool isSpecial;
-
         [Serialize]
         public AccessModifier scope;
         [Serialize]
@@ -47,30 +46,16 @@ namespace Lasm.UAlive
         [Serialize]
         private string _name;
         public string name { get => _name; set { _name = value; macro.name = value; } }
+
+        public IGraphNest nest => throw new NotImplementedException();
+
+        private CustomClass @class;
+
         [Serialize]
         public bool showLabel = true;
-        [Serialize]
-        private Type _type = typeof(Lasm.UAlive.Void);
-        [Inspectable]
-        public Type returnType
-        {
-            get => _type;
-            set
-            {
-                _type = value;
-
-                if (macro?.entry != null) 
-                {
-                    macro.entry.returnType = value;
-                }
-            }
-        } 
-
-        [Serialize]
-        public Action<object> returnMethod;
         #endregion
 
-#if UNITY_EDITOR        
+#if UNITY_EDITOR         
         public Texture2D icon;
 #endif 
 
@@ -83,25 +68,20 @@ namespace Lasm.UAlive
         public static void New(Method nest)
         {
             if (nest.macro == null) nest.macro = MethodMacro.Create();
-            nest.macro.returnMethod = nest.returnMethod;
         }
-        
-        public static void SetReturnMethod(Method nest)
+
+        public static void SetReturnMethod(Method nest, Action<object> returnMethod)
         {
             if (nest.macro != null)
             {
-                nest.macro.returnMethod = nest.returnMethod;
-                nest.macro.entry.returnMethod = nest.returnMethod;
+                nest.macro.entry.returnMethod = returnMethod;
             }
         }
 
         public void Invoke(IUAClass @class, Action<object> returnMethod, params object[] parameters)
-        { 
-            SetReturnMethod(this);
+        {
+            SetReturnMethod(this, returnMethod);
 
-            macro.entry.returnMethod = returnMethod;
-            macro.returnMethod = returnMethod;
-             
             Flow flow = Flow.New(GraphReference.New(macro, false));
 
             macro.entry.assignedValues.Clear();

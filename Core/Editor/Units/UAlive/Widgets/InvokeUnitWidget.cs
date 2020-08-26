@@ -41,7 +41,7 @@ namespace Lasm.UAlive
 
             if (GUI.Button(position.Add().X(42).Add().Y(23).Set().Height(20).Set().Width(missingContent ? 120 : GUI.skin.label.CalcSize(new GUIContent(unit.macro?.title + "." + unit.method?.name)).x + buttonPadding), buttonText))
             {
-                var classes = HUMAssets.Find().Assets().OfType<ClassMacro>();
+                var classes = HUMAssets.Find().Assets().OfType<CustomClass>();
 
                 GenericMenu menu = new GenericMenu();
 
@@ -51,7 +51,7 @@ namespace Lasm.UAlive
                     {
                         menu.AddItem(new GUIContent(classes[i].title + "/" + classes[i].methods.custom[j].name), false, (data) =>
                         {
-                            var tuple = (ValueTuple<ClassMacro, string, int>)data;
+                            var tuple = (ValueTuple<CustomClass, string, int>)data;
                             unit.macro = tuple.Item1;
                             unit.memberName = tuple.Item2;
                             unit.id = tuple.Item3; 

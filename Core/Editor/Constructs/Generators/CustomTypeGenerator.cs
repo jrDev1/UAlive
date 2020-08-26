@@ -1,8 +1,8 @@
 ﻿namespace Lasm.UAlive
 {
-    public abstract class TypeMacroGenerator<TGenerator, TMacro> : Decorator<TGenerator, GeneratorAttribute, TMacro>
-        where TGenerator : TypeMacroGenerator<TGenerator, TMacro>
-            where TMacro : TypeMacro
+    public abstract class CustomTypeGenerator<TGenerator, TMacro> : Decorator<TGenerator, GeneratorAttribute, TMacro>
+        where TGenerator : CustomTypeGenerator<TGenerator, TMacro>
+            where TMacro : CustomType
     {
         protected abstract void DefineCompiledCode();
         protected abstract void DefineLiveCode();

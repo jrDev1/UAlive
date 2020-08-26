@@ -6,7 +6,7 @@ namespace Lasm.UAlive
 {
     public abstract class ClassMember
     {
-        public ClassMacro owner;
+        public CustomClass owner;
         public Guid guid;
     }
 }

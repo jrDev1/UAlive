@@ -35,7 +35,8 @@ namespace Lasm.UAlive
         public List<ReturnUnit> returns = new List<ReturnUnit>();
 
         [Serialize]
-        public Type _type;
+        public Type _type = typeof(Lasm.UAlive.Void);
+        [Inspectable]
         public Type returnType
         {
             get => _type;
@@ -45,7 +46,7 @@ namespace Lasm.UAlive
                 Define();
             }
         }
-
+        
         public event Action onChanged = () => { };
 
         public void Changed()

@@ -7,14 +7,14 @@ using System.Linq;
 
 namespace Lasm.UAlive
 {
-    [Editor(typeof(ClassMacro))]
-    public sealed class ClassMacroEditor : Inspector
+    [Editor(typeof(CustomClass))]
+    public sealed class CustomClassEditor : Inspector
     {
-        private ClassMacroGenerator generator;
-        private ClassMacro _target;
+        private CustomClassGenerator generator;
+        private CustomClass _target;
         private Dictionary<string, Method> tempOverrides = new Dictionary<string, Method>();
 
-        public ClassMacroEditor(Metadata metadata) : base(metadata)
+        public CustomClassEditor(Metadata metadata) : base(metadata)
         {
         }
 
@@ -26,8 +26,8 @@ namespace Lasm.UAlive
         public override void Initialize()
         {
             Images.Cache();
-            _target = metadata.value as ClassMacro;
-            generator = ClassMacroGenerator.GetDecorator(_target);
+            _target = metadata.value as CustomClass;
+            generator = CustomClassGenerator.GetDecorator(_target);
         }
 
         protected override void OnGUI(Rect position, GUIContent label)
@@ -72,7 +72,7 @@ namespace Lasm.UAlive
 
         private void Overrides(Rect position)
         {
-            _target.overridesOpen = HUMEditor.Foldout(_target.overridesOpen, new GUIContent("Overrides", Images.override_16),
+            _target.editorData.overridesOpen = HUMEditor.Foldout(_target.editorData.overridesOpen, new GUIContent("Overrides", Images.override_16),
             Styles.backgroundColor.Brighten(0.05f),
             Color.black,
             1,
@@ -80,7 +80,7 @@ namespace Lasm.UAlive
             {
                 HUMEditor.Vertical().Box(Styles.backgroundColor, Color.black, new RectOffset(4, 4, 4, 4), new RectOffset(1, 1, 0, 1), () =>
                 {
-                    _target.methodOverridesOpen = HUMEditor.Foldout(_target.methodOverridesOpen,
+                    _target.editorData.methodOverridesOpen = HUMEditor.Foldout(_target.editorData.methodOverridesOpen,
                     new GUIContent("Methods", Images.flow_icon_16),
                     Styles.backgroundColor.Brighten(0.05f),
                     Styles.borderColor,
@@ -96,7 +96,7 @@ namespace Lasm.UAlive
                             for (int i = 0; i < overrides.Count; i++)
                             {
                                 var nest = ((Method)overrides.ValueMetadata(i).value);
-                                if (!nest.isSpecial || (nest.isSpecial && nest.isOverridden))
+                                if (!nest.macro.isSpecial || (nest.macro.isSpecial && nest.macro.isOverridden))
                                 {
                                     var _name = nest.name;
                                     if (position.width - 170 < GUI.skin.label.CalcSize(new GUIContent(_name)).x)
@@ -131,7 +131,7 @@ namespace Lasm.UAlive
                                         startSeparator = false;
                                     }
                                     var key = keys[i];
-                                    menu.AddItem(new GUIContent(key), false, (obj) => { tempOverrides[(string)obj].isOverridden = true; _target.Define(); }, key);
+                                    menu.AddItem(new GUIContent(key), false, (obj) => { tempOverrides[(string)obj].macro.isOverridden = true; _target.Define(); }, key);
                                     if (keys[i] == "OnGUI") startSeparator = true;
                                 }
 
@@ -145,7 +145,7 @@ namespace Lasm.UAlive
 
         private void Methods(Rect position)
         {
-            _target.customMethodsOpen = HUMEditor.Foldout(_target.customMethodsOpen,
+            _target.editorData.customMethodsOpen = HUMEditor.Foldout(_target.editorData.customMethodsOpen,
             new GUIContent("Methods", Images.flow_icon_16),
             Styles.backgroundColor.Brighten(0.05f),
             Styles.borderColor,
@@ -189,12 +189,11 @@ namespace Lasm.UAlive
 
                     if (GUILayout.Button("+ New Method"))
                     {
-                        var meth = new Method();
+                        var meth = new Method() { parentGUID = _target.GetGUID() };
                         meth.Initialize();
                         meth.showLabel = false;
                         meth.name = string.Empty;
                         meth.macro.hideFlags = HideFlags.HideInHierarchy;
-                        meth.macro.entry = (EntryUnit)meth.macro.graph.units.Single((unit) => { return unit.GetType() == typeof(EntryUnit); });
                         AssetDatabase.AddObjectToAsset(meth.macro, _target);
                         methodsVal.Add(meth);
                         _target.Define();
@@ -207,7 +206,7 @@ namespace Lasm.UAlive
 
         private void Variables(Rect position)
         {
-            _target.customVariablesOpen = HUMEditor.Foldout(_target.customVariablesOpen,
+            _target.editorData.customVariablesOpen = HUMEditor.Foldout(_target.editorData.customVariablesOpen,
             new GUIContent("Variables", Images.variables_16),
             Styles.backgroundColor.Brighten(0.05f),
             Styles.borderColor,

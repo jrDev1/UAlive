@@ -35,7 +35,9 @@ namespace Lasm.UAlive
 
         [Serialize]
         public object value = 0;
-         
+
+        //public bool property;
+
         [Serialize] 
         public Method getter = new Method();
         [Serialize]

@@ -1,8 +1,8 @@
 ﻿
 namespace Lasm.UAlive
 {
-    [Generator(typeof(EnumMacro))]
-    public sealed class EnumMacroGenerator : TypeMacroGenerator<EnumMacroGenerator, EnumMacro>
+    [Generator(typeof(CustomEnum))]
+    public sealed class CustomEnumGenerator : CustomTypeGenerator<CustomEnumGenerator, CustomEnum>
     {
         private EnumGenerator @enum;
         private NamespaceGenerator @namespace;

@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using Ludiq;
+using Bolt;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Lasm.UAlive
 {
@@ -20,7 +24,7 @@ namespace Lasm.UAlive
 
         protected override float GetHeight(float width, GUIContent label)
         {
-            return 26;
+            return 46;
         }
 
         private void Init()
@@ -36,7 +40,7 @@ namespace Lasm.UAlive
             backgroundRect = position;
             backgroundRect.height = GetHeight(position.width, label) - 2;
 
-            if (nest != null && nest.isSpecial) {
+            if (nest != null && nest.macro.isSpecial) {
                 iconRect = backgroundRect;
                 iconRect.y += 4;
                 iconRect.x += 5;
@@ -44,7 +48,7 @@ namespace Lasm.UAlive
                 iconRect.height = 16;
             }
 
-            typeRect = nest != null && nest.isSpecial ? backgroundRect.Add().X(iconRect.width + 4).Set().Width(80).Add().Y(3).Add().X(4) : backgroundRect.Set().Width(80).Add().Y(3).Add().X(4);
+            typeRect = nest != null && nest.macro.isSpecial ? backgroundRect.Add().X(iconRect.width + 4).Set().Width(80).Add().Y(3).Add().X(4) : backgroundRect.Set().Width(80).Add().Y(3).Add().X(4);
             typeRect.height = 16;
 
             if (string.IsNullOrEmpty(nest.name) || string.IsNullOrWhiteSpace(nest.name) || !nest.showLabel)
@@ -83,18 +87,18 @@ namespace Lasm.UAlive
 
             if (nest.hasOptionalOverride)
             {
-                nest.isOverridden = GUI.Toggle(toggleRect, nest.isOverridden, GUIContent.none);
+                nest.macro.isOverridden = GUI.Toggle(toggleRect, nest.macro.isOverridden, GUIContent.none);
             }
 
-            HUMEditor.Disabled(!nest.isOverridden && nest.hasOptionalOverride, () =>
+            HUMEditor.Disabled(!nest.macro.isOverridden && nest.hasOptionalOverride, () =>
             {
                 GUI.Label(labelRect, label);
 
                 GUI.Box(backgroundRect, GUIContent.none, new GUIStyle(EditorStyles.helpBox));
-                if (nest.isSpecial) GUI.DrawTexture(iconRect, Images.special_16);
+                if (nest.macro.isSpecial) GUI.DrawTexture(iconRect, Images.special_16);
 
                 EditorGUI.BeginDisabledGroup(nest.hasOptionalOverride);
-                LudiqGUI.Inspector(metadata["returnType"], typeRect, GUIContent.none);
+                LudiqGUI.Inspector(metadata["macro"]["entry"]["returnType"], typeRect, GUIContent.none);
                 EditorGUI.EndDisabledGroup();
 
                 EditButton(editRect);
@@ -108,6 +112,18 @@ namespace Lasm.UAlive
             if (GUI.Button(position, "Edit"))
             {
                 GraphWindow.OpenActive(GraphReference.New((MethodMacro)macro.value, true));
+            }
+
+            try
+            {
+                if (GUI.Button(position.Add().Y(20), "Edit"))
+                {
+                    GraphWindow.OpenActive(GraphReference.New(((Method)metadata.value).macro, true));
+                } 
+            }
+            catch(Exception e)
+            {
+                Debug.Log(e);
             }
         }
     }

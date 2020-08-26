@@ -8,7 +8,7 @@ namespace Lasm.UAlive
     {
         public static void DefineAllGraphs()
         {
-            var assets = HUMAssets.Find().Assets().OfType<ClassMacro>();
+            var assets = HUMAssets.Find().Assets().OfType<CustomClass>();
 
             for (int i = 0; i < assets.Count; i++)
             {
@@ -26,7 +26,7 @@ namespace Lasm.UAlive
 
         public static void DefineAllGraphsOfType<T>() where T : IUnit
         {
-            var assets = HUMAssets.Find().Assets().OfType<ClassMacro>();
+            var assets = HUMAssets.Find().Assets().OfType<CustomClass>();
             for (int i = 0; i < assets.Count; i++)
             {
                 for (int j = 0; j < assets[i].methods.custom.Count; j++)

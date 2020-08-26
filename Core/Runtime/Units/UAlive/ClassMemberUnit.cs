@@ -14,7 +14,7 @@ namespace Lasm.UAlive
         [AllowsNull]
         public ValueInput target;
         [Serialize]
-        public ClassMacro macro;
+        public CustomClass macro;
         [Serialize]
         public string memberName;
         [Serialize]
