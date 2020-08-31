@@ -26,7 +26,10 @@ namespace Lasm.UAlive
             @return = ControlInput("return", Return);
             if (entry != null)
             {
-                if (entry.returnType != null && entry.returnType != typeof(void) && entry.returnType != typeof(Lasm.UAlive.Void)) value = ValueInput(entry.returnType, "value");
+                if (entry.declaration.type != null && entry.declaration.type != typeof(void) && entry.declaration.type != typeof(Lasm.UAlive.Void))
+                {
+                    value = ValueInput(entry.declaration.type, "value");
+                }
             }
             else
             {
@@ -36,9 +39,9 @@ namespace Lasm.UAlive
 
         public ControlOutput Return(Flow flow) 
         {
-            if (entry?.macro != null)
+            if (entry.declaration.method != null)
             {
-                if (entry.returnType != null && entry.returnType != typeof(Lasm.UAlive.Void) && entry.returnType != typeof(void)) entry.returnMethod(flow.GetValue<object>(value));
+                if (entry.declaration.type != null && entry.declaration.type != typeof(Lasm.UAlive.Void) && entry.declaration.type != typeof(void)) entry.returnMethod(flow.GetValue<object>(value));
             }
 
             return null;  
@@ -54,7 +57,7 @@ namespace Lasm.UAlive
                 {
                     entry = (EntryUnit)graph.units[i];
                     entry.AddReturn(this);
-                    returnType = entry.returnType;
+                    returnType = entry.declaration.type;
                     break; 
                 }
             }

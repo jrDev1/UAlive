@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Lasm.UAlive {
     public static partial class HUMString

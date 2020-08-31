@@ -86,7 +86,7 @@ namespace Lasm.UAlive
         {
             if (GUI.Button(position, "Edit"))
             {
-                GraphWindow.OpenActive(GraphReference.New((MethodMacro)macro.objectReferenceValue, true));
+                GraphWindow.OpenActive(GraphReference.New((Method)macro.objectReferenceValue, true));
             }
         }
 

@@ -10,7 +10,7 @@ using UnityEngine;
 namespace Lasm.UAlive
 {
     [Serializable]
-    public sealed class CustomClass : CustomType, IClassDeclaration, IRefreshable, IDefinable
+    public sealed class CustomClass : CustomType, IRefreshable, IDefinable
     {
         #region Declaration
 
@@ -20,7 +20,7 @@ namespace Lasm.UAlive
         }
 
         [Serialize]
-        public Inheritance inheritance = new Inheritance();
+        public Inheritance inheritance { get; set; } = new Inheritance();
 
         #endregion
 
@@ -32,9 +32,18 @@ namespace Lasm.UAlive
         public Variables variables = new Variables();
         #endregion
 
-#if UNITY_EDITOR
-        public EditorClassData editorData;
-#endif
+        #region Definition
+
+        public event Action definitionChanged = () => { };
+        public event Action refreshed = () => { };
+
+        public bool changed => methods.changed;
+
+        private bool _defineAdded;
+        public bool defineAdded { get => _defineAdded; set => _defineAdded = value; }
+
+        private bool _defineRemoved;
+        public bool defineRemoved { get => _defineRemoved; set => _defineRemoved = value; }
 
         public void Define()
         {
@@ -44,6 +53,11 @@ namespace Lasm.UAlive
             Refresh();
         }
 
+        public void Undefine()
+        {
+            methods.Undefine();
+        }
+
         private void BeforeDefine()
         {
             methods.overrides.Clear();
@@ -51,7 +65,7 @@ namespace Lasm.UAlive
 
         private void AfterDefine()
         {
-            methods.RemoveUnusedMethods();
+            methods.Undefine();
         }
 
         private void Definition()
@@ -68,8 +82,8 @@ namespace Lasm.UAlive
                     }
 
                     var modifier = method.GetModifier() == MethodModifier.Abstract || method.GetModifier() == MethodModifier.Virtual ? MethodModifier.Override : method.GetModifier();
-                    var meth = methods.New(this, method.Name, method.GetScope(), modifier, method.ReturnType, methodParams.ToArray());
-                    if (method.IsVirtual) meth.hasOptionalOverride = true;
+                    var meth = methods.TryCreateMethod(this, new MethodDeclaration(method.Name, method.GetScope(), modifier, method.ReturnType, methodParams.ToArray()));
+                    if (method.IsVirtual) meth.entry.declaration.hasOptionalOverride = true;
                 }
             }
 
@@ -78,11 +92,20 @@ namespace Lasm.UAlive
 
         public void Refresh()
         {
-            if (methods.CanAdd())
+            if (changed)
             {
                 methods.Refresh();
+                refreshed();
             }
         }
+
+        #endregion
+
+#if UNITY_EDITOR
+        public EditorClassData editorData = new EditorClassData();
+#endif
+
+        #region Messages
 
         private void UnityMethods()
         {
@@ -90,6 +113,8 @@ namespace Lasm.UAlive
             if (MagicMethods.TryAddScriptableObject(methods, this, inheritance)) return;
             if (MagicMethods.TryAddEditorWindow(methods, this, inheritance)) return;
         }
+
+        #endregion
 
     }
 }

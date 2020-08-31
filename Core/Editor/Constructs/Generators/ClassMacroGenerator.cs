@@ -1,6 +1,7 @@
 ﻿using Ludiq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lasm.UAlive
 {
@@ -46,7 +47,7 @@ namespace Lasm.UAlive
 
         protected override void DefineLiveCode()
         {
-            var keys = decorated.methods.overrides.KeysToArray();
+            var keys = decorated.methods.overrides.Keys().ToArray();
 
             // FORCE COMPILE SHELL
             //HUMQuery.For(keys, (list, index) => 
@@ -65,7 +66,20 @@ namespace Lasm.UAlive
                 var nest = decorated.methods.overrides[keys[i]]; 
                 if (CanAddMethod(nest))
                 {
-                    var method = nest.macro.entry.returnType.Is().Void() ? Method(nest.name, nest.scope, nest.modifier, nest.macro.entry.returnType, true) : Method(nest.name, nest.scope, nest.modifier, nest.macro.entry.returnType, true);
+                    var method = nest.entry.declaration.type.Is().Void() ? 
+                        Method(
+                            nest.name,
+                            nest.entry.declaration.scope, 
+                            nest.entry.declaration.modifier, 
+                            nest.entry.declaration.type, 
+                            true
+                            )
+                        : Method(
+                            nest.name, nest.entry.declaration.scope, 
+                            nest.entry.declaration.modifier, 
+                            nest.entry.declaration.type,
+                            true
+                            );
                     AddParameters(method, nest);
                     @class.AddMethod(method);
                 }
@@ -99,26 +113,26 @@ namespace Lasm.UAlive
             
         }
 
-        private bool CanAddMethod(Method nest)
+        private bool CanAddMethod(Method method)
         {
-            return nest.macro.isOverridden && nest.hasOptionalOverride || !nest.hasOptionalOverride;
+            return method.entry.declaration.isOverridden && method.entry.declaration.hasOptionalOverride || !method.entry.declaration.hasOptionalOverride;
         }
 
-        private void AddParameters(MethodGenerator method, Method nest)
+        private void AddParameters(MethodGenerator generator, Method method)
         {
-            foreach (KeyValuePair<string, Type> pair in nest.macro.entry.parameters)
+            foreach (ParameterDeclaration declaration in method.entry.declaration.parameters)
             {
-                method.AddParameter(ParameterGenerator.Parameter(pair.Key, pair.Value, ParameterModifier.None));
+                generator.AddParameter(ParameterGenerator.Parameter(declaration.name, declaration.type, ParameterModifier.None));
             }
         }
 
-        private string GetParameters(MethodGenerator method, Method nest)
+        private string GetParameters(MethodGenerator generator, Method method)
         {
             var parameters = new List<ParameterGenerator>();
 
-            foreach (KeyValuePair<string, Type> pair in nest.macro.entry.parameters)
+            foreach (ParameterDeclaration declaration in method.entry.declaration.parameters)
             {
-                parameters.Add(ParameterGenerator.Parameter(pair.Key, pair.Value, ParameterModifier.None));
+                parameters.Add(ParameterGenerator.Parameter(declaration.name, declaration.type, ParameterModifier.None));
             }
 
             return parameters.Count == 0 ? string.Empty : parameters.Parameters();

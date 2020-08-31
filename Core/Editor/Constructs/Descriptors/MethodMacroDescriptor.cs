@@ -6,10 +6,10 @@ using Bolt;
 
 namespace Lasm.UAlive
 {
-    [Descriptor(typeof(MethodMacro))]
-    public class MethodMacroDescriptor : MacroDescriptor<MethodMacro, MacroDescription>
+    [Descriptor(typeof(Method))]
+    public class MethodMacroDescriptor : MacroDescriptor<Method, MacroDescription>
     {
-        public MethodMacroDescriptor(MethodMacro target) : base(target)
+        public MethodMacroDescriptor(Method target) : base(target)
         {
         }
     }

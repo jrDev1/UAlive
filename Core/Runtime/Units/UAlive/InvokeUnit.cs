@@ -17,7 +17,7 @@ namespace Lasm.UAlive
         [Inspectable]
         public bool chain;
 
-        [DoNotSerialize]
+        [Serialize]
         public Method method;
 
         [DoNotSerialize]
@@ -49,50 +49,46 @@ namespace Lasm.UAlive
 
             if (chain) chainTarget = ValueOutput<IUAClass>("chain", (flow) => { return flow.GetValue<IUAClass>(target); });
 
-            if (id != 0) method = FindWithID(id);
-
             if (method != null)
             {
-                if (method.macro != null && method.macro.entry != null)
+                if (method != null && method.entry != null)
                 {
                     if (IsValidReturnType())
                     {
-                        result = ValueOutput(method.macro.entry.returnType, "result", (flow) =>
+                        result = ValueOutput(method.entry.declaration.type, "result", (flow) =>
                         {
                             IUAClass _target = null;
                             return Invoke(ref _target, flow);
                         });
                     }
 
-                    if (method.macro.entry.parameters.Count > 0)
+                    if (method.entry.declaration.parameters?.Length > 0)
                     {
-                        var keys = method.macro.entry.parameters.KeysToArray();
-
-                        for (int i = 0; i < keys.Length; i++)
+                        for (int i = 0; i < method.entry.declaration.parameters.Length; i++)
                         {
-                            parameters.Add(ValueInput(method.macro.entry.parameters[keys[i]], keys[i]));
+                            parameters.Add(ValueInput(method.entry.declaration.parameters[i].type, method.entry.declaration.parameters[i].name));
                         }
                     }
 
                     if (IsValidReturnType()) Requirement(target, result);
                 }
+            }
+
+            if (method != null && method.entry != null && !method.entry.declaration.pure)
+            {
+                enter = ControlInput("enter", (flow) =>
+                {
+                    IUAClass _target = null; 
+                    Invoke(ref _target, flow);
+                    return exit;
+                }); 
+
+                exit = ControlOutput("exit");
 
                 for (int i = 0; i < parameters.Count; i++)
                 {
                     Requirement(parameters[i], enter);
                 }
-            }
-
-            if (method != null && method.macro?.entry != null && !method.macro.entry.pure)
-            {
-                enter = ControlInput("enter", (flow) =>
-                {
-                    IUAClass _target = null;
-                    Invoke(ref _target, flow);
-                    return exit;
-                });
-
-                exit = ControlOutput("exit");
 
                 Requirement(target, enter);
                 Succession(enter, exit);
@@ -124,30 +120,30 @@ namespace Lasm.UAlive
 
         private bool IsValidReturnType()
         {
-            return method.macro.entry.returnType != null && method.macro.entry.returnType != typeof(void) && method.macro.entry.returnType != typeof(Void);
+            return method.entry.declaration.type != null && method.entry.declaration.type != typeof(void) && method.entry.declaration.type != typeof(Void);
         }
 
         protected override void AfterDefine()
         {
-            if (method?.macro?.entry != null)
+            if (method != null && method.entry != null)
             {
-                method.macro.entry.onChanged += Define;
+                method.entry.onChanged += Define;
             }
         } 
 
         protected override void BeforeUndefine()
         {
-            if (method?.macro?.entry != null)
+            if (method != null && method.entry != null)
             {
-                method.macro.entry.onChanged -= Define;
+                method.entry.onChanged -= Define;
             }
         }
 
-        private Method FindWithID(int id)
+        public Method FindWithGUID(string guid)
         {
-            if (macro.methods.custom.Any((v) => { return v.id == id; }))
+            if (Class.methods.custom.Any((method) => { return method.entry.declaration.guid == guid && !string.IsNullOrEmpty(guid); }))
             {
-                return macro.methods.custom.Single((v) => { return v.id == id; });
+                return Class.methods.custom.Single((method) => { return method.entry.declaration.guid == guid && !string.IsNullOrEmpty(guid); });
             }
 
             return null;

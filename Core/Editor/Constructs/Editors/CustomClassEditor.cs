@@ -89,16 +89,15 @@ namespace Lasm.UAlive
                     {
                         HUMEditor.Vertical().Box(Styles.backgroundColor.Brighten(0.025f), Styles.borderColor, new RectOffset(4, 4, 4, 2), new RectOffset(1, 1, 0, 1), () =>
                         {
-                            var overrides = metadata["methods"]["overrides"];
-
+                            var overrides = metadata["methods"]["overrides"]["current"];
                             tempOverrides.Clear();
 
                             for (int i = 0; i < overrides.Count; i++)
                             {
-                                var nest = ((Method)overrides.ValueMetadata(i).value);
-                                if (!nest.macro.isSpecial || (nest.macro.isSpecial && nest.macro.isOverridden))
+                                var method = ((Method)overrides.ValueMetadata(i).value);
+                                if (!method.entry.declaration.isMagic || (method.entry.declaration.isMagic && method.entry.declaration.isOverridden))
                                 {
-                                    var _name = nest.name;
+                                    var _name = method.name;
                                     if (position.width - 170 < GUI.skin.label.CalcSize(new GUIContent(_name)).x)
                                     {
                                         if (_name.Length > 11)
@@ -107,7 +106,7 @@ namespace Lasm.UAlive
                                         }
                                     }
 
-                                    LudiqGUI.InspectorLayout(overrides.ValueMetadata(i), new GUIContent(_name));
+                                    UAGUI.MethodOverride(overrides.ValueMetadata(i), new GUIContent(_name));
                                 }
                                 else
                                 {
@@ -131,7 +130,7 @@ namespace Lasm.UAlive
                                         startSeparator = false;
                                     }
                                     var key = keys[i];
-                                    menu.AddItem(new GUIContent(key), false, (obj) => { tempOverrides[(string)obj].macro.isOverridden = true; _target.Define(); }, key);
+                                    menu.AddItem(new GUIContent(key), false, (obj) => { tempOverrides[(string)obj].entry.declaration.isOverridden = true; _target.Define(); }, key);
                                     if (keys[i] == "OnGUI") startSeparator = true;
                                 }
 
@@ -159,45 +158,44 @@ namespace Lasm.UAlive
 
                     for (int i = 0; i < methodsVal.Count; i++)
                     {
-                        if (i != 0) GUILayout.Space(2);
+                        if (i != 0) GUILayout.Space(2);  
 
                         HUMEditor.Vertical().Box(Styles.backgroundColor.Brighten(0.075f), Styles.borderColor, new RectOffset(4, 4, 4, 2), new RectOffset(1, 1, 1, 1), () =>
                         {
                             var meth = methodsVal[i];
                             meth.name = GUILayout.TextField(meth.name);
-                            meth.macro.name = meth.name;
 
                             HUMEditor.Horizontal(() =>
                             {
                                 HUMEditor.Vertical(() =>
                                 {
-                                    LudiqGUI.InspectorLayout(methods[i], GUIContent.none);
+                                    BeginBlock(methods[i], position, GUIContent.none);
+                                    UAGUI.MethodCustom(methods[i], GUIContent.none);
+                                    if (EndBlock(methods[i])) meth.entry.Define();
                                 });
 
                                 if (GUILayout.Button("-", GUILayout.Width(16), GUILayout.Height(18)))
                                 {
                                     methodsVal.Remove(meth);
-                                    meth.macro.entry.Define();
-                                    AssetDatabase.RemoveObjectFromAsset(meth.macro);
+                                    meth.entry.Define();
+                                    AssetDatabase.RemoveObjectFromAsset(meth);
                                     AssetDatabase.SaveAssets();
                                     AssetDatabase.Refresh();
                                     _target.Define();
                                 }
                             });
+
+                            meth.entry.declaration.name = meth.name;
                         });
                     }
 
                     if (GUILayout.Button("+ New Method"))
                     {
-                        var meth = new Method() { parentGUID = _target.GetGUID() };
-                        meth.Initialize();
-                        meth.showLabel = false;
-                        meth.name = string.Empty;
-                        meth.macro.hideFlags = HideFlags.HideInHierarchy;
-                        AssetDatabase.AddObjectToAsset(meth.macro, _target);
+                        var meth = Method.Create(_target);
+                        AssetDatabase.AddObjectToAsset(meth, _target);
                         methodsVal.Add(meth);
                         _target.Define();
-                        AssetDatabase.SaveAssets();   
+                        AssetDatabase.SaveAssets();
                         AssetDatabase.Refresh();
                     }
                 });
@@ -221,71 +219,60 @@ namespace Lasm.UAlive
                     for (int i = 0; i < variablesVal.variables.Count; i++)
                     {
                         if (i != 0) GUILayout.Space(2);
-                        
+
                         HUMEditor.Vertical().Box(Styles.backgroundColor.Brighten(0.075f), Styles.borderColor, new RectOffset(4, 4, 4, 2), new RectOffset(1, 1, 1, 1), () =>
                         {
                             var variable = variables["variables"][i];
                             var variableVal = (Variable)variable.value;
+
                             HUMEditor.Vertical(() =>
-                            {
-                                HUMEditor.Horizontal(() =>
                                 {
-                                    HUMEditor.Vertical(() =>
+                                    HUMEditor.Horizontal(() =>
                                     {
-                                        LudiqGUI.InspectorLayout(variable["name"], GUIContent.none);
+                                        HUMEditor.Vertical(() =>
+                                        {
+                                            LudiqGUI.InspectorLayout(variable["name"], GUIContent.none);
+                                        });
+
+                                        GUILayout.Label(GUIContent.none, new GUIStyle() { fixedWidth = 4 });
+
+                                        HUMEditor.Vertical(() =>
+                                        {
+                                            LudiqGUI.InspectorLayout(variable["declaration"]["type"], GUIContent.none);
+                                        });
+
+                                        if (GUILayout.Button("-", GUILayout.Width(16), GUILayout.Height(14)))
+                                        {
+                                            variablesVal.variables.Remove(variableVal);
+                                            variableVal.declaration.Changed();
+                                            AssetDatabase.RemoveObjectFromAsset(variableVal.getter);
+                                            AssetDatabase.RemoveObjectFromAsset(variableVal.setter);
+                                            AssetDatabase.RemoveObjectFromAsset(variableVal);
+                                            AssetDatabase.SaveAssets();
+                                            AssetDatabase.Refresh();
+                                            _target.Define();
+                                        }
                                     });
 
-                                    GUILayout.Label(GUIContent.none, new GUIStyle() { fixedWidth = 4 });
+                                    GUILayout.Space(2);
 
                                     HUMEditor.Vertical(() =>
                                     {
-                                        LudiqGUI.InspectorLayout(variable["type"], GUIContent.none);
+                                        LudiqGUI.InspectorLayout(variable["declaration"]["defaultValue"].Cast(variableVal.declaration.type), GUIContent.none);
                                     });
-
-                                    if (GUILayout.Button("-", GUILayout.Width(16), GUILayout.Height(14)))
-                                    {
-                                        variablesVal.variables.Remove(variableVal);
-                                        variableVal.Changed();
-                                        AssetDatabase.RemoveObjectFromAsset(variableVal.getter.macro);
-                                        AssetDatabase.RemoveObjectFromAsset(variableVal.setter.macro);
-                                        AssetDatabase.SaveAssets();
-                                        AssetDatabase.Refresh(); 
-                                        _target.Define();
-                                    } 
                                 });
-
-                                GUILayout.Space(2);
-
-                                HUMEditor.Vertical(() =>
-                                {
-                                    LudiqGUI.InspectorLayout(variable["value"].Cast(variableVal.type), GUIContent.none);
-                                }); 
-                            });
 
                             GUILayout.Space(2);
                         });
                     }
 
-                    BeginBlock(metadata, position, GUIContent.none);
                     if (GUILayout.Button("+ New Variable"))
                     {
-                        var variable = new Variable();
-                        variable.getter.Initialize();
-                        variable.setter.Initialize();
-                        variable.getter.showLabel = false;
-                        variable.setter.showLabel = false;
-                        variable.getter.name = string.Empty;
-                        variable.setter.name = string.Empty;
-                        variable.getter.macro.hideFlags = HideFlags.HideInHierarchy;
-                        variable.setter.macro.hideFlags = HideFlags.HideInHierarchy;
-                        AssetDatabase.AddObjectToAsset(variable.getter.macro, _target);
-                        AssetDatabase.AddObjectToAsset(variable.setter.macro, _target);
+                        var variable = Variable.Create(_target);
                         variablesVal.variables.Add(variable);
-                        AssetDatabase.SaveAssets();
-                        AssetDatabase.Refresh();
-                    }
-                    if (EndBlock(metadata))
-                    {
+                        AssetDatabase.AddObjectToAsset(variable, _target);
+                        AssetDatabase.AddObjectToAsset(variable.getter, _target);
+                        AssetDatabase.AddObjectToAsset(variable.setter, _target);
                         _target.Define();
                     }
                 });

@@ -17,7 +17,7 @@ namespace Lasm.UAlive
         {
             for (int i = 0; i < variables.Count; i++)
             {
-                if (variables[i].name == name) return (T)variables[i].value;
+                if (variables[i].name == name) return (T)variables[i].declaration.defaultValue;
             } 
 
             return default(T);
@@ -27,7 +27,7 @@ namespace Lasm.UAlive
         {
             for (int i = 0; i < variables.Count; i++)
             {
-                if (variables[i].name == name) return variables[i].value;
+                if (variables[i].name == name) return variables[i].declaration.defaultValue;
             }
 
             return null;
@@ -56,7 +56,7 @@ namespace Lasm.UAlive
                 }
             }
 
-            variables[index].value = value;
+            variables[index].declaration.defaultValue = value;
         }
     }
 }

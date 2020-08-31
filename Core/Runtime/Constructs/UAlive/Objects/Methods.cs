@@ -9,211 +9,187 @@ using UnityEngine;
 namespace Lasm.UAlive
 {
     [Serializable]
-    public sealed class Methods : IRefreshable
+    public sealed class Methods : IRefreshable, IDefinable
     {
-        #region Collections
+        #region Definition
 
         [Serialize]
-        public Dictionary<string, Method> previousOverrides = new Dictionary<string, Method>();
-        [Serialize]
-        public Dictionary<string, Method> overrides = new Dictionary<string, Method>();
+        public DefinedDictionary<string, Method> overrides = new DefinedDictionary<string, Method>();
 
         [Serialize]
         public List<Method> custom = new List<Method>();
 
-        #endregion
+        public event Action definitionChanged = () => { };
+        public event Action refreshed = () => { };
 
-#if UNITY_EDITOR
-        public bool addedMethod = false;
-        public bool removedMethod = false;
-#endif
-
-        private Method Add(Method method)
+        private void DefineMethod(string name, Method method)
         {
-            previousOverrides.Add(method.name, method);
-            overrides.Add(method.name, method);
-            return method;
+            method.name = name;
+            method.entry.Define();
         }
 
-#if UNITY_EDITOR
-        public bool CanAdd()
+        public void Define()
         {
-            return addedMethod || removedMethod;
+            Refresh();
         }
 
+        public void Undefine()
+        {
+            overrides.Undefine(ref _defineRemoved, (method) =>
+            {
+                UnityEngine.Object.DestroyImmediate(method, true);
+            });
+
+            if (defineRemoved)
+            {
+                definitionChanged();
+            }
+        }
+
+        private bool _defineAdded;
+        public bool defineAdded { get => _defineAdded; private set => _defineAdded = value; }
+
+        private bool _defineRemoved;
+        public bool defineRemoved { get => _defineRemoved; private set => _defineRemoved = value; }
+
+        public bool changed => defineAdded || defineRemoved;
+
+#if UNITY_EDITOR
         private CustomType GetRootAsset(CustomClass instance)
         {
             return AssetDatabase.LoadAssetAtPath<CustomType>(AssetDatabase.GUIDToAssetPath(HUMAssets.GetGUID(instance)));
         }
+#endif
 
         public void Refresh()
         {
-            addedMethod = false;
-            removedMethod = false;
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
+            defineAdded = false;
+            defineRemoved = false;
+            refreshed();
         }
-#endif
-        public Method New(CustomClass instance, string name, AccessModifier scope, MethodModifier modifier, Type returnType, ParameterDeclaration[] parameters, bool isMagic = false)
+
+        #endregion
+
+        private bool IsOverridable(MethodDeclaration declaration)
+        {
+            return declaration.modifier == MethodModifier.Override || 
+                declaration.isMagic;
+        }
+
+        private Method Create(MethodDeclaration declaration, CustomType asset)
+        {
+            var _method = Method.Create(asset);
+            _method.name = declaration.name;
+            SetParameters(_method, declaration.parameters);
+            DefineMethod(declaration.name, _method);
+            AssetDatabase.AddObjectToAsset(_method, asset);
+            return _method;
+        }
+
+        public Method TryCreateMethod(CustomClass instance, MethodDeclaration declaration)
         {
             var asset = GetRootAsset(instance);
             Method _method = null;
 
-            if (modifier == MethodModifier.Override || modifier == MethodModifier.None && isMagic)
+            if (IsOverridable(declaration))
             {
-                return Override();
-            }
-
-            return Custom();
-
-            Method Override()
-            {
-                asset.Is().NotNull(() =>
+                if (asset != null)
                 {
-                    _method = overrides.Define(previousOverrides, name,
+                    _method = overrides.Define(declaration.name, ref _defineAdded,
                     (method) =>
                     {
-                        _method = CreateNest(out addedMethod);
-                        _method.name = name;
-                        SetNestEntryParameters(_method, parameters);
-                        DefineNestMacro(name, _method);
-                        Add(_method);
-                        AssetDatabase.AddObjectToAsset(_method.macro, asset);
-                        addedMethod = true;
-                        return _method;
+                        return Create(declaration, asset);
                     },
                     (method) =>
                     {
-                        EnsureParametersMatch(name, parameters);
-                        addedMethod = true;
-                        SetOverrideMethod(name);
-                        _method = method;
+                        EnsureParametersMatch(declaration.name, declaration.parameters);
+                        SetOverrideMethod(declaration.name);
                     });
-                });
-
+                }
+                 
                 if (_method != null)
                 {
-                    _method.scope = scope;
-                    _method.modifier = modifier;
-                    _method.macro.entry.returnType = returnType;
-                    _method.macro.isSpecial = isMagic;
-                    _method.hasOptionalOverride = true;
+                    var overridden = _method.entry.declaration.isOverridden;
+                    var type = _method.entry.declaration.type;
+                    _method.entry.declaration.Copy(declaration);
+                    _method.entry.declaration.isOverridden = overridden;
+                    _method.entry.declaration.hasOptionalOverride = true;
 
-                    if (_method.macro.entry.returnType != returnType)
+                    if (type != declaration.type)
                     {
-                        _method.macro.entry.returnType = returnType;
-                        _method.macro.entry.DefineReturns();
+                        _method.entry.declaration.type = declaration.type;
+                        _method.entry.DefineReturns();
                     }
 
-                    _method.macro.hideFlags = HideFlags.HideInHierarchy;
+                    _method.hideFlags = HideFlags.HideInHierarchy;
                 }
-
-                return _method;
             }
-
-            Method Custom()
+            else
             {
                 if (_method != null)
                 {
-                    _method.scope = scope;
-                    _method.modifier = modifier;
-                    _method.name = name;
-                    _method.macro.isSpecial = false;
-                    _method.macro.hideFlags = HideFlags.HideInHierarchy;
-                    _method.macro.entry.returnType = returnType;
-                    _method.macro.entry.Define();
+                    _method.entry.declaration.scope = declaration.scope;
+                    _method.entry.declaration.modifier = declaration.modifier;
+                    _method.name = declaration.name;
+                    _method.entry.declaration.isMagic = false;
+                    _method.hideFlags = HideFlags.HideInHierarchy;
+                    _method.entry.declaration.type = declaration.type;
+                    _method.entry.Define();
                 }
-
-                return _method;
             }
 
-            Method CreateNest(out bool nestAdded)
-            {
-                var nest = new Method();
-                nest.Initialize();
-                nestAdded = true;
-                return nest;
-            }
+            return _method;
         }
 
         private void EnsureParametersMatch(string name, ParameterDeclaration[] parameters)
         {
             var shouldDefine = false;
-            var method = previousOverrides[name];
+            var method = overrides[name];
 
             for (int i = 0; i < parameters.Length; i++)
             {
-                if (!method.macro.entry.parameters.ContainsKey(parameters[i].name))
+                var parameter = ParameterDeclaration.WithName(method.entry.declaration.parameters, parameters[i].name);
+
+                if (parameter == null)
                 {
                     shouldDefine = true;
                     break;
                 }
 
-                if (method.macro.entry.parameters[parameters[i].name] != parameters[i].type)
+                if (parameter.type != parameters[i].type)
                 {
                     shouldDefine = true;
                     break;
                 }
             }
 
-            if (method.macro.entry.parameters.Count != parameters.Length)
+            if (method.entry.declaration.parameters.Length != parameters.Length)
             {
                 shouldDefine = true;
             }
 
             if (shouldDefine)
             {
-                method.macro.entry.parameters.Clear();
-                for (int i = 0; i < parameters.Length; i++)
-                {
-                    method.macro.entry.parameters.Add(parameters[i].name, parameters[i].type);
-                }
-
-                method.macro.entry.Define();
+                SetParameters(method, parameters);
+                method.entry.Define();
             }
         }
 
         private void SetOverrideMethod(string name)
         {
-            var method = previousOverrides[name];
+            var method = overrides[name];
             overrides.Add(name, method);
-            method.Initialize();
         }
 
-        private void SetNestEntryParameters(Method nest, ParameterDeclaration[] parameters)
+        private void SetParameters(Method method, ParameterDeclaration[] parameters)
         {
-            for (int i = 0; i < parameters?.Length; i++)
+            var tempList = new List<ParameterDeclaration>();
+            for (int i = 0; i < parameters.Length; i++)
             {
-                nest.macro.entry.parameters.Add(parameters[i].name, parameters[i].type);
-            }
-        }
-
-        private void DefineNestMacro(string name, Method nest)
-        {
-            nest.macro.name = name;
-            nest.macro.entry.Define();
-        }
-
-        public void RemoveUnusedMethods()
-        {
-            var removeAmount = 10;
-
-            for (int i = 0; i < removeAmount; i++)
-            {
-                if (i > 0 && !removedMethod) break;
-
-                overrides.Undefine(previousOverrides, (method) =>
-                {
-                    UnityEngine.Object.DestroyImmediate(method.macro, true);
-                    removedMethod = true;
-                });
+                tempList.Add(new ParameterDeclaration(parameters[i].name, parameters[i].type));
             }
 
-            if (removedMethod)
-            {
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
-            }
+            method.entry.declaration.parameters = tempList.ToArray();
         }
     }
 }

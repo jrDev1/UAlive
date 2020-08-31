@@ -6,11 +6,11 @@ namespace Lasm.UAlive
 {
     public abstract class ClassVariableUnit : ClassMemberUnit
     {
-        protected Variable FindWithID(int id)
+        protected Variable FindWithID(string guid)
         {
-            if (macro.variables.variables.Any((v) => { return v.id == id; }))
+            if (Class.variables.variables.Any((variable) => { return variable.declaration.guid == _guid; }))
             {
-                return macro.variables.variables.Single((v) => { return v.id == id; });
+                return Class.variables.variables.Single((variable) => { return variable.declaration.guid == _guid; });
             }
 
             return null;

@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
+using UnityEditor.ProjectWindowCallback;
 using UnityEngine;
 
 namespace Lasm.UAlive
@@ -9,7 +11,9 @@ namespace Lasm.UAlive
         {
             var macro = ScriptableObject.CreateInstance<T>();
             macro.title = macro.GetDefaultName();
-            ProjectWindowUtil.CreateAsset(macro, HUMAssets.ProjectWindowPath() + "/" + macro.title.Nice() + ".asset");
+            AssetDatabase.CreateAsset(macro, HUMAssets.ProjectWindowPath() + "/" + macro.title.Nice() + ".asset");
+            var definable = macro as IDefinable;
+            if (definable != null) definable.Define();
             return macro;
         }
     }

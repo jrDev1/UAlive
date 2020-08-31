@@ -39,14 +39,13 @@ namespace Lasm.UAlive
 
         protected override void Definition()
         {
-            base.Definition();
+            base.Definition(); 
 
             if (chain) chainTarget = ValueOutput<IUAClass>("chain", (flow) => { return flow.GetValue<IUAClass>(target); });
 
-            if (id != 0)
-            {
-                variable = FindWithID(id);
-                value = ValueInput(variable.type, "value");
+            if (variable != null)
+            { 
+                value = ValueInput(variable.declaration.type, "value");
             }
 
             enter = ControlInput("enter", (flow) =>
@@ -62,7 +61,7 @@ namespace Lasm.UAlive
                     _target = (IUAClass)flow.variables.Get("#secret_uaclass_instance");
                 }
 
-                _target.Class.Set(memberName, flow.GetValue(value, variable.type));
+                _target.Class.Set(memberName, flow.GetValue(value, variable.declaration.type));
                 return exit;
             });
 
@@ -74,12 +73,12 @@ namespace Lasm.UAlive
 
         protected override void AfterDefine()
         {
-            if (variable != null) variable.onChanged += Define;
+            if (variable != null) variable.declaration.onChanged += Define;
         }
 
         protected override void BeforeUndefine()
         {
-            if (variable != null) variable.onChanged -= Define;
+            if (variable != null) variable.declaration.onChanged -= Define;
         }
     }
 }

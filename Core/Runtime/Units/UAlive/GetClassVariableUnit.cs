@@ -15,7 +15,7 @@ namespace Lasm.UAlive
     [TypeIcon(typeof(CustomClass))]
     public sealed class GetClassVariableUnit : ClassVariableUnit
     {
-        [DoNotSerialize]
+        [Serialize]
         public Variable variable;
          
         [DoNotSerialize][PortLabelHidden]
@@ -25,11 +25,9 @@ namespace Lasm.UAlive
         {
             base.Definition();
 
-            if (id != 0)
-            {
-                variable = FindWithID(id); 
-
-                value = ValueOutput(variable.type, "value", (flow) =>
+            if (variable != null && variable.declaration != null)
+            { 
+                value = ValueOutput(variable.declaration.type, "value", (flow) =>
                 {
                      IUAClass _target;
                      
@@ -42,11 +40,11 @@ namespace Lasm.UAlive
                          _target = (IUAClass)flow.variables.Get("#secret_uaclass_instance");
                      }
 
-                     return _target.Class.Get(variable.name);
+                     return _target.Class.Get(variable.name); 
                 });
             }
 
-            if (variable != null)
+            if (variable != null && variable.declaration != null) 
             {
                 Requirement(target, value);
             }
@@ -54,12 +52,12 @@ namespace Lasm.UAlive
         
         protected override void AfterDefine()
         {
-            if (variable != null) variable.onChanged += Define;
+            if (variable != null) variable.declaration.onChanged += Define;
         }
 
         protected override void BeforeUndefine()
         {
-            if (variable != null) variable.onChanged -= Define;
+            if (variable != null) variable.declaration.onChanged -= Define;
         }
     }
 }  

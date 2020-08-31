@@ -3,6 +3,8 @@ using Bolt;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
+using Lasm.OdinSerializer;
 
 namespace Lasm.UAlive
 {
@@ -11,14 +13,15 @@ namespace Lasm.UAlive
     [SpecialUnit][Serializable]
     public class EntryUnit : Unit
     {
+        [DoNotSerialize]
+        public CustomClass @class;
+
+        [DoNotSerialize]
+        public Method root;
+
+        [Inspectable]
         [Serialize]
-        public MethodMacro macro;
-
-        [Inspectable]
-        public bool pure;
-
-        [Inspectable]
-        public Dictionary<string, Type> parameters = new Dictionary<string, Type>();
+        public MethodDeclaration declaration = new MethodDeclaration();
 
         public List<object> assignedValues = new List<object>();
 
@@ -28,24 +31,12 @@ namespace Lasm.UAlive
         [DoNotSerialize]
         public List<ValueOutput> _outputs = new List<ValueOutput>();
 
-        [OdinSerializer.OdinSerialize]
+        [OdinSerialize]
         public Action<object> returnMethod;
 
         [Serialize]
         public List<ReturnUnit> returns = new List<ReturnUnit>();
 
-        [Serialize]
-        public Type _type = typeof(Lasm.UAlive.Void);
-        [Inspectable]
-        public Type returnType
-        {
-            get => _type;
-            set
-            {
-                _type = value;
-                Define();
-            }
-        }
         
         public event Action onChanged = () => { };
 
@@ -62,25 +53,18 @@ namespace Lasm.UAlive
 
             _outputs.Clear();
 
-            if (macro != null) macro.entry = this;
+            if (root != null) root.entry = this;
 
-            if (parameters.Keys != null)
+            if (declaration.parameters?.Length > 0)
             {
-                if (parameters.Values != null)
+                for (int i = 0; i < declaration.parameters.Length; i++)
                 {
-                    var keys = parameters.Keys.ToListPooled();
-                    var values = parameters.Values.ToListPooled();
-
-                    for (int i = 0; i < keys.Count; i++)
+                    if (string.IsNullOrEmpty(declaration.parameters[i].name))
                     {
-                        var value = values[i];
-
-                        if (value != null) {
-                            var output = ValueOutput(value, keys[i]);
-                            _outputs.Add(output); 
-                        }
+                        var output = ValueOutput(declaration.parameters[i].type, declaration.parameters[i].name);
+                        _outputs.Add(output);
                     }
-                } 
+                }
             }
 
             DefineReturns();

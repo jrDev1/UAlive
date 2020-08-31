@@ -2,6 +2,8 @@
 {
     public interface IClassDeclaration
     {
-
+        Inheritance inheritance { get; }
     }
+
+
 }

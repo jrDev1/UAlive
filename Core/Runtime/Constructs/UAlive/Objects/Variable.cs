@@ -7,47 +7,44 @@ using UnityEngine;
 namespace Lasm.UAlive
 {
     [Serializable]
-    public sealed class Variable
+    public sealed class Variable : LudiqScriptableObject, IUnityInitializable
     {
         [Serialize]
-        public string name;
+        public VariableDeclaration declaration = new VariableDeclaration();
 
-        [Serialize]
-        public int id = new object().GetHashCode();
-         
-        [Serialize]
-        private Type _type = typeof(int);
-        [Inspectable]
-        public Type type
-        { 
-            get => _type;
-            set
-            {
-                var changed = _type != value;
-                _type = value;
-                if (changed)
-                {
-                    this.value = value.Default();
-                    onChanged?.Invoke();
-                }
-            }
-        }
+        #region Initialization
 
-        [Serialize]
-        public object value = 0;
+        [SerializeField]
+        private bool _isInitialized;
+        public bool isInitialized { get => _isInitialized; private set => _isInitialized = value; }
 
-        //public bool property;
-
-        [Serialize] 
-        public Method getter = new Method();
-        [Serialize]
-        public Method setter = new Method();
-
-        public event Action onChanged = new Action(() => { });
-
-        public void Changed()
+        public void Initialize(CustomType owner, object data = null)
         {
-            onChanged?.Invoke();
+            getter = Method.Create(owner);
+            setter = Method.Create(owner);
+            declaration.guid = this.GetGUID();
+            declaration.classGUID = owner.GetGUID();
+            getter.name = string.Empty;
+            setter.name = string.Empty;
+            hideFlags = HideFlags.HideInHierarchy;
+            getter.hideFlags = HideFlags.HideInHierarchy;
+            setter.hideFlags = HideFlags.HideInHierarchy;
+            isInitialized = true;
         }
+          
+        public static Variable Create(CustomType owner)
+        {
+            var variable = CreateInstance<Variable>();
+            variable.Initialize(owner);
+            return variable;
+        }
+
+        #endregion
+
+        [SerializeField] 
+        public Method getter;
+
+        [SerializeField]
+        public Method setter;
     }
 } 

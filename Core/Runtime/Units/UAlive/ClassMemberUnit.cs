@@ -14,11 +14,11 @@ namespace Lasm.UAlive
         [AllowsNull]
         public ValueInput target;
         [Serialize]
-        public CustomClass macro;
+        public CustomClass Class;
         [Serialize]
         public string memberName;
         [Serialize]
-        public int id = 0;
+        public string _guid;
 
         protected override void Definition()
         {

@@ -65,6 +65,23 @@ namespace Lasm.UAlive
             return null;
         }
 
+        public static bool Changed(ref object refValue, object value, bool assign = true)
+        {
+            var changed = refValue != value;
+            if (assign) refValue = value;
+            return changed;
+        }
+
+        public static bool Changed(this object refValue, object value, Action<object> onValueChanged)
+        {
+            var changed = refValue != value;
+            if (refValue != value)
+            {
+                onValueChanged?.Invoke(value);
+            }
+            return changed;
+        }
+
         /// <summary>
         /// Begins a creation operation.
         /// </summary>

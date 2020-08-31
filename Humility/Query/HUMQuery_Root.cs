@@ -59,7 +59,7 @@ namespace Lasm.UAlive
         /// <param name="onCreated"></param>
         /// <param name="onAdded"></param>
         /// <returns></returns>
-        public static TValue Define<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, Dictionary<TKey, TValue> deserializedDictionary, TKey key, Func<TValue, TValue> onCreated, Action<TValue> onAdded)
+        public static TValue Define<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, Dictionary<TKey, TValue> deserializedDictionary, TKey key, Func<TValue, TValue> onCreated, Action<TValue> exists)
         {
             TValue value = (TValue)typeof(TValue).Default();
 
@@ -69,7 +69,7 @@ namespace Lasm.UAlive
             }
             else
             {
-                onAdded(value);
+                exists(value);
                 value = dictionary[key];
             }
 

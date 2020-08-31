@@ -11,7 +11,7 @@ namespace Lasm.UAlive
     {
         private bool onChangedSet;
         private float buttonPadding => 8;
-        private bool missingContent => unit.macro == null && unit.method == null;
+        private bool missingContent => unit.Class == null && unit.method == null;
 
         public InvokeUnitWidget(FlowCanvas canvas, InvokeUnit unit) : base(canvas, unit)
         {
@@ -26,7 +26,7 @@ namespace Lasm.UAlive
 
         protected override float GetHeaderAddonWidth()
         {
-            return Mathf.Clamp(GUI.skin.label.CalcSize(new GUIContent(unit.method == null ? "   (None Selected)   " : unit.macro?.title + "." + unit.method?.name)).x + buttonPadding, base.GetHeaderAddonWidth(), 400);
+            return Mathf.Clamp(GUI.skin.label.CalcSize(new GUIContent(unit.method == null ? "   (None Selected)   " : unit.Class?.title + "." + unit.method?.name)).x + buttonPadding, base.GetHeaderAddonWidth(), 400);
         }
 
         public override bool foregroundRequiresInput => true;
@@ -36,27 +36,28 @@ namespace Lasm.UAlive
             var buttonText = "(None Selected)";
             if (unit.method != null)
             {
-                buttonText = unit.macro.title + "." + unit.method.name;
+                buttonText = unit.Class.title + "." + unit.method.name;
             }
 
-            if (GUI.Button(position.Add().X(42).Add().Y(23).Set().Height(20).Set().Width(missingContent ? 120 : GUI.skin.label.CalcSize(new GUIContent(unit.macro?.title + "." + unit.method?.name)).x + buttonPadding), buttonText))
+            if (GUI.Button(position.Add().X(42).Add().Y(23).Set().Height(20).Set().Width(missingContent ? 120 : GUI.skin.label.CalcSize(new GUIContent(unit.Class?.title + "." + unit.method?.name)).x + buttonPadding), buttonText))
             {
                 var classes = HUMAssets.Find().Assets().OfType<CustomClass>();
 
                 GenericMenu menu = new GenericMenu();
 
                 for (int i = 0; i < classes.Count; i++)
-                {
+                { 
                     for (int j = 0; j < classes[i].methods.custom.Count; j++)
                     {
                         menu.AddItem(new GUIContent(classes[i].title + "/" + classes[i].methods.custom[j].name), false, (data) =>
                         {
-                            var tuple = (ValueTuple<CustomClass, string, int>)data;
-                            unit.macro = tuple.Item1;
+                            var tuple = (ValueTuple<CustomClass, string, string, Method>)data;
+                            unit.Class = tuple.Item1;
                             unit.memberName = tuple.Item2;
-                            unit.id = tuple.Item3; 
+                            unit._guid = tuple.Item3;
+                            unit.method = tuple.Item4;
                             unit.Define();
-                        }, (classes[i], classes[i].methods.custom[j].name, classes[i].methods.custom[j].id));
+                        }, (classes[i], classes[i].methods.custom[j].name, classes[i].methods.custom[j].entry.declaration.guid, classes[i].methods.custom[j]));
                     }
                 }
 

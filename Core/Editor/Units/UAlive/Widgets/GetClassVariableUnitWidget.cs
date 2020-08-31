@@ -13,7 +13,7 @@ namespace Lasm.UAlive
     {
         private bool onChangedSet;
         private float buttonPadding => 8;
-        private bool missingContent => unit.macro == null && unit.variable == null;
+        private bool missingContent => unit.Class == null && unit.variable == null;
 
         public GetClassVariableUnitWidget(FlowCanvas canvas, GetClassVariableUnit unit) : base(canvas, unit)
         {
@@ -27,7 +27,7 @@ namespace Lasm.UAlive
 
         protected override float GetHeaderAddonWidth()
         {
-            return Mathf.Clamp(GUI.skin.label.CalcSize(new GUIContent(unit.variable == null ? "   (None Selected)   " : unit.macro?.title + "." + unit.variable?.name)).x + buttonPadding, base.GetHeaderAddonWidth(), 400);
+            return Mathf.Clamp(GUI.skin.label.CalcSize(new GUIContent(unit.variable == null ? "   (None Selected)   " : unit.Class?.title + "." + unit.variable?.name)).x + buttonPadding, base.GetHeaderAddonWidth(), 400);
         }
 
         public override bool foregroundRequiresInput => true;
@@ -39,10 +39,10 @@ namespace Lasm.UAlive
             var buttonText = "(None Selected)";
             if (unit.variable != null)
             {
-                buttonText = unit.macro.title + "." + unit.variable.name;
+                buttonText = unit.Class.title + "." + unit.variable.name;
             }
 
-            if (GUI.Button(position.Add().X(42).Add().Y(23).Set().Height(20).Set().Width(missingContent ? 120 : GUI.skin.label.CalcSize(new GUIContent(unit.macro?.title + "." + unit.variable?.name)).x + buttonPadding), buttonText))
+            if (GUI.Button(position.Add().X(42).Add().Y(23).Set().Height(20).Set().Width(missingContent ? 120 : GUI.skin.label.CalcSize(new GUIContent(unit.Class?.title + "." + unit.variable?.name)).x + buttonPadding), buttonText))
             {
                 var classes = HUMAssets.Find().Assets().OfType<CustomClass>();
 
@@ -54,12 +54,13 @@ namespace Lasm.UAlive
                     {
                         menu.AddItem(new GUIContent(classes[i].title + "/" + classes[i].variables.variables[j].name), false, (data) =>
                         {
-                            var tuple = (ValueTuple<CustomClass, string, int>)data;
-                            unit.macro = tuple.Item1;
+                            var tuple = (ValueTuple<CustomClass, string, string, Variable>)data;
+                            unit.Class = tuple.Item1;
                             unit.memberName = tuple.Item2;
-                            unit.id = tuple.Item3;
+                            unit._guid = tuple.Item3;
+                            unit.variable = tuple.Item4;
                             unit.Define();
-                        }, (classes[i], classes[i].variables.variables[j].name, classes[i].variables.variables[j].id));
+                        }, (classes[i], classes[i].variables.variables[j].name, classes[i].variables.variables[j].declaration.guid, classes[i].variables.variables[j]));
                     } 
                 }
 

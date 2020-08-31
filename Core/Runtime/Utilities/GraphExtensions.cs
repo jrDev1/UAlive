@@ -14,7 +14,7 @@ namespace Lasm.UAlive
             {
                 for (int j = 0; j < assets[i].methods.custom.Count; j++)
                 {
-                    var units = assets[i].methods.custom[j].macro.graph.units.ToArrayPooled();
+                    var units = assets[i].methods.custom[j].graph.units.ToArrayPooled();
 
                     for (int unit = 0; unit < units.Length; unit++)
                     {
@@ -31,7 +31,7 @@ namespace Lasm.UAlive
             {
                 for (int j = 0; j < assets[i].methods.custom.Count; j++)
                 {
-                    var units = assets[i].methods.custom[j].macro.graph.units.Where((u) => { return u.GetType() == typeof(T); }).ToArrayPooled();
+                    var units = assets[i].methods.custom[j].graph.units.Where((u) => { return u.GetType() == typeof(T); }).ToArrayPooled();
                     for (int unit = 0; unit < units.Length; unit++)
                     {
                         units[unit].Define();

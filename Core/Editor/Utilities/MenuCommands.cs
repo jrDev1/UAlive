@@ -32,23 +32,22 @@ namespace Lasm.UAlive
         [MenuItem("Assets/Create/UAlive/Custom Class", priority = 0)]
         public static void CreateClass()
         {
-            var macro = TypeExtensions.CreateAsset<CustomClass>();
-            macro.Define();
-            Selection.activeObject = macro;
+            CustomClass @class = null;
+            @class = TypeExtensions.CreateAsset<CustomClass>();
         }
 
         [MenuItem("Assets/Create/UAlive/Custom Enum", priority = 0)]
         private static void CreateEnum()
         {
-            var macro = TypeExtensions.CreateAsset<CustomEnum>();
-            Selection.activeObject = macro;
+            CustomEnum @enum = null;
+            @enum = TypeExtensions.CreateAsset<CustomEnum>();
         }
 
         [MenuItem("Assets/Create/UAlive/Custom Interface", priority = 0)]
         public static void CreateInterface()
         {
-            var macro = TypeExtensions.CreateAsset<CustomInterface>();
-            Selection.activeObject = macro;
+            CustomInterface @interface = null;
+            @interface = TypeExtensions.CreateAsset<CustomInterface>();
         }
 
     }
