@@ -1,5 +1,6 @@
 ﻿using Bolt;
 using Ludiq;
+using System;
 using System.Linq;
 using UnityEngine;
 
@@ -8,13 +9,14 @@ namespace Lasm.UAlive
     [UnitTitle("Set Class Variable")]
     [UnitOrder(100)]
     [UnitCategory("Variables")]
+    [Serializable]
     public sealed class SetClassVariableUnit : ClassVariableUnit
     {
         [Serialize]
         [Inspectable]
         public bool chain;
 
-        [Serialize]
+        [SerializeField] 
         public Variable variable;
 
         [DoNotSerialize]
@@ -44,7 +46,7 @@ namespace Lasm.UAlive
             if (chain) chainTarget = ValueOutput<IUAClass>("chain", (flow) => { return flow.GetValue<IUAClass>(target); });
 
             if (variable != null)
-            { 
+            {
                 value = ValueInput(variable.declaration.type, "value");
             }
 
@@ -61,7 +63,7 @@ namespace Lasm.UAlive
                     _target = (IUAClass)flow.variables.Get("#secret_uaclass_instance");
                 }
 
-                _target.Class.Set(memberName, flow.GetValue(value, variable.declaration.type));
+                _target.Class.Set(variable.name, flow.GetValue(value, variable.declaration.type));
                 return exit;
             });
 

@@ -15,10 +15,6 @@ namespace Lasm.UAlive
         public ValueInput target;
         [Serialize]
         public CustomClass Class;
-        [Serialize]
-        public string memberName;
-        [Serialize]
-        public string _guid;
 
         protected override void Definition()
         {

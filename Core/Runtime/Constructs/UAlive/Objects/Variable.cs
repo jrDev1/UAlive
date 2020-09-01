@@ -9,12 +9,12 @@ namespace Lasm.UAlive
     [Serializable]
     public sealed class Variable : LudiqScriptableObject, IUnityInitializable
     {
-        [Serialize]
+        [SerializeReference] 
         public VariableDeclaration declaration = new VariableDeclaration();
 
         #region Initialization
-
-        [SerializeField]
+         
+        [Serialize]
         private bool _isInitialized;
         public bool isInitialized { get => _isInitialized; private set => _isInitialized = value; }
 
@@ -30,7 +30,7 @@ namespace Lasm.UAlive
             getter.hideFlags = HideFlags.HideInHierarchy;
             setter.hideFlags = HideFlags.HideInHierarchy;
             isInitialized = true;
-        }
+        } 
           
         public static Variable Create(CustomType owner)
         {
@@ -41,10 +41,10 @@ namespace Lasm.UAlive
 
         #endregion
 
-        [SerializeField] 
+        [Serialize] 
         public Method getter;
 
-        [SerializeField]
+        [Serialize]
         public Method setter;
     }
 } 

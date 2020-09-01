@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Ludiq;
 using Bolt;
 using System.Linq;
+using System;
 
 namespace Lasm.UAlive
 {
@@ -130,7 +131,7 @@ namespace Lasm.UAlive
                                         startSeparator = false;
                                     }
                                     var key = keys[i];
-                                    menu.AddItem(new GUIContent(key), false, (obj) => { tempOverrides[(string)obj].entry.declaration.isOverridden = true; _target.Define(); }, key);
+                                    menu.AddItem(new GUIContent(key), false, (obj) => { tempOverrides[(string)obj].entry.declaration.isOverridden = true; }, key);
                                     if (keys[i] == "OnGUI") startSeparator = true;
                                 }
 
@@ -192,11 +193,11 @@ namespace Lasm.UAlive
                     if (GUILayout.Button("+ New Method"))
                     {
                         var meth = Method.Create(_target);
-                        AssetDatabase.AddObjectToAsset(meth, _target);
                         methodsVal.Add(meth);
-                        _target.Define();
+                        AssetDatabase.AddObjectToAsset(meth, _target);
                         AssetDatabase.SaveAssets();
                         AssetDatabase.Refresh();
+                        _target.Define();
                     }
                 });
             });
@@ -224,6 +225,7 @@ namespace Lasm.UAlive
                         {
                             var variable = variables["variables"][i];
                             var variableVal = (Variable)variable.value;
+                            Debug.Log(variableVal.name + " : " + variableVal.declaration.type);
 
                             HUMEditor.Vertical(() =>
                                 {
@@ -237,7 +239,7 @@ namespace Lasm.UAlive
                                         GUILayout.Label(GUIContent.none, new GUIStyle() { fixedWidth = 4 });
 
                                         HUMEditor.Vertical(() =>
-                                        {
+                                        { 
                                             LudiqGUI.InspectorLayout(variable["declaration"]["type"], GUIContent.none);
                                         });
 

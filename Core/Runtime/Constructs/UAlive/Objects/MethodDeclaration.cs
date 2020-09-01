@@ -12,10 +12,6 @@ namespace Lasm.UAlive
         #region Assets
 
         [Serialize]
-        private Method _method;
-        public Method method => _method = _method ?? AssetDatabase.LoadAssetAtPath<Method>(AssetDatabase.GUIDToAssetPath(guid));
-
-        [Serialize]
         public string guid;
 
         [Serialize]
@@ -55,7 +51,7 @@ namespace Lasm.UAlive
         [Serialize]
         public ParameterDeclaration[] parameters;
 
-        [Serialize]
+        [Serialize] 
         public bool isMagic;
 
         [Serialize]
@@ -63,9 +59,9 @@ namespace Lasm.UAlive
 
         [Serialize]
         public bool isOverridden;
-
+          
         public event Action changed = () => { };
-
+         
         public MethodDeclaration() { }
 
         public MethodDeclaration(string name, AccessModifier scope, MethodModifier modifier, Type type, ParameterDeclaration[] parameters, bool isMagic = false)
@@ -91,45 +87,6 @@ namespace Lasm.UAlive
             isOverridden = other.isOverridden;
         }
 
-        public static bool operator ==(MethodDeclaration original, MethodDeclaration other)
-        {
-            if (original.name != other.name) return false;
-            if (original.type != other.type) return false;
-            if (original.isMagic != other.isMagic) return false;
-            if (original.modifier != other.modifier) return false;
-            if (original.scope != other.scope) return false;
-            if (original.parameters.Length != other.parameters.Length) return false;
-            for (int i = 0; i < original.parameters.Length; i++)
-            {
-                if (original.parameters[i] != other.parameters[i]) return false;
-            }
-            return true;
-        }
-
-        public static bool operator !=(MethodDeclaration original, MethodDeclaration other)
-        {
-            if (original.name != other.name) return true;
-            if (original.type != other.type) return true;
-            if (original.isMagic != other.isMagic) return true;
-            if (original.modifier != other.modifier) return true;
-            if (original.scope != other.scope) return true;
-            if (original.parameters.Length != other.parameters.Length) return true;
-            for (int i = 0; i < original.parameters.Length; i++)
-            {
-                if (original.parameters[i] != other.parameters[i]) return true;
-            }
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
         #endregion
     }
 }

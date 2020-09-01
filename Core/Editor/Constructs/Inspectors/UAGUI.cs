@@ -5,7 +5,7 @@ using Bolt;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+ 
 namespace Lasm.UAlive
 {
     public static class UAGUI
@@ -15,7 +15,7 @@ namespace Lasm.UAlive
             var _method = ((Method)method.value);
             HUMEditor.Horizontal(() => 
             {
-                HUMEditor.Horizontal().Box(HUMEditorColor.DefaultEditorBackground, Styles.borderColor, new RectOffset(0, 0, 0, 0), new RectOffset(1, 1, 1, 1), () =>
+                HUMEditor.Horizontal().Box(HUMEditorColor.DefaultEditorBackground, Styles.borderColor, new RectOffset(2,2,2,2), new RectOffset(1, 1, 1, 1), () =>
                 {
                     if (_method.entry.declaration.isMagic)
                     {
@@ -27,7 +27,7 @@ namespace Lasm.UAlive
                                     background = Images.special_16
                                 }
                             },
-                            GUILayout.Width(32), GUILayout.Height(32));
+                            GUILayout.Width(16), GUILayout.Height(16));
                     }
 
                     EditorGUILayout.LabelField(GUIContent.none, GUILayout.Width(100));

@@ -16,7 +16,7 @@ namespace Lasm.UAlive
 
         private static void DelayInitialize()
         {
-            HUMFlow.AfterTicks(ref ticks, 4, afterTicks: () =>
+            HUMFlow.AfterTicks(ref ticks, 2, afterTicks: () =>
             {
                 var macros = HUMAssets.Find().Assets().OfType<IDefinable>();
                 for (int i = 0; i < macros.Count; i++)

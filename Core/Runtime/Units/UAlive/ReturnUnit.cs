@@ -39,11 +39,8 @@ namespace Lasm.UAlive
 
         public ControlOutput Return(Flow flow) 
         {
-            if (entry.declaration.method != null)
-            {
-                if (entry.declaration.type != null && entry.declaration.type != typeof(Lasm.UAlive.Void) && entry.declaration.type != typeof(void)) entry.returnMethod(flow.GetValue<object>(value));
-            }
-
+            if (entry.declaration.type != null && entry.declaration.type != typeof(Lasm.UAlive.Void) && entry.declaration.type != typeof(void)) entry.returnMethod(flow.GetValue<object>(value));
+              
             return null;  
         }
 

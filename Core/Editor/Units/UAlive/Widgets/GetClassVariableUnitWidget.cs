@@ -52,12 +52,12 @@ namespace Lasm.UAlive
                 {
                     for (int j = 0; j < classes[i].variables.variables.Count; j++)
                     {
+                        Debug.Log(classes[i].variables.variables[j].name + " : " + classes[i].variables.variables[j].declaration.type);
+
                         menu.AddItem(new GUIContent(classes[i].title + "/" + classes[i].variables.variables[j].name), false, (data) =>
                         {
                             var tuple = (ValueTuple<CustomClass, string, string, Variable>)data;
                             unit.Class = tuple.Item1;
-                            unit.memberName = tuple.Item2;
-                            unit._guid = tuple.Item3;
                             unit.variable = tuple.Item4;
                             unit.Define();
                         }, (classes[i], classes[i].variables.variables[j].name, classes[i].variables.variables[j].declaration.guid, classes[i].variables.variables[j]));

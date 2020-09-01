@@ -16,7 +16,7 @@ namespace Lasm.UAlive
 
         public override string GetDefaultName()
         {
-            return "New Custom Class";
+            return "Custom Class " + this.GetInstanceID().ToString().Replace("-", string.Empty);
         }
 
         [Serialize]
@@ -88,6 +88,11 @@ namespace Lasm.UAlive
             }
 
             UnityMethods();
+
+            for (int i = 0; i < variables.variables.Count; i++)
+            {
+                variables.variables[i].declaration.Changed();
+            }
         }
 
         public void Refresh()
@@ -114,6 +119,10 @@ namespace Lasm.UAlive
             if (MagicMethods.TryAddEditorWindow(methods, this, inheritance)) return;
         }
 
+        private void OnDisable()
+        {
+            DeserializationRoutine.Disable();
+        }
         #endregion
 
     }

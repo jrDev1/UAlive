@@ -56,7 +56,7 @@ namespace Lasm.UAlive
             }
             current[key] = item;
             return item;
-        } 
+        }
 
         public void Undefine(ref bool removed, Action<TValue> onRemoved)
         {
@@ -67,7 +67,8 @@ namespace Lasm.UAlive
             {
                 if (i > 0 && !removed) break;
                 {
-                    current.Undefine(previous, (val)=> {
+                    current.Undefine(previous, (val) =>
+                    {
                         _removed = true;
                         onRemoved(val);
                     });

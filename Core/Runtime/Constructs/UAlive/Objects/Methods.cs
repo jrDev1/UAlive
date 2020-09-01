@@ -13,10 +13,10 @@ namespace Lasm.UAlive
     {
         #region Definition
 
-        [Serialize]
-        public DefinedDictionary<string, Method> overrides = new DefinedDictionary<string, Method>();
-
-        [Serialize]
+        [OdinSerialize]
+        public MethodDictionary overrides = new MethodDictionary();
+        
+        [OdinSerialize]
         public List<Method> custom = new List<Method>();
 
         public event Action definitionChanged = () => { };
@@ -132,9 +132,11 @@ namespace Lasm.UAlive
                     _method.entry.declaration.modifier = declaration.modifier;
                     _method.name = declaration.name;
                     _method.entry.declaration.isMagic = false;
+                    _method.entry.declaration.isOverridden = false;
+                    _method.entry.declaration.hasOptionalOverride = false;
                     _method.hideFlags = HideFlags.HideInHierarchy;
                     _method.entry.declaration.type = declaration.type;
-                    _method.entry.Define();
+                    _method.entry.Define(); 
                 }
             }
 

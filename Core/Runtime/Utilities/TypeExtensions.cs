@@ -11,7 +11,7 @@ namespace Lasm.UAlive
         {
             var macro = ScriptableObject.CreateInstance<T>();
             macro.title = macro.GetDefaultName();
-            AssetDatabase.CreateAsset(macro, HUMAssets.ProjectWindowPath() + "/" + macro.title.Nice() + ".asset");
+            AssetDatabase.CreateAsset(macro, HUMAssets.ProjectWindowPath() + "/" + macro.GetDefaultName() + ".asset");
             var definable = macro as IDefinable;
             if (definable != null) definable.Define();
             return macro;

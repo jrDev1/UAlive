@@ -43,7 +43,7 @@ namespace Lasm.UAlive
         }
 
         #endregion
-
+         
         public void Invoke(IUAClass @class, Action<object> returnMethod, params object[] parameters)
         {
             entry.returnMethod = returnMethod;

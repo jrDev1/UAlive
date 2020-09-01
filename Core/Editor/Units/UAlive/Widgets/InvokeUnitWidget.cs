@@ -53,8 +53,6 @@ namespace Lasm.UAlive
                         {
                             var tuple = (ValueTuple<CustomClass, string, string, Method>)data;
                             unit.Class = tuple.Item1;
-                            unit.memberName = tuple.Item2;
-                            unit._guid = tuple.Item3;
                             unit.method = tuple.Item4;
                             unit.Define();
                         }, (classes[i], classes[i].methods.custom[j].name, classes[i].methods.custom[j].entry.declaration.guid, classes[i].methods.custom[j]));
