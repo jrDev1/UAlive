@@ -27,7 +27,6 @@ namespace Lasm.UAlive
 
             if (variable?.declaration?.type != null)
             {
-                Debug.Log(variable.declaration.type);
                 value = ValueOutput(variable.declaration.type, "value", (flow) =>
                 {
                      IUAClass _target;
