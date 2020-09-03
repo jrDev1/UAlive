@@ -69,12 +69,13 @@ namespace Lasm.UAlive
             }
             else
             {
-                exists(value);
-                value = dictionary[key];
+                value = deserializedDictionary[key];
+                dictionary.Add(key, value);
+                exists?.DynamicInvoke(value);
             }
 
-            return value;
-        }
+            return value; 
+        } 
 
         /// <summary>
         /// Removes all unused values from one dictionary, that don't exist in another.

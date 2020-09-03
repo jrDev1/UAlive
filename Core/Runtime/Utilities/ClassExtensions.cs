@@ -22,7 +22,7 @@ namespace Lasm.UAlive
         {
             if (isOverride)
             {
-                @class.Class.macro.methods.overrides[name].Invoke(@class, returnMethod, parameters);
+                @class.Class.macro.methods.overrides.current[name].Invoke(@class, returnMethod, parameters);
                 return;
             }
 

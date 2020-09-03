@@ -1,6 +1,8 @@
 ﻿using Lasm.OdinSerializer;
 using Ludiq;
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using UnityEditor;
 
 namespace Lasm.UAlive
@@ -9,16 +11,6 @@ namespace Lasm.UAlive
     [Inspectable]
     public sealed class MethodDeclaration : ICopy<MethodDeclaration>
     {
-        #region Assets
-
-        [Serialize]
-        public string guid;
-
-        [Serialize]
-        public string classGUID;
-
-        #endregion
-
         [Serialize]  
         [Inspectable(order = 0)]
         public string name;
@@ -55,16 +47,25 @@ namespace Lasm.UAlive
         public bool isMagic;
 
         [Serialize]
-        public bool hasOptionalOverride;
+        public bool hasOptionalOverride => modifier == MethodModifier.Abstract 
+            || (modifier == MethodModifier.Override && modifier != MethodModifier.Sealed) 
+            || modifier == MethodModifier.Virtual || isMagic;
 
         [Serialize]
         public bool isOverridden;
-          
+
+        public bool isAbstract;
+
         public event Action changed = () => { };
+
+        public void Changed()
+        {
+            changed();
+        }
          
         public MethodDeclaration() { }
 
-        public MethodDeclaration(string name, AccessModifier scope, MethodModifier modifier, Type type, ParameterDeclaration[] parameters, bool isMagic = false)
+        public MethodDeclaration(string name, AccessModifier scope, MethodModifier modifier, Type type, ParameterDeclaration[] parameters, bool isMagic = false, bool isAbstract = false)
         {
             this.name = name;
             this.scope = scope;
@@ -72,6 +73,19 @@ namespace Lasm.UAlive
             this.type = type;
             this.isMagic = isMagic;
             this.parameters = parameters;
+            this.isAbstract = isAbstract;
+        }
+
+        public static MethodDeclaration FromReflected(MethodInfo methodInfo)
+        {
+            List<ParameterDeclaration> parameters = new List<ParameterDeclaration>();
+
+            foreach (ParameterInfo parameter in methodInfo.GetParameters())
+            {
+                parameters.Add(new ParameterDeclaration(parameter.Name, parameter.ParameterType));
+            }
+
+            return new MethodDeclaration(methodInfo.Name, methodInfo.GetScope(), methodInfo.GetModifier(), methodInfo.ReturnType, parameters.ToArray(), isAbstract: methodInfo.IsAbstract);
         }
 
         #region Copy
@@ -83,8 +97,18 @@ namespace Lasm.UAlive
             modifier = other.modifier;
             type = other.type;
             isMagic = other.isMagic;
-            hasOptionalOverride = other.hasOptionalOverride;
-            isOverridden = other.isOverridden;
+            pure = other.pure;
+            isAbstract = other.isAbstract;
+            changed = other.changed;
+
+            var newParams = new List<ParameterDeclaration>();
+
+            for (int i = 0; i < other.parameters.Length; i++)
+            {
+                newParams.Add(other.parameters[i]);
+            }
+
+            parameters = newParams.ToArray();
         }
 
         #endregion

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Lasm.UAlive
@@ -81,15 +82,15 @@ namespace Lasm.UAlive
 
         public static List<T> OfType<T>(this HUMAssets.Data.Assets assets) where T : class
         {
-            var assetIds = UnityEditor.AssetDatabase.FindAssets("t:" + typeof(T).FullName);
+            var assetIds = UnityEditor.AssetDatabase.FindAssets("t:" + typeof(UnityEngine.Object));
             var assetsList = new List<T>();
 
             foreach (string assetId in assetIds)
             {
                 var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(UnityEditor.AssetDatabase.GUIDToAssetPath(assetId)) as T;
-                assetsList.Add(asset);
+                if (asset != null) assetsList.Add(asset);
             }
-
+              
             return assetsList;
         }
 

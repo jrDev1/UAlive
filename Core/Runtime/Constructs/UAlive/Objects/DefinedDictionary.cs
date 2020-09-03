@@ -2,21 +2,36 @@
 using Ludiq;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Lasm.UAlive
 {
     [Serializable]
     public class DefinedDictionary<TKey, TValue>
     {
-        [OdinSerialize]
+        [Serialize]
         public Dictionary<TKey, TValue> previous = new Dictionary<TKey, TValue>();
-        [OdinSerialize]
+        [Serialize] 
         public Dictionary<TKey, TValue> current = new Dictionary<TKey, TValue>();
-
-        public TValue this[TKey key]
+        
+        public void DebugCurrent()
         {
-            get { return current[key]; }
-            set { current[key] = value; }
+            var keys = Keys().ToListPooled();
+
+            for (int i = 0; i < keys.Count; i++)
+            {
+                Debug.Log(current[keys[i]]);
+            }
+        }
+
+        public void DebugPrevious()
+        {
+            var keys = Keys().ToListPooled();
+
+            for (int i = 0; i < keys.Count; i++)
+            {
+                Debug.Log(current[keys[i]]);
+            }
         }
 
         public void Add(TKey key, TValue value)
@@ -51,11 +66,10 @@ namespace Lasm.UAlive
             var item = current.Define(previous, key, onCreate, exists);
             if (!current.ContainsKey(key))
             {
-                current.Add(key, (TValue)typeof(TValue).Default());
                 defined = true;
             }
-            current[key] = item;
-            return item;
+            Add(key, item);
+            return item; 
         }
 
         public void Undefine(ref bool removed, Action<TValue> onRemoved)

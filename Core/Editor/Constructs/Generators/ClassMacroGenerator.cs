@@ -63,7 +63,7 @@ namespace Lasm.UAlive
 
             for (int i = 0; i < keys.Length; i++)
             { 
-                var nest = decorated.methods.overrides[keys[i]]; 
+                var nest = decorated.methods.overrides.current[keys[i]]; 
                 if (CanAddMethod(nest))
                 {
                     var method = nest.entry.declaration.type.Is().Void() ? 

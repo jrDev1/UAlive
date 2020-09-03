@@ -28,8 +28,6 @@ namespace Lasm.UAlive
         public void Initialize(CustomType owner, object data = null)
         {
             entry.@class = owner as CustomClass;
-            entry.declaration.classGUID = entry.@class.GetGUID();
-            entry.declaration.guid = this.GetGUID();
             this.hideFlags = HideFlags.HideInHierarchy;
             graph.units.Add(entry);
             if (data != null) entry.returnMethod = data as Action<object>;
@@ -38,6 +36,7 @@ namespace Lasm.UAlive
         public static Method Create(CustomType owner, Action<object> returnMethod = null)
         {
             var method = ScriptableObject.CreateInstance<Method>();
+            AssetDatabase.AddObjectToAsset(method, owner);
             method.Initialize(owner, returnMethod);
             return method;    
         }

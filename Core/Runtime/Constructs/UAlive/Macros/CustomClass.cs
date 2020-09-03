@@ -36,6 +36,8 @@ namespace Lasm.UAlive
 
         public event Action definitionChanged = () => { };
         public event Action refreshed = () => { };
+        private bool created = false;
+        public Action onCreate { get; set; }
 
         public bool changed => methods.changed;
 
@@ -70,25 +72,23 @@ namespace Lasm.UAlive
 
         private void Definition()
         {
+            // Define all overrides based on data from the reflected Method Info.
             foreach (MethodInfo method in inheritance.type.GetMethods())
             {
                 if (method.Overridable())
                 {
-                    List<ParameterDeclaration> methodParams = new List<ParameterDeclaration>();
-
-                    foreach (ParameterInfo parameter in method.GetParameters())
-                    {
-                        methodParams.Add(new ParameterDeclaration(parameter.Name, parameter.ParameterType));
-                    }
-
-                    var modifier = method.GetModifier() == MethodModifier.Abstract || method.GetModifier() == MethodModifier.Virtual ? MethodModifier.Override : method.GetModifier();
-                    var meth = methods.TryCreateMethod(this, new MethodDeclaration(method.Name, method.GetScope(), modifier, method.ReturnType, methodParams.ToArray()));
-                    if (method.IsVirtual) meth.entry.declaration.hasOptionalOverride = true;
+                    var _method = methods.SetMethod(this, MethodDeclaration.FromReflected(method));
+                    if (method.IsAbstract) _method.entry.declaration.isOverridden = true;
                 }
             }
 
-            UnityMethods();
+            // Add all special methods for different UnityEngine.Object types that have special "Magic" methods. Aka Messages.
+            if (MagicMethods.TryAddMonoBehaviour(methods, this, inheritance)) return;
+            if (MagicMethods.TryAddScriptableObject(methods, this, inheritance)) return;
+            if (MagicMethods.TryAddEditorWindow(methods, this, inheritance)) return;
 
+            // Ensures all the variables of this class have notified observers that they have changed.
+            // Generally we end up invoking the Define behaviour on all units to ensure the data is shown.
             for (int i = 0; i < variables.variables.Count; i++)
             {
                 variables.variables[i].declaration.Changed();
@@ -111,14 +111,7 @@ namespace Lasm.UAlive
 #endif
 
         #region Messages
-
-        private void UnityMethods()
-        {
-            if (MagicMethods.TryAddMonoBehaviour(methods, this, inheritance)) return;
-            if (MagicMethods.TryAddScriptableObject(methods, this, inheritance)) return;
-            if (MagicMethods.TryAddEditorWindow(methods, this, inheritance)) return;
-        }
-
+        
         private void OnDisable()
         {
             DeserializationRoutine.Disable();

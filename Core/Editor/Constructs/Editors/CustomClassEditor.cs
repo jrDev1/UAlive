@@ -159,7 +159,7 @@ namespace Lasm.UAlive
 
                     for (int i = 0; i < methodsVal.Count; i++)
                     {
-                        if (i != 0) GUILayout.Space(2);  
+                        if (i != 0) GUILayout.Space(2);
 
                         HUMEditor.Vertical().Box(Styles.backgroundColor.Brighten(0.075f), Styles.borderColor, new RectOffset(4, 4, 4, 2), new RectOffset(1, 1, 1, 1), () =>
                         {
@@ -194,7 +194,6 @@ namespace Lasm.UAlive
                     {
                         var meth = Method.Create(_target);
                         methodsVal.Add(meth);
-                        AssetDatabase.AddObjectToAsset(meth, _target);
                         AssetDatabase.SaveAssets();
                         AssetDatabase.Refresh();
                         _target.Define();
@@ -225,44 +224,43 @@ namespace Lasm.UAlive
                         {
                             var variable = variables["variables"][i];
                             var variableVal = (Variable)variable.value;
-                            Debug.Log(variableVal.name + " : " + variableVal.declaration.type);
 
                             HUMEditor.Vertical(() =>
+                            {
+                                HUMEditor.Horizontal(() =>
                                 {
-                                    HUMEditor.Horizontal(() =>
+                                    HUMEditor.Vertical(() =>
                                     {
-                                        HUMEditor.Vertical(() =>
-                                        {
-                                            LudiqGUI.InspectorLayout(variable["name"], GUIContent.none);
-                                        });
-
-                                        GUILayout.Label(GUIContent.none, new GUIStyle() { fixedWidth = 4 });
-
-                                        HUMEditor.Vertical(() =>
-                                        { 
-                                            LudiqGUI.InspectorLayout(variable["declaration"]["type"], GUIContent.none);
-                                        });
-
-                                        if (GUILayout.Button("-", GUILayout.Width(16), GUILayout.Height(14)))
-                                        {
-                                            variablesVal.variables.Remove(variableVal);
-                                            variableVal.declaration.Changed();
-                                            AssetDatabase.RemoveObjectFromAsset(variableVal.getter);
-                                            AssetDatabase.RemoveObjectFromAsset(variableVal.setter);
-                                            AssetDatabase.RemoveObjectFromAsset(variableVal);
-                                            AssetDatabase.SaveAssets();
-                                            AssetDatabase.Refresh();
-                                            _target.Define();
-                                        }
+                                        LudiqGUI.InspectorLayout(variable["name"], GUIContent.none);
                                     });
 
-                                    GUILayout.Space(2);
+                                    GUILayout.Label(GUIContent.none, new GUIStyle() { fixedWidth = 4 });
 
                                     HUMEditor.Vertical(() =>
                                     {
-                                        LudiqGUI.InspectorLayout(variable["declaration"]["defaultValue"].Cast(variableVal.declaration.type), GUIContent.none);
+                                        LudiqGUI.InspectorLayout(variable["declaration"]["type"], GUIContent.none);
                                     });
+
+                                    if (GUILayout.Button("-", GUILayout.Width(16), GUILayout.Height(14)))
+                                    {
+                                        variablesVal.variables.Remove(variableVal);
+                                        variableVal.declaration.Changed();
+                                        AssetDatabase.RemoveObjectFromAsset(variableVal.getter);
+                                        AssetDatabase.RemoveObjectFromAsset(variableVal.setter);
+                                        AssetDatabase.RemoveObjectFromAsset(variableVal);
+                                        AssetDatabase.SaveAssets();
+                                        AssetDatabase.Refresh();
+                                        _target.Define();
+                                    }
                                 });
+
+                                GUILayout.Space(2);
+
+                                HUMEditor.Vertical(() =>
+                                {
+                                    LudiqGUI.InspectorLayout(variable["declaration"]["defaultValue"].Cast(variableVal.declaration.type), GUIContent.none);
+                                });
+                            });
 
                             GUILayout.Space(2);
                         });
@@ -272,9 +270,6 @@ namespace Lasm.UAlive
                     {
                         var variable = Variable.Create(_target);
                         variablesVal.variables.Add(variable);
-                        AssetDatabase.AddObjectToAsset(variable, _target);
-                        AssetDatabase.AddObjectToAsset(variable.getter, _target);
-                        AssetDatabase.AddObjectToAsset(variable.setter, _target);
                         _target.Define();
                     }
                 });

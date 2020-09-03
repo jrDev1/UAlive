@@ -8,7 +8,7 @@ namespace Lasm.UAlive
     [Serializable]
     [Inspectable]
     [InspectorLabel(null)]
-    public sealed class ParameterDeclaration
+    public sealed class ParameterDeclaration : ICopy<ParameterDeclaration>
     {
         [Inspectable]
         public string name = "Parameter" + new object().GetHashCode().ToString().Replace("-", string.Empty);
@@ -68,28 +68,11 @@ namespace Lasm.UAlive
             return results.ToArray();
         }
 
-        public static bool operator ==(ParameterDeclaration original, ParameterDeclaration other)
+        public void Copy(ParameterDeclaration other)
         {
-            if (original.name != other.name) return false;
-            if (original.type != other.type) return false;
-            return true;
-        }
-
-        public static bool operator !=(ParameterDeclaration original, ParameterDeclaration other)
-        {
-            if (original.name != other.name) return true;
-            if (original.type != other.type) return true;
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
+            type = other._type;
+            name = other.name;
+            changed = other.changed;
         }
     }
 }

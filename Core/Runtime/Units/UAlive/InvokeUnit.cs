@@ -138,15 +138,5 @@ namespace Lasm.UAlive
                 method.entry.onChanged -= Define;
             }
         }
-
-        public Method FindWithGUID(string guid)
-        {
-            if (Class.methods.custom.Any((method) => { return method.entry.declaration.guid == guid && !string.IsNullOrEmpty(guid); }))
-            {
-                return Class.methods.custom.Single((method) => { return method.entry.declaration.guid == guid && !string.IsNullOrEmpty(guid); });
-            }
-
-            return null;
-        }
     }
 }

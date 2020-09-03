@@ -36,13 +36,14 @@ namespace Lasm.UAlive
 
         [Serialize]
         public List<ReturnUnit> returns = new List<ReturnUnit>();
-
         
         public event Action onChanged = () => { };
 
         public void Changed()
         {
+            DefineReturns();
             onChanged?.Invoke();
+            declaration?.Changed();
         }
 
         protected override void Definition()
@@ -58,8 +59,8 @@ namespace Lasm.UAlive
             if (declaration.parameters?.Length > 0)
             {
                 for (int i = 0; i < declaration.parameters.Length; i++)
-                {
-                    if (string.IsNullOrEmpty(declaration.parameters[i].name))
+                { 
+                    if (!string.IsNullOrEmpty(declaration.parameters[i].name))
                     {
                         var output = ValueOutput(declaration.parameters[i].type, declaration.parameters[i].name);
                         _outputs.Add(output);
@@ -67,8 +68,7 @@ namespace Lasm.UAlive
                 }
             }
 
-            DefineReturns();
-            onChanged?.Invoke();
+            Changed();
         }
 
         public void DefineReturns()
@@ -83,6 +83,16 @@ namespace Lasm.UAlive
         {
             returns.Add(returnUnit);
             DefineReturns();
+        }
+
+        protected override void AfterDefine()
+        {
+            if (declaration != null) declaration.changed += Define;
+        }
+
+        protected override void BeforeUndefine()
+        {
+            if (declaration != null) declaration.changed -= Define;
         }
     }
 }

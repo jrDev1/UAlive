@@ -14,7 +14,7 @@ namespace Lasm.UAlive
             AssetDatabase.CreateAsset(macro, HUMAssets.ProjectWindowPath() + "/" + macro.GetDefaultName() + ".asset");
             var definable = macro as IDefinable;
             if (definable != null) definable.Define();
-            return macro;
+            return macro; 
         }
     }
 }
