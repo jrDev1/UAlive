@@ -18,7 +18,7 @@ namespace Lasm.UAlive
 
         public string name = "Variable " + new object().GetHashCode().ToString();
           
-        [SerializeReference]
+        [Serialize]
         public Type _type = typeof(object); 
         public Type type 
         {

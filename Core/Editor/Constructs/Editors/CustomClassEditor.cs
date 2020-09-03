@@ -108,6 +108,7 @@ namespace Lasm.UAlive
                                     }
 
                                     UAGUI.MethodOverride(overrides.ValueMetadata(i), new GUIContent(_name));
+                                    if (i < overrides.Count - 1) EditorGUILayout.Space(2);
                                 }
                                 else
                                 {
@@ -116,7 +117,7 @@ namespace Lasm.UAlive
                                 }
                             }
 
-                            GUILayout.Space(6);
+                            GUILayout.Space(2);
 
                             if (GUILayout.Button("+ Message"))
                             {
@@ -269,6 +270,7 @@ namespace Lasm.UAlive
                     if (GUILayout.Button("+ New Variable"))
                     {
                         var variable = Variable.Create(_target);
+                        AssetDatabase.AddObjectToAsset(variable, _target);
                         variablesVal.variables.Add(variable);
                         _target.Define();
                     }

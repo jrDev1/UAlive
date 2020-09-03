@@ -13,7 +13,7 @@ namespace Lasm.UAlive
     {
         #region Definition
 
-        [SerializeReference]
+        [Serialize]
         public MethodDictionary overrides = new MethodDictionary();
 
         [OdinSerialize]

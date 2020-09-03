@@ -15,7 +15,7 @@ namespace Lasm.UAlive
             var _method = ((Method)method.value);
             HUMEditor.Horizontal(() =>
             {
-                HUMEditor.Horizontal().Box(HUMEditorColor.DefaultEditorBackground, Styles.borderColor, new RectOffset(2, 2, 2, 2), new RectOffset(1, 1, 1, 1), () =>
+                HUMEditor.Horizontal().Box(HUMEditorColor.DefaultEditorBackground.Darken(0.075f), Styles.borderColor, new RectOffset(2, 2, 2, 2), new RectOffset(1, 1, 1, 1), () =>
                    {
                        if (_method.entry.declaration.isMagic)
                        {

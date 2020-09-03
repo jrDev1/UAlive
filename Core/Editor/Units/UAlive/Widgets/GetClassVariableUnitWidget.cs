@@ -40,7 +40,7 @@ namespace Lasm.UAlive
             if (unit.variable != null)
             {
                 buttonText = unit.Class.title + "." + unit.variable.name;
-            }  
+            } 
 
             if (GUI.Button(position.Add().X(42).Add().Y(23).Set().Height(20).Set().Width(missingContent ? 120 : GUI.skin.label.CalcSize(new GUIContent(unit.Class?.title + "." + unit.variable?.name)).x + buttonPadding), buttonText))
             {
@@ -64,6 +64,6 @@ namespace Lasm.UAlive
 
                 menu.ShowAsContext();
             }
-        }
+        } 
     }
 }
