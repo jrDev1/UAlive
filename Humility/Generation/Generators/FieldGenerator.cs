@@ -50,10 +50,11 @@ namespace Lasm.UAlive
         public override string Generate(int indent)
         {
             var _attributes = string.Empty;
+            var count = 0;
 
             foreach (AttributeGenerator attr in attributes)
             {
-                _attributes += attr.Generate(indent) + "\n";
+                _attributes += attr.Generate(indent) + ((count < attributes.Count - 1) ? "\n" : string.Empty);
             }
 
             var modSpace = (modifier == FieldModifier.None) ? string.Empty : " ";

@@ -36,7 +36,6 @@ namespace Lasm.UAlive
 
         public event Action definitionChanged = () => { };
         public event Action refreshed = () => { };
-        private bool created = false;
         public Action onCreate { get; set; }
 
         public bool changed => methods.changed;

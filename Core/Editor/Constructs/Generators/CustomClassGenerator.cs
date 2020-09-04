@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Lasm.UAlive
 {
@@ -30,6 +31,8 @@ namespace Lasm.UAlive
         protected override void AfterLiveGeneration()
         {
             var uaClass = FieldGenerator.Field(AccessModifier.Private, FieldModifier.None, typeof(UAClass), "data").CustomDefault("new UAClass(" + guid.As().Code(false) + ");");
+            uaClass.AddAttribute(AttributeGenerator.Attribute<SerializeField>());
+
             var interfaceUAClass = PropertyGenerator.Property(AccessModifier.Public, PropertyModifier.None, typeof(UAClass), "Class", false).SingleStatementGetter(AccessModifier.Public, "data");
             @class.AddField(uaClass);
             @class.AddProperty(interfaceUAClass);
@@ -68,15 +71,16 @@ namespace Lasm.UAlive
                 {
                     var method = nest.entry.declaration.type.Is().Void() ? 
                         Method(
-                            nest.name,
-                            nest.entry.declaration.scope, 
-                            nest.entry.declaration.modifier, 
+                            nest.name.Replace(" ", string.Empty),
+                            nest.entry.declaration.scope,
+                            MustOverride(nest) ? MethodModifier.Override : nest.entry.declaration.modifier, 
                             nest.entry.declaration.type, 
                             true
                             )
                         : Method(
-                            nest.name, nest.entry.declaration.scope, 
-                            nest.entry.declaration.modifier, 
+                            nest.name.Replace(" ", string.Empty),
+                            nest.entry.declaration.scope,
+                            MustOverride(nest) ? MethodModifier.Override : nest.entry.declaration.modifier, 
                             nest.entry.declaration.type,
                             true
                             );
@@ -84,6 +88,11 @@ namespace Lasm.UAlive
                     @class.AddMethod(method);
                 }
             };
+        }
+
+        private bool MustOverride(Method method)
+        {
+            return method.entry.declaration.modifier == MethodModifier.Virtual && method.entry.declaration.isOverridden || method.entry.declaration.modifier == MethodModifier.Abstract;
         }
 
         protected MethodGenerator Method(string key, AccessModifier scope, MethodModifier modifier, Type returnType, bool isOverride, string parameters = null)
