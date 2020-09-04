@@ -21,6 +21,7 @@ namespace Lasm.UAlive
         public static Texture2D class_16;
         public static Texture2D class_32;
         public static Texture2D class_variable_32;
+        public static Texture2D parameters_16;
         public static Texture2D invoke_32;
         public static Texture2D compilation_16;
         public static Texture2D search_16;
@@ -58,6 +59,7 @@ namespace Lasm.UAlive
                 Icons("class_16", out class_16);
                 Icons("class_32", out class_32);
                 Icons("class_variable_32", out class_variable_32);
+                Icons("parameters_16", out parameters_16);
                 Icons("invoke_32", out invoke_32);
                 Icons("compilation_16", out compilation_16);
                 Icons("search_16", out search_16);

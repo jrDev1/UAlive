@@ -19,6 +19,13 @@ namespace Lasm.UAlive
             return new FlowGraph();
         }
 
+        #region Editor
+
+        public bool isOpen;
+
+        #endregion
+
+
         #region Initialization
 
         [SerializeField]

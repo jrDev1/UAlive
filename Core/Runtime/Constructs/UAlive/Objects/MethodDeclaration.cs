@@ -11,6 +11,10 @@ namespace Lasm.UAlive
     [Inspectable]
     public sealed class MethodDeclaration : ICopy<MethodDeclaration>
     {
+        #region Editor
+        public bool parametersOpen;
+        #endregion
+
         [Serialize]  
         [Inspectable(order = 0)]
         public string name;

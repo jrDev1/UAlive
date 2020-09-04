@@ -88,6 +88,28 @@ namespace Lasm.UAlive
             return true;
         }
 
+        public static bool Foldout(bool isOpen, Color backgroundColor, Color borderColor, int border = 1, Action header = null, Action whileOpen = null)
+        {
+            var foldout = false;
+            Vertical().Box(backgroundColor, borderColor, new RectOffset(2, 2, 2, 2), TextAnchor.MiddleLeft, border, () =>
+            {
+                Horizontal(() =>
+                {
+                    foldout = EditorGUILayout.Toggle(isOpen, new GUIStyle(EditorStyles.foldout), GUILayout.Width(16));
+                    header?.Invoke();
+                });
+            });
+
+            if (!foldout)
+            {
+                return false;
+            }
+
+            whileOpen();
+
+            return true;
+        }
+
         public static bool Foldout(bool isOpen, string label, Color backgroundColor, Color borderColor, int border = 1, Action whileOpen = null)
         {
             var foldout = false;

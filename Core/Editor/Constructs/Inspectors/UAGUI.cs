@@ -56,24 +56,33 @@ namespace Lasm.UAlive
             });
         }
 
-        public static void MethodCustom(Metadata method, GUIContent label)
+        public static void IconFoldout(ref bool isOpen, string label, Texture2D icon, Action content, int padding = 4)
         {
-            var _method = ((Method)method.value);
-            HUMEditor.Horizontal(() =>
+            isOpen = HUMEditor.Foldout(isOpen, new GUIContent(label, icon),
+            Styles.backgroundColor.Brighten(0.05f),
+            Color.black,
+            1,
+            () =>
             {
-                HUMEditor.Horizontal().Box(HUMEditorColor.DefaultEditorBackground, Styles.borderColor, new RectOffset(0, 0, 0, 0), new RectOffset(1, 1, 1, 1), () =>
-                      {
-                          EditorGUI.BeginDisabledGroup(_method.entry.declaration.hasOptionalOverride);
-                          EditorGUILayout.LabelField(GUIContent.none);
-                          var lastRect = GUILayoutUtility.GetLastRect();
-                          LudiqGUI.Inspector(method["entry"]["declaration"]["type"], new Rect(lastRect.x, lastRect.y, lastRect.width, 20), GUIContent.none);
-                          EditorGUI.EndDisabledGroup();
+                HUMEditor.Vertical().Box(Styles.backgroundColor, Color.black, new RectOffset(padding, padding, padding, padding), new RectOffset(1, 1, 0, 1), () =>
+                {
+                    content?.Invoke();
+                });
+            });
+        }
 
-                          if (GUILayout.Button("Edit", GUILayout.Width(42)))
-                          {
-                              GraphWindow.OpenActive(GraphReference.New(_method, true));
-                          }
-                      });
+        public static void IconFoldout(ref bool isOpen, string label, Texture2D icon, Action content, Color background, int padding = 4)
+        {
+            isOpen = HUMEditor.Foldout(isOpen, new GUIContent(label, icon),
+            Styles.backgroundColor.Brighten(0.05f),
+            Color.black,
+            1,
+            () =>
+            {
+                HUMEditor.Vertical().Box(background, Color.black, new RectOffset(padding, padding, padding, padding), new RectOffset(1, 1, 0, 1), () =>
+                {
+                    content?.Invoke();
+                });
             });
         }
     }
