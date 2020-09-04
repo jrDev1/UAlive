@@ -20,6 +20,7 @@ namespace Lasm.UAlive
         public Method root;
 
         [Inspectable]
+        [InspectorLabel(null)]
         [Serialize]
         public MethodDeclaration declaration = new MethodDeclaration();
 
