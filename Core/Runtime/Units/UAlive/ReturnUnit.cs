@@ -29,6 +29,7 @@ namespace Lasm.UAlive
                 if (entry.declaration.type != null && entry.declaration.type != typeof(void) && entry.declaration.type != typeof(Lasm.UAlive.Void))
                 {
                     value = ValueInput(entry.declaration.type, "value");
+                    value.SetDefaultValue(entry.declaration.type.Default());
                 }
             }
             else

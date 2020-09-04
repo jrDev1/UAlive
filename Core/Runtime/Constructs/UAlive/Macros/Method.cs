@@ -37,7 +37,7 @@ namespace Lasm.UAlive
         {
             var method = ScriptableObject.CreateInstance<Method>();
             AssetDatabase.AddObjectToAsset(method, owner);
-            method.Initialize(owner, returnMethod);
+            method.Initialize(owner, returnMethod); 
             return method;    
         }
 

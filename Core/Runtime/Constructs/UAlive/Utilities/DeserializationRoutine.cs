@@ -12,22 +12,17 @@ namespace Lasm.UAlive
         private static void StartInitializing()
         {
             isInitializing = true;
-            EditorApplication.update += DelayInitialize;
+            EditorApplication.delayCall += DelayInitialize;
         }
 
         private static void DelayInitialize()
         {
-            HUMFlow.AfterTicks(ref ticks, 4, afterTicks: () =>
+            var macros = HUMAssets.Find().Assets().OfType<IDefinable>();
+
+            for (int i = 0; i < macros.Count; i++)
             {
-                var macros = HUMAssets.Find().Assets().OfType<IDefinable>();
-                
-                for (int i = 0; i < macros.Count; i++)
-                {
-                    macros[i].Define();
-                }
-                EditorApplication.update -= DelayInitialize;
-                isInitializing = false;
-            });
+                macros[i].Define();
+            }
         }
         
         public static void Disable()

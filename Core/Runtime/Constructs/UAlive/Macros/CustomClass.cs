@@ -87,12 +87,12 @@ namespace Lasm.UAlive
             if (MagicMethods.TryAddScriptableObject(methods, this, inheritance)) return;
             if (MagicMethods.TryAddEditorWindow(methods, this, inheritance)) return;
 
-            //// Ensures all the variables of this class have notified observers that they have changed.
-            //// Generally we end up invoking the Define behaviour on all units to ensure the data is shown.
-            //for (int i = 0; i < variables.variables.Count; i++)
-            //{
-            //    variables.variables[i].declaration.Changed();
-            //}
+            // Ensures all the variables of this class have notified observers that they have changed.
+            // Generally we end up invoking the Define behaviour on all units to ensure the data is shown.
+            for (int i = 0; i < variables.variables.Count; i++)
+            {
+                variables.variables[i].declaration.Changed();
+            }
         }
 
         public void Refresh()

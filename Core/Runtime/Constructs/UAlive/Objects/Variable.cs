@@ -9,7 +9,7 @@ namespace Lasm.UAlive
     [Serializable]
     public sealed class Variable : LudiqScriptableObject, IUnityInitializable
     {
-        [Serialize] 
+        [SerializeReference] 
         public VariableDeclaration declaration = new VariableDeclaration();
 
         #region Initialization

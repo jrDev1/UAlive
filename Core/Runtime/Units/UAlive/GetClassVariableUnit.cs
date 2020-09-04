@@ -49,7 +49,10 @@ namespace Lasm.UAlive
         
         protected override void AfterDefine()
         {
-            if (variable != null) variable.declaration.onChanged += Define;
+            if (variable != null)
+            {
+                variable.declaration.onChanged += Define;
+            }
         }
 
         protected override void BeforeUndefine()

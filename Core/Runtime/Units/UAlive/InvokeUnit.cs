@@ -66,7 +66,9 @@ namespace Lasm.UAlive
                     {
                         for (int i = 0; i < method.entry.declaration.parameters.Length; i++)
                         {
-                            parameters.Add(ValueInput(method.entry.declaration.parameters[i].type, method.entry.declaration.parameters[i].name));
+                            var valInput = ValueInput(method.entry.declaration.parameters[i].type, method.entry.declaration.parameters[i].name);
+                            valInput.SetDefaultValue(method.entry.declaration.parameters[i].type.Default());
+                            parameters.Add(valInput);
                         }
                     }
 

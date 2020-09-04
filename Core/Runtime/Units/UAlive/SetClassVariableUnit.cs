@@ -16,7 +16,7 @@ namespace Lasm.UAlive
         [Inspectable]
         public bool chain;
 
-        [SerializeField] 
+        [Serialize] 
         public Variable variable;
 
         [DoNotSerialize]
@@ -48,6 +48,7 @@ namespace Lasm.UAlive
             if (variable != null)
             {
                 value = ValueInput(variable.declaration.type, "value");
+                value.SetDefaultValue(variable.declaration.type.Default());
             }
 
             enter = ControlInput("enter", (flow) =>
