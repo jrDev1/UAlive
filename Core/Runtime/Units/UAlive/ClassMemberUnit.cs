@@ -20,5 +20,21 @@ namespace Lasm.UAlive
         {
             target = ValueInput<IUAClass>("target").AllowsNull();
         }
+
+        protected IUAClass GetTarget(Flow flow)
+        {
+            IUAClass _target;
+
+            if (target.hasValidConnection)
+            {
+                _target = flow.GetValue<IUAClass>(target);
+            }
+            else
+            {
+                _target = (IUAClass)flow.variables.Get("#secret_uaclass_instance");
+            }
+
+            return _target;
+        }
     }
 }

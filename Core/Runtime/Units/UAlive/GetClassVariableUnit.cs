@@ -29,18 +29,7 @@ namespace Lasm.UAlive
             {
                 value = ValueOutput(variable.declaration.type, "value", (flow) =>
                 {
-                     IUAClass _target;
-                     
-                     if (target.hasValidConnection)
-                     {
-                         _target = flow.GetValue<IUAClass>(target);
-                     }
-                     else 
-                     {
-                         _target = (IUAClass)flow.variables.Get("#secret_uaclass_instance");
-                     }
-
-                     return _target.Class.Get(variable.name); 
+                    return GetTarget(flow).Class.Get(variable.name); 
                 });
 
                 Requirement(target, value);

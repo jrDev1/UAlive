@@ -27,9 +27,13 @@ namespace Lasm.UAlive
         [PortLabelHidden]
         public ControlOutput exit;
 
-        [DoNotSerialize] 
+        [DoNotSerialize]
         [PortLabelHidden]
         public ValueInput value;
+
+        [DoNotSerialize]
+        [PortLabelHidden]
+        public ValueOutput outValue;
 
         private bool justDefined;
 
@@ -48,23 +52,16 @@ namespace Lasm.UAlive
             if (variable != null)
             {
                 value = ValueInput(variable.declaration.type, "value");
+                outValue = ValueOutput(variable.declaration.type, "valueOut", (flow)=> 
+                {
+                    return GetTarget(flow).Class.Get(variable.name);
+                });
                 value.SetDefaultValue(variable.declaration.type.Default());
             }
 
             enter = ControlInput("enter", (flow) =>
             {
-                IUAClass _target;
-
-                if (target.hasValidConnection)
-                {
-                    _target = flow.GetValue<IUAClass>(target);
-                }
-                else
-                { 
-                    _target = (IUAClass)flow.variables.Get("#secret_uaclass_instance");
-                }
-
-                _target.Class.Set(variable.name, flow.GetValue(value, variable.declaration.type));
+                GetTarget(flow).Class.Set(variable.name, flow.GetValue(value, variable.declaration.type));
                 return exit;
             });
 
