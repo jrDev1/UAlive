@@ -11,9 +11,8 @@ namespace Lasm.UAlive
     [Widget(typeof(GetClassVariableUnit))]
     public class GetClassVariableUnitWidget : UnitWidget<GetClassVariableUnit>
     {
-        private bool onChangedSet;
         private float buttonPadding => 8;
-        private bool missingContent => unit.Class == null && unit.variable == null;
+        private bool missingContent => unit.Class == null || unit.variable == null;
 
         public GetClassVariableUnitWidget(FlowCanvas canvas, GetClassVariableUnit unit) : base(canvas, unit)
         {
@@ -37,7 +36,7 @@ namespace Lasm.UAlive
         protected override void DrawHeaderAddon()
         {
             var buttonText = "(None Selected)";
-            if (unit.variable != null)
+            if (!missingContent)
             {
                 buttonText = unit.Class.title + "." + unit.variable.name;
             } 

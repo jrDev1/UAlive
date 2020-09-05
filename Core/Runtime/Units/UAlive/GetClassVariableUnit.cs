@@ -29,7 +29,7 @@ namespace Lasm.UAlive
             {
                 value = ValueOutput(variable.declaration.type, "value", (flow) =>
                 {
-                    return GetTarget(flow).Class.Get(variable.name); 
+                    return GetTarget(flow)?.Class?.Get(variable.name); 
                 });
 
                 Requirement(target, value);
@@ -38,10 +38,7 @@ namespace Lasm.UAlive
         
         protected override void AfterDefine()
         {
-            if (variable != null)
-            {
-                variable.declaration.onChanged += Define;
-            }
+            if (variable != null) variable.declaration.onChanged += Define;
         }
 
         protected override void BeforeUndefine()

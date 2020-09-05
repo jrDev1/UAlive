@@ -9,9 +9,8 @@ namespace Lasm.UAlive
     [Widget(typeof(SetClassVariableUnit))]
     public class SetClassVariableUnitWidget : UnitWidget<SetClassVariableUnit>
     {
-        private bool onChangedSet;
         private float buttonPadding => 8;
-        private bool missingContent => unit.Class == null && unit.variable == null;
+        private bool missingContent => unit.Class == null || unit.variable == null;
 
         public SetClassVariableUnitWidget(FlowCanvas canvas, SetClassVariableUnit unit) : base(canvas, unit)
         {
@@ -25,7 +24,7 @@ namespace Lasm.UAlive
 
         protected override float GetHeaderAddonWidth()
         {
-            return Mathf.Clamp(missingContent ? 120 : GUI.skin.label.CalcSize(new GUIContent(unit.variable == null ? "   (None Selected)   " : unit.Class.title + "." + unit.variable?.name)).x + buttonPadding, base.GetHeaderAddonWidth(), 400);
+            return Mathf.Clamp(missingContent ? 120 : GUI.skin.label.CalcSize(new GUIContent(unit.variable == null ? "   (None Selected)   " : unit.Class?.title + "." + unit.variable?.name)).x + buttonPadding, base.GetHeaderAddonWidth(), 400);
         }
 
         protected override NodeColorMix color => NodeColorMix.TealReadable;
@@ -35,7 +34,7 @@ namespace Lasm.UAlive
         protected override void DrawHeaderAddon()
         {
             var buttonText = "(None Selected)";
-            if (unit.variable != null)
+            if (!missingContent)
             {
                 buttonText = unit.Class.title + "." + unit.variable.name;
             }
@@ -52,11 +51,11 @@ namespace Lasm.UAlive
                     {
                         menu.AddItem(new GUIContent(classes[i].title + "/" + classes[i].variables.variables[j].name), false, (data) =>
                         {
-                            var tuple = (ValueTuple<CustomClass, string, string, Variable>)data;
+                            var tuple = (ValueTuple<CustomClass, Variable>)data;
                             unit.Class = tuple.Item1;
-                            unit.variable = tuple.Item4;
+                            unit.variable = tuple.Item2;
                             unit.Define();
-                        }, (classes[i], classes[i].variables.variables[j].name, classes[i].variables.variables[j].declaration.guid, classes[i].variables.variables[j]));
+                        }, (classes[i], classes[i].variables.variables[j]));
                     }
                 } 
 

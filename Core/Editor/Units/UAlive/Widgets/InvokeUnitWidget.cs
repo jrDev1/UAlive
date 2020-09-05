@@ -9,9 +9,8 @@ namespace Lasm.UAlive
     [Widget(typeof(InvokeUnit))]
     public class InvokeUnitWidget : UnitWidget<InvokeUnit>
     {
-        private bool onChangedSet;
         private float buttonPadding => 8;
-        private bool missingContent => unit.Class == null && unit.method == null;
+        private bool missingContent => unit.Class == null || unit.method == null;
 
         public InvokeUnitWidget(FlowCanvas canvas, InvokeUnit unit) : base(canvas, unit)
         {
@@ -34,7 +33,7 @@ namespace Lasm.UAlive
         protected override void DrawHeaderAddon()
         {
             var buttonText = "(None Selected)";
-            if (unit.method != null)
+            if (!missingContent)
             {
                 buttonText = unit.Class.title + "." + unit.method.name;
             }

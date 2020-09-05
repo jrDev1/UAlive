@@ -54,14 +54,14 @@ namespace Lasm.UAlive
                 value = ValueInput(variable.declaration.type, "value");
                 outValue = ValueOutput(variable.declaration.type, "valueOut", (flow)=> 
                 {
-                    return GetTarget(flow).Class.Get(variable.name);
+                    return GetTarget(flow)?.Class?.Get(variable.name);
                 });
                 value.SetDefaultValue(variable.declaration.type.Default());
             }
 
             enter = ControlInput("enter", (flow) =>
             {
-                GetTarget(flow).Class.Set(variable.name, flow.GetValue(value, variable.declaration.type));
+                GetTarget(flow)?.Class?.Set(variable.name, flow.GetValue(value, variable.declaration.type));
                 return exit;
             });
 
