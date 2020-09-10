@@ -52,6 +52,7 @@ namespace Lasm.UAlive
             if (EndBlock(metadata))
             {
                 metadata.RecordUndo();
+                CSharpPreview.instance?.Changed();
             }
         }
 

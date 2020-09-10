@@ -5,11 +5,11 @@ using UnityEngine;
 
 namespace Lasm.UAlive
 {
-    public abstract class UnitCodeGenerator<T> : Decorator<UnitCodeGenerator<T>, CodeGenAttribute, T> where T : IUnit
+    public abstract class UnitGenerator<TUnit> : Decorator<UnitGenerator<TUnit>, UnitGeneratorAttribute, TUnit> where TUnit : IUnit
     {
-        public T unit;
+        public TUnit unit;
 
-        public UnitCodeGenerator(T unit) { this.unit = unit; }
+        public UnitGenerator(TUnit unit) { this.unit = unit; }
 
         public abstract string GenerateValue(ValueInput input);
 

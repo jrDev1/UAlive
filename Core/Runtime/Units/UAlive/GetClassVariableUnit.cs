@@ -25,11 +25,11 @@ namespace Lasm.UAlive
         {
             base.Definition();
 
-            if (variable?.declaration?.type != null)
+            if (variable?.declaration?.type != null) 
             {
                 value = ValueOutput(variable.declaration.type, "value", (flow) =>
                 {
-                    return GetTarget(flow)?.Class?.Get(variable.name); 
+                    return GetTarget(flow)?.Class?.Get(variable); 
                 });
 
                 Requirement(target, value);

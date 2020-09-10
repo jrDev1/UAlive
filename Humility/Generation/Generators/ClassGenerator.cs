@@ -103,7 +103,7 @@ namespace Lasm.UAlive
                 output += fields[i].Generate(indent) + (i < fields.Count - 1 ? "\n" : string.Empty);
             }
 
-            output += properties.Count > 0 && fields.Count != 0 ? "\n" : string.Empty;
+            output += properties.Count > 0 || fields.Count != 0 ? "\n" : string.Empty;
 
             for (int i = 0; i < properties.Count; i++)
             {

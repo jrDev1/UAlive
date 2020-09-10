@@ -21,8 +21,9 @@ namespace Lasm.UAlive
             if (type == typeof(float)) return value.ToString() + "[Type:Float]";
             if (type == typeof(int)) return value.ToString() + "[Type:Int]";
             if (type == typeof(string)) return value + "[Type:String]";
+            if (type == typeof(Type)) return ((Type)value).FullName + "[Type:Type]";
             if (type == typeof(UnityEngine.GameObject)) return "null";
-
+             
             return string.Empty;
         }
 
@@ -51,6 +52,11 @@ namespace Lasm.UAlive
             if (str.Contains("[Type:Int]"))
             {
                 return int.Parse(str.Replace("[Type:Int]", string.Empty));
+            }
+
+            if (str.Contains("[Type:Type]"))
+            {
+                return Type.GetType(str.Replace("[Type:Type]", string.Empty));
             }
 
             if (str.Contains("[Type:GameObject"))

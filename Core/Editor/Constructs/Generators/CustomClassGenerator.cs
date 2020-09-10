@@ -14,6 +14,32 @@ namespace Lasm.UAlive
         private string output;
         private string guid;
 
+        public string GetLiveOutput()
+        {
+            BeforeLiveGeneration();
+            DefineLiveCode();
+            AfterLiveGeneration();
+            return output;
+        }
+
+        public string GetCompiledOutput()
+        {
+            BeforeCompiledGeneration();
+            DefineCompiledCode();
+            AfterCompiledGeneration();
+            return output;
+        }
+
+        protected override void SaveCompiled()
+        {
+            ClassExtensions.Save(guid, decorated, output);
+        }
+
+        protected override void SaveLive()
+        {
+            ClassExtensions.Save(guid, decorated, output);
+        }
+
         protected override void BeforeLiveGeneration()
         {
             if (!(string.IsNullOrEmpty(decorated.@namespace) || string.IsNullOrWhiteSpace(decorated.@namespace))) @namespace = NamespaceGenerator.Namespace(decorated.@namespace.ToString());
@@ -39,13 +65,57 @@ namespace Lasm.UAlive
 
             @namespace?.AddClass(@class);
             var usings = CodeBuilder.Using(@class.Usings()) + "\n\n";
-            var output = (string.IsNullOrEmpty(decorated.@namespace) || string.IsNullOrWhiteSpace(decorated.@namespace)) ? usings + @class.Generate(0) : usings + @namespace.Generate(0);
-            ClassExtensions.Save(guid, decorated, output);
+            output = (string.IsNullOrEmpty(decorated.@namespace) || string.IsNullOrWhiteSpace(decorated.@namespace)) ? usings + @class.Generate(0) : usings + @namespace.Generate(0);
         }
 
         protected override void DefineCompiledCode()
         {
+            var methods = decorated.methods.custom;
+            var fields = decorated.variables.variables;
 
+            for (int i = 0; i < fields.Count; i++)
+            {
+                var variable = decorated.variables.variables[i];
+                var field = FieldGenerator.Field(AccessModifier.Public, FieldModifier.None, variable.declaration.type, variable.name);
+                field.CustomDefault(variable.declaration.defaultValue.As().Code(true) + ";");
+                @class.AddField(field);
+            }
+
+            for (int i = 0; i < methods.Count; i++)
+            {
+                var nest = decorated.methods.custom[i];
+                if (CanAddMethod(nest))
+                {
+                    var method = Method(nest.name, nest.entry.declaration.scope, nest.entry.declaration.modifier, nest.entry.declaration.type);
+                    AddParameters(method, nest);
+                    @class.AddMethod(method);
+                }
+            }
+
+            var keys = decorated.methods.overrides.Keys().ToArray();
+
+            for (int i = 0; i < keys.Length; i++)
+            {
+                var nest = decorated.methods.overrides.current[keys[i]];
+                if (CanAddMethod(nest))
+                {
+                    var method = nest.entry.declaration.type.Is().Void() ?
+                        Method(
+                            nest.name.Replace(" ", string.Empty),
+                            nest.entry.declaration.scope,
+                            MustOverride(nest) ? MethodModifier.Override : nest.entry.declaration.modifier,
+                            nest.entry.declaration.type
+                            )
+                        : Method(
+                            nest.name.Replace(" ", string.Empty),
+                            nest.entry.declaration.scope,
+                            MustOverride(nest) ? MethodModifier.Override : nest.entry.declaration.modifier,
+                            nest.entry.declaration.type
+                            );
+                    AddParameters(method, nest);
+                    @class.AddMethod(method);
+                }
+            };
         }
 
         protected override void DefineLiveCode()
@@ -105,21 +175,35 @@ namespace Lasm.UAlive
             return method;
         }
 
-        private MethodGenerator Method(string key, AccessModifier scope, MethodModifier modifier, bool isOverride, Method nest)
+        protected MethodGenerator Method(string key, AccessModifier scope, MethodModifier modifier, Type returnType, string parameters = null, string body = null)
         {
-            var method = MethodGenerator.Method(scope, modifier, typeof(Lasm.UAlive.Void), key.Replace(" ", string.Empty));
-            method.Body(CodeExtensions.Invoke(key, typeof(Lasm.UAlive.Void), isOverride, GetParameters(method, nest)));
+            var method = MethodGenerator.Method(scope, modifier, returnType, key.Replace(" ", string.Empty));
+            if (!string.IsNullOrEmpty(body)) method.Body(body);
             return method;
         }
 
-        protected override void AfterCodeGeneration()
+        private MethodGenerator Method(string key, AccessModifier scope, MethodModifier modifier, bool isOverride, Method nest)
         {
-            
+            var method = MethodGenerator.Method(scope, modifier, typeof(void), key.Replace(" ", string.Empty));
+            method.Body(CodeExtensions.Invoke(key, typeof(void), isOverride, GetParameters(method, nest)));
+            return method;
         }
 
-        protected override void BeforeCodeGeneration()
+        protected override void AfterCompiledGeneration()
         {
-            
+            @namespace?.AddClass(@class);
+            var usings = CodeBuilder.Using(@class.Usings()) + "\n\n";
+            output = (string.IsNullOrEmpty(decorated.@namespace) || string.IsNullOrWhiteSpace(decorated.@namespace)) ? usings + @class.Generate(0) : usings + @namespace.Generate(0);
+        }
+
+        protected override void BeforeCompiledGeneration()
+        {
+            if (!(string.IsNullOrEmpty(decorated.@namespace) || string.IsNullOrWhiteSpace(decorated.@namespace))) @namespace = NamespaceGenerator.Namespace(decorated.@namespace.ToString());
+            @class = ClassGenerator.Class(
+                RootAccessModifier.Public,
+                ClassModifier.None,
+                NoSpace(decorated.title),
+                decorated.inheritance.type);
         }
 
         private bool CanAddMethod(Method method)
@@ -129,9 +213,12 @@ namespace Lasm.UAlive
 
         private void AddParameters(MethodGenerator generator, Method method)
         {
-            foreach (ParameterDeclaration declaration in method.entry.declaration.parameters)
+            if (method.entry.declaration.parameters != null)
             {
-                generator.AddParameter(ParameterGenerator.Parameter(declaration.name, declaration.type, ParameterModifier.None));
+                foreach (ParameterDeclaration declaration in method.entry.declaration.parameters)
+                {
+                    generator.AddParameter(ParameterGenerator.Parameter(declaration.name, declaration.type, ParameterModifier.None));
+                }
             }
         }
 

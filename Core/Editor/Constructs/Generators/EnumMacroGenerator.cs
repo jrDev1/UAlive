@@ -9,7 +9,7 @@ namespace Lasm.UAlive
         private string output;
         private string guid;
 
-        protected override void AfterCodeGeneration()
+        protected override void AfterCompiledGeneration()
         {
             AfterGeneration();
         }
@@ -19,7 +19,7 @@ namespace Lasm.UAlive
             AfterGeneration();
         }
 
-        protected override void BeforeCodeGeneration()
+        protected override void BeforeCompiledGeneration()
         {
             BeforeGeneration();
         }
@@ -60,6 +60,16 @@ namespace Lasm.UAlive
             {
                 @enum.AddItem(decorated.items[i].name, decorated.items[i].index);
             }
+        }
+
+        protected override void SaveLive()
+        {
+            EnumExtensions.Save(guid, decorated, output);
+        }
+
+        protected override void SaveCompiled()
+        {
+            EnumExtensions.Save(guid, decorated, output);
         }
     }
 }

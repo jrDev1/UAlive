@@ -11,7 +11,7 @@ namespace Lasm.UAlive
         private string output;
         private string guid;
 
-        protected override void AfterCodeGeneration()
+        protected override void AfterCompiledGeneration()
         {
             AfterGeneration();
         }
@@ -21,7 +21,7 @@ namespace Lasm.UAlive
             AfterGeneration();
         }
 
-        protected override void BeforeCodeGeneration()
+        protected override void BeforeCompiledGeneration()
         {
             BeforeGeneration();
         }
@@ -76,6 +76,16 @@ namespace Lasm.UAlive
 
                 @interface.AddMethod(methodGen);
             }
+        }
+
+        protected override void SaveLive()
+        {
+            InterfaceExtensions.Save(guid, decorated, output);
+        }
+
+        protected override void SaveCompiled()
+        {
+            InterfaceExtensions.Save(guid, decorated, output);
         }
     }
 }

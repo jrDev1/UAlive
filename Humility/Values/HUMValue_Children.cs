@@ -169,7 +169,7 @@ namespace Lasm.UAlive
 
             if (isNew)
             {
-                if (type.IsClass)
+                if (type.IsClass || !type.IsClass && !type.IsInterface && !type.IsEnum)
                 {
                     return "new " + type.Name + "(" + ")";
                 }

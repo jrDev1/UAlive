@@ -57,9 +57,65 @@ namespace Lasm.UAlive
 
                 if (GUILayout.Button("Compile"))
                 {
-                    MenuCommands.GenerateLive();
+                    if (isLive)
+                    {
+                        MenuCommands.GenerateLive();
+                    }
+                    else
+                    {
+                        MenuCommands.GenerateNative();
+                    }
                 }
             });
+        }
+    }
+
+    public sealed class CSharpPreview : EditorWindow
+    {
+        public static CSharpPreview instance;
+
+        string output = string.Empty;
+
+        [MenuItem("Window/UAlive/C# Preview")]
+        private static void Open()
+        {
+            CSharpPreview window = GetWindow<CSharpPreview>();
+            window.titleContent = new GUIContent("C# Preview");
+            instance = window;
+        }
+
+        public static Color background => Styles.backgroundColor.Darken(0.1f);
+        public static Color construct => new Color(0.2f, 0.2f, 0.8f);
+        public static Color normal => new Color(0.85f, 0.85f, 0.85f);
+
+        public static CustomType selection => Selection.activeObject as CustomType;
+        public static CustomClass Class => Selection.activeObject as CustomClass;
+
+        private bool changed = true;
+
+        public void Changed() { changed = true; }
+
+        private void OnEnable()
+        {
+            instance = this;
+        }
+
+        private void OnGUI()
+        {
+            HUMEditor.Vertical().Box(background, 10, () => 
+            {
+                if (changed && selection != null)
+                {
+                    if (Class != null) output = CustomClassGenerator.GetDecorator(Class).GetCompiledOutput();
+                    changed = false;
+                }
+
+                GUILayout.Label(output, new GUIStyle(GUI.skin.label) { stretchWidth = true, stretchHeight = true, alignment = TextAnchor.UpperLeft, wordWrap = true });
+
+            }, true, true);
+
+
+            Repaint();
         }
     }
 }

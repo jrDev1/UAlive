@@ -20,10 +20,12 @@ namespace Lasm.UAlive
             GUI.color = old;
         }
 
-        public static void Box(this HUMEditor.Data.Vertical vertical, Color background, int padding = 0, Action action = null, params GUILayoutOption[] options)
+        public static void Box(this HUMEditor.Data.Vertical vertical, Color background, int padding = 0, Action action = null, bool stretchHorizontal = false, bool stretchVertical = false, params GUILayoutOption[] options)
         {
             var style = new GUIStyle(GUI.skin.box);
             style.padding = new RectOffset(padding, padding, padding, padding);
+            style.stretchWidth = stretchHorizontal;
+            style.stretchHeight = stretchVertical;
             var old = GUI.color;
             GUI.color = background;
             EditorGUILayout.BeginVertical(style, options);

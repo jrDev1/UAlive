@@ -29,6 +29,31 @@ namespace Lasm.UAlive
             AssetDatabase.Refresh();
         }
 
+        [MenuItem("Tools/UAlive/Generate Native Code")]
+        public static void GenerateNative()
+        {
+            var assets = HUMAssets.Find().Assets().OfType<CustomClass>();
+            for (int i = 0; i < assets.Count; i++)
+            {
+                CustomClassGenerator.GetDecorator(assets[i]).GenerateCompiledCode();
+            }
+
+            var enumAssets = HUMAssets.Find().Assets().OfType<CustomEnum>();
+            for (int i = 0; i < enumAssets.Count; i++)
+            {
+                CustomEnumGenerator.GetDecorator(enumAssets[i]).GenerateCompiledCode();
+            }
+
+            var interfaceAssets = HUMAssets.Find().Assets().OfType<CustomInterface>();
+            for (int i = 0; i < interfaceAssets.Count; i++)
+            {
+                CustomInterfaceGenerator.GetDecorator(interfaceAssets[i]).GenerateCompiledCode();
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
         [MenuItem("Assets/Create/UAlive/Custom Class", priority = 0)]
         public static void CreateClass()
         {

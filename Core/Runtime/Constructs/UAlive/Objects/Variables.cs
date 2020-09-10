@@ -33,14 +33,9 @@ namespace Lasm.UAlive
             return null;
         }
 
-        internal bool Has(string name)
+        internal bool Has(Variable variable)
         {
-            for (int i = 0; i < variables.Count; i++)
-            {
-                if (variables[i].name == name) return true;
-            }
-
-            return false;
+            return variables.Contains(variable);
         }
 
         public void Set(string name, object value)

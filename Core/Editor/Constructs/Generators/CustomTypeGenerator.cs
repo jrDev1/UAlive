@@ -12,6 +12,7 @@
             BeforeLiveGeneration();
             DefineLiveCode();
             AfterLiveGeneration();
+            SaveLive();
         }
 
         public void GenerateCompiledCode()
@@ -19,21 +20,17 @@
             BeforeCompiledGeneration();
             DefineCompiledCode();
             AfterCompiledGeneration();
+            SaveCompiled();
         }
 
 
         protected abstract void AfterLiveGeneration();
-        protected abstract void AfterCodeGeneration();
+        protected abstract void AfterCompiledGeneration();
 
         protected abstract void BeforeLiveGeneration();
-        protected abstract void BeforeCodeGeneration();
+        protected abstract void BeforeCompiledGeneration();
 
-        public void BeforeCompiledGeneration()
-        {
-        }
-
-        public void AfterCompiledGeneration()
-        {
-        }
+        protected abstract void SaveLive();
+        protected abstract void SaveCompiled();
     }
 }
