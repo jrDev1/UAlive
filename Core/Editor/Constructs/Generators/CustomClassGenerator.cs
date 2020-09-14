@@ -48,8 +48,8 @@ namespace Lasm.UAlive
                 ClassModifier.None,
                 decorated.title.LegalMemberName(),
                 decorated.inheritance.type);
-            var att = AttributeGenerator.Attribute<IncludeInSettingsAttribute>().AddParameter(true);
-            @class.AddAttribute(att);
+            @class.AddAttribute(AttributeGenerator.Attribute<IncludeInSettingsAttribute>().AddParameter(true));
+            @class.AddAttribute(AttributeGenerator.Attribute<InspectableAttribute>());
             @class.AddInterface(typeof(IUAClass));
             guid = decorated.GetGUID();
         }
@@ -58,6 +58,7 @@ namespace Lasm.UAlive
         {
             var uaClass = FieldGenerator.Field(AccessModifier.Private, FieldModifier.None, typeof(UAClass), "data").CustomDefault("new UAClass(" + guid.As().Code(false) + ");");
             uaClass.AddAttribute(AttributeGenerator.Attribute<SerializeField>());
+            uaClass.AddAttribute(AttributeGenerator.Attribute<InspectableAttribute>());
 
             var interfaceUAClass = PropertyGenerator.Property(AccessModifier.Public, PropertyModifier.None, typeof(UAClass), "Class", false).SingleStatementGetter(AccessModifier.Public, "data");
             @class.AddField(uaClass);

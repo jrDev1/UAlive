@@ -38,7 +38,9 @@ namespace Lasm.UAlive
                 if (i < stringTypeParameterValues.Count - 1) parameters += ", ";
             }
 
-            return CodeBuilder.Indent(indent) + "[" + type.Name.Replace("Attribute", string.Empty) + "(" + parameters + ")]" + "\n";
+            var showBrackets = stringTypeParameterValues.Count > 0 || parameterValuesWithLabel.Count > 0 || parameterValues.Count > 0;
+
+            return CodeBuilder.Indent(indent) + "[" + type.Name.Replace("Attribute", string.Empty) + (showBrackets ? "(" + parameters + ")" : string.Empty) + "]";
         }
 
         private AttributeGenerator()

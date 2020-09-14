@@ -77,7 +77,7 @@ namespace Lasm.UAlive
 
             for (int i = 0; i < attributes.Count; i++)
             {
-                output += attributes[i].Generate(indent);
+                output += attributes[i].Generate(indent) + "\n";
             }
 
             var canShowInherits = !(inherits == null && string.IsNullOrEmpty(stringInherits) || inherits == typeof(object) && inherits.BaseType == null);
@@ -103,7 +103,7 @@ namespace Lasm.UAlive
                 if (!string.IsNullOrEmpty(fields[i].name)) output += fields[i].Generate(indent) + (i < fields.Count - 1 ? "\n" : string.Empty);
             }
 
-            output += properties.Count > 0 || fields.Count != 0 ? "\n" : string.Empty;
+            output += fields.Count > 0 ? "\n" : string.Empty;
 
             for (int i = 0; i < properties.Count; i++)
             {
