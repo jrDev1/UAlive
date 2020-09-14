@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEngine;
 
 namespace Lasm.UAlive
@@ -7,16 +8,20 @@ namespace Lasm.UAlive
     {
         private static int ticks;
         private static bool isInitializing;
+        private static GlobalUpdate update = new GlobalUpdate();
 
         [InitializeOnLoadMethod]
         private static void StartInitializing()
         {
-            isInitializing = true;
             EditorApplication.delayCall += DelayInitialize;
         }
 
         private static void DelayInitialize()
         {
+            isInitializing = true;
+
+            update.Bind();
+
             var macros = HUMAssets.Find().Assets().OfType<IDefinable>();
 
             for (int i = 0; i < macros.Count; i++)
@@ -27,7 +32,12 @@ namespace Lasm.UAlive
         
         public static void Disable()
         {
-            if (isInitializing) EditorApplication.update -= DelayInitialize;
+            if (isInitializing)
+            {
+                EditorApplication.update -= DelayInitialize;
+            }
+
+            update.Unbind();
         }
     }
 }

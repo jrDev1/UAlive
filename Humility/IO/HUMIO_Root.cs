@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Ludiq;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -53,6 +55,20 @@ namespace Lasm.UAlive
             if (files.Length == 0) return string.Empty;
             var assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(files[0]).Replace(fileName, string.Empty);
             return assetPath;
+        }
+
+        public static List<T> AssetsAtPathOf<T>(string fileName) where T : UnityEngine.Object
+        {
+            var files = UnityEditor.AssetDatabase.FindAssets(fileName);
+            if (files.Length == 0) return new List<T>();
+            List<T> assets = new List<T>();
+            for (int i = 0; i < files.Length; i++)
+            {
+                var assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(files[i]);
+                var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(assetPath);
+                if (asset != null) assets.Add(asset);
+            }
+            return assets;
         }
 #endif
 
