@@ -42,29 +42,16 @@ namespace Lasm.UAlive
 
         private void LiveStatus()
         {
-            var isLive = false;
-
-            HUMEditor.Horizontal(() =>
+            HUMEditor.Vertical(() =>
             {
-                if (EditorPrefs.HasKey("UAlive_Global_IsLive"))
+                if (GUILayout.Button("Compile Live C# Code"))
                 {
-                    isLive = EditorPrefs.GetBool("UAlive_Global_IsLive");
+                        MenuCommands.GenerateLive();
                 }
 
-                isLive = GUILayout.Toggle(isLive, "Live");
-
-                EditorPrefs.SetBool("UAlive_Global_IsLive", isLive);
-
-                if (GUILayout.Button("Compile"))
+                if (GUILayout.Button("Compile Native C# Code"))
                 {
-                    if (isLive)
-                    {
-                        MenuCommands.GenerateLive();
-                    }
-                    else
-                    {
-                        MenuCommands.GenerateNative();
-                    }
+                    MenuCommands.GenerateNative();
                 }
             });
         }

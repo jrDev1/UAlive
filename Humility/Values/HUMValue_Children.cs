@@ -165,6 +165,7 @@ namespace Lasm.UAlive
             if (type == typeof(float)) return @as.value.ToString() + "f";
             if (type == typeof(string)) return @"""" + @as.value.ToString() + @"""";
             if (type == typeof(UnityEngine.GameObject)) return "null";
+            //if (type.ContainsGenericParameters) return GenericValue(@as.value);
             if (type == typeof(int) || type == typeof(uint) || type == typeof(byte) || type == typeof(long) || type == typeof(short) || type == typeof(double)) return @as.value.ToString();
 
             if (isNew)
@@ -204,5 +205,19 @@ namespace Lasm.UAlive
                 return output;
             }
         }
+
+        //public static string GenericValue(object value)
+        //{
+        //    var output = string.Empty;
+
+        //    return output;
+        //}
+
+        //public static string GenericDeclaration(Type type)
+        //{
+        //    var output = string.Empty;
+
+        //    return output;
+        //}
     }
 }
