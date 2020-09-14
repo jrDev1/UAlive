@@ -11,7 +11,7 @@ namespace Lasm.UAlive
 
         public override string Generate(int indent)
         {
-            return type.Name + " " + name + " " + "{ " + get + " " + set + "}";
+            return type.Name + " " + name.LegalMemberName() + " " + "{ " + get + " " + set + "}";
         }
 
         private InterfacePropertyGenerator() { }

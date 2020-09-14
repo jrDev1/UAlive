@@ -280,5 +280,28 @@ namespace Lasm.UAlive
         {
             return "return " + value + ";";
         }
+
+        public static string LegalMemberName(this string memberName)
+        {
+            var output = memberName;
+            output = output.Replace(" ", string.Empty);
+
+            var newCopy = output;
+
+            for (int i = 0; i < newCopy.Length; i++)
+            {
+                if (!char.IsLetter(newCopy[i]) && !char.IsNumber(newCopy[i]))
+                {
+                    output = output.Replace(newCopy[i].ToString(), string.Empty);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(output) && char.IsNumber(output[0]))
+            {
+                output = "_" + output;
+            }
+
+            return output;
+        }
     }
 }

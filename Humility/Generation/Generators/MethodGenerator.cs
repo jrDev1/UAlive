@@ -34,11 +34,12 @@ namespace Lasm.UAlive
             }
             var modSpace = modifier == MethodModifier.None ? string.Empty : " ";
 
-            return attributes + CodeBuilder.Indent(indent) + scope.AsString().ToLower() + " " + modifier.AsString() + modSpace + returnType.As().CSharpName() + " " + name + CodeBuilder.Parameters(this.parameters);
+            return attributes + CodeBuilder.Indent(indent) + scope.AsString().ToLower() + " " + modifier.AsString() + modSpace + returnType.As().CSharpName() + " " + name.LegalMemberName() + CodeBuilder.Parameters(this.parameters);
         }
 
         protected override sealed string GenerateBody(int indent)
         {
+            if (string.IsNullOrEmpty(name)) { return string.Empty; }
             return string.IsNullOrEmpty(body) ? string.Empty : body.Contains("\n") ? body.Replace("\n", "\n" + CodeBuilder.Indent(indent)).Insert(0, CodeBuilder.Indent(indent)) : CodeBuilder.Indent(indent) + body;
         }
 

@@ -52,7 +52,7 @@ namespace Lasm.UAlive
                 output += attributes[i].Generate(indent) + "\n";
             }
 
-            output += CodeBuilder.Indent(indent) + scope.AsString() + modifier.AsString() + " struct " + name;
+            output += CodeBuilder.Indent(indent) + scope.AsString() + modifier.AsString() + " struct " + name.LegalMemberName();
             output += interfaces.Count == 0 ? string.Empty : " : ";
 
             for (int i = 0; i < interfaces.Count; i++)

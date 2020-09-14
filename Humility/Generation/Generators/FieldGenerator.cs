@@ -49,6 +49,8 @@ namespace Lasm.UAlive
 
         public override string Generate(int indent)
         {
+            if (string.IsNullOrEmpty(name)) { return string.Empty; }
+
             var _attributes = string.Empty;
             var count = 0;
 
@@ -58,7 +60,7 @@ namespace Lasm.UAlive
             }
 
             var modSpace = (modifier == FieldModifier.None) ? string.Empty : " ";
-            var definition = CodeBuilder.Indent(indent) + scope.AsString() + " " + modifier.AsString() + modSpace + type.As().CSharpName() + " " + name;
+            var definition = CodeBuilder.Indent(indent) + scope.AsString() + " " + modifier.AsString() + modSpace + type.As().CSharpName() + " " + name.LegalMemberName();
             var output = defaultValue == null && type.IsValueType ? ";" : " = " + (isString ? stringDefault : defaultValue.As().Code(true) + ";");
             return _attributes + definition + output;
         }

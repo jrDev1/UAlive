@@ -81,7 +81,7 @@ namespace Lasm.UAlive
             }
 
             var canShowInherits = !(inherits == null && string.IsNullOrEmpty(stringInherits) || inherits == typeof(object) && inherits.BaseType == null);
-            output += CodeBuilder.Indent(indent) + scope.AsString() + (modifier == ClassModifier.None ? string.Empty : " " + modifier.AsString()) + " class " + name;
+            output += CodeBuilder.Indent(indent) + scope.AsString() + (modifier == ClassModifier.None ? string.Empty : " " + modifier.AsString()) + " class " + name.LegalMemberName();
             output += !canShowInherits && interfaces.Count == 0 ? string.Empty : " : ";
             output += canShowInherits ? (inherits == null ? stringInherits : inherits.As().CSharpName()) + (interfaces.Count > 0 ? ", " : string.Empty) : string.Empty;
 
@@ -100,14 +100,14 @@ namespace Lasm.UAlive
 
             for (int i = 0; i < fields.Count; i++)
             {
-                output += fields[i].Generate(indent) + (i < fields.Count - 1 ? "\n" : string.Empty);
+                if (!string.IsNullOrEmpty(fields[i].name)) output += fields[i].Generate(indent) + (i < fields.Count - 1 ? "\n" : string.Empty);
             }
 
             output += properties.Count > 0 || fields.Count != 0 ? "\n" : string.Empty;
 
             for (int i = 0; i < properties.Count; i++)
             {
-                output += properties[i].Generate(indent) + (i < properties.Count - 1 ? "\n" : string.Empty);
+                if (!string.IsNullOrEmpty(properties[i].name)) output += properties[i].Generate(indent) + (i < properties.Count - 1 ? "\n" : string.Empty);
             }
 
             output += constructors.Count > 0 ? "\n\n" : (properties.Count > 0 ? "\n" : string.Empty);
@@ -121,7 +121,7 @@ namespace Lasm.UAlive
 
             for (int i = 0; i < methods.Count; i++)
             {
-                output += methods[i].Generate(indent) + (i < methods.Count - 1 ? "\n\n" : string.Empty);
+                if (!string.IsNullOrEmpty(methods[i].name)) output += methods[i].Generate(indent) + (i < methods.Count - 1 ? "\n\n" : string.Empty);
             }
 
             output += (properties.Count > 0 || fields.Count > 0 || methods.Count > 0) && classes.Count > 0 ? "\n" : string.Empty;

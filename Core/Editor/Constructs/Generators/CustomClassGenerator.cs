@@ -42,11 +42,11 @@ namespace Lasm.UAlive
 
         protected override void BeforeLiveGeneration()
         {
-            if (!(string.IsNullOrEmpty(decorated.@namespace) || string.IsNullOrWhiteSpace(decorated.@namespace))) @namespace = NamespaceGenerator.Namespace(decorated.@namespace.ToString());
+            if (!(string.IsNullOrEmpty(decorated.@namespace) || string.IsNullOrWhiteSpace(decorated.@namespace))) @namespace = NamespaceGenerator.Namespace(decorated.@namespace.ToString().LegalMemberName());
             @class = ClassGenerator.Class(
                 RootAccessModifier.Public,
                 ClassModifier.None,
-                NoSpace(decorated.title),
+                decorated.title.LegalMemberName(),
                 decorated.inheritance.type);
             var att = AttributeGenerator.Attribute<IncludeInSettingsAttribute>().AddParameter(true);
             @class.AddAttribute(att);

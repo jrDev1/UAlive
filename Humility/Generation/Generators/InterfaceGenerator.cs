@@ -24,11 +24,11 @@ namespace Lasm.UAlive
             }
 
             var hasInterfaces = interfaces.Length > 0;
-            output += CodeBuilder.Indent(indent) + scope.AsString() + " interface " + typeName + (hasInterfaces ? " : " : string.Empty);
+            output += CodeBuilder.Indent(indent) + scope.AsString() + " interface " + typeName.LegalMemberName() + (hasInterfaces ? " : " : string.Empty);
             
             for (int i = 0; i < interfaces.Length; i++)
             {
-                output += interfaces[i].Name;
+                output += interfaces[i].Name.LegalMemberName();
                 if (i < interfaces.Length - 1) output += ", ";
             }
 

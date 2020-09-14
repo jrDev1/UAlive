@@ -115,7 +115,7 @@ namespace Lasm.UAlive
                 }
 
                 var modSpace = (modifier == PropertyModifier.None) ? string.Empty : " ";
-                var definition = CodeBuilder.Indent(indent) + scope.AsString() + " " + modifier.AsString() + modSpace + returnTypeString + " " + name + " " + GetterSetter();
+                var definition = CodeBuilder.Indent(indent) + scope.AsString() + " " + modifier.AsString() + modSpace + returnTypeString + " " + name.LegalMemberName() + " " + GetterSetter();
                 var output = defaultValue == null && returnType.IsValueType && returnType.IsPrimitive ? (hasGetter || hasSetter ? string.Empty : ";") : hasDefault ? " = " + defaultValue.As().Code(true) + ";" : string.Empty;
                 return _attributes + definition + output;
             }
