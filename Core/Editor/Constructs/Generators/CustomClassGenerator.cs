@@ -204,6 +204,7 @@ namespace Lasm.UAlive
                 ClassModifier.None,
                 NoSpace(decorated.title),
                 decorated.inheritance.type);
+            guid = decorated.GetGUID();
         }
 
         private bool CanAddMethod(Method method)
