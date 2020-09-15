@@ -1,4 +1,6 @@
 ﻿
+using UnityEngine;
+
 namespace Lasm.UAlive
 {
     [Generator(typeof(CustomEnum))]
@@ -9,12 +11,23 @@ namespace Lasm.UAlive
         private string output;
         private string guid;
 
-        protected override void AfterCompiledGeneration()
+        public string GetLiveOutput()
         {
-            AfterGeneration();
+            BeforeLiveGeneration();
+            DefineLiveCode();
+            AfterLiveGeneration();
+            return output;
         }
 
-        protected override void AfterLiveGeneration()
+        public string GetCompiledOutput()
+        {
+            BeforeCompiledGeneration();
+            DefineCompiledCode();
+            AfterCompiledGeneration();
+            return output;
+        }
+
+        protected override void AfterCompiledGeneration()
         {
             AfterGeneration();
         }
@@ -24,19 +37,9 @@ namespace Lasm.UAlive
             BeforeGeneration();
         }
 
-        private void BeforeGeneration()
+        protected override void DefineCompiledCode()
         {
-            if (!(string.IsNullOrEmpty(decorated.@namespace) || string.IsNullOrWhiteSpace(decorated.@namespace))) @namespace = NamespaceGenerator.Namespace(decorated.@namespace.ToString());
-            @enum = EnumGenerator.Enum(decorated.title);
-            guid = decorated.GetGUID();
-        }
-
-        private void AfterGeneration()
-        {
-            @namespace?.AddEnum(@enum);
-            var usings = CodeBuilder.Using(new string[] { "Ludiq" });
-            var output = (string.IsNullOrEmpty(decorated.@namespace) || string.IsNullOrWhiteSpace(decorated.@namespace)) ? usings + "\n\n" + @enum.Generate(0) : usings + "\n\n" + @namespace.Generate(0);
-            EnumExtensions.Save(guid, decorated, output);
+            DefineCode();
         }
 
         protected override void BeforeLiveGeneration()
@@ -44,14 +47,28 @@ namespace Lasm.UAlive
             BeforeGeneration();
         }
 
-        protected override void DefineCompiledCode()
+        protected override void AfterLiveGeneration()
         {
-            DefineCode();
+            AfterGeneration();
         }
 
         protected override void DefineLiveCode()
         {
-            DefineCode();   
+            DefineCode();
+        }
+
+        private void BeforeGeneration()
+        {
+            if (!(string.IsNullOrEmpty(decorated.@namespace) || string.IsNullOrWhiteSpace(decorated.@namespace))) @namespace = NamespaceGenerator.Namespace(decorated.@namespace.ToString());
+            @enum = EnumGenerator.Enum(decorated.title.LegalMemberName());
+            guid = decorated.GetGUID();
+        }
+
+        private void AfterGeneration()
+        {
+            @namespace?.AddEnum(@enum);
+            var usings = CodeBuilder.Using(new string[] { "Ludiq" });
+            output = (string.IsNullOrEmpty(decorated.@namespace) || string.IsNullOrWhiteSpace(decorated.@namespace)) ? usings + "\n\n" + @enum.Generate(0) : usings + "\n\n" + @namespace.Generate(0);
         }
 
         private void DefineCode()

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ludiq;
+using System;
 using System.Collections.Generic;
 
 namespace Lasm.UAlive
@@ -10,6 +11,22 @@ namespace Lasm.UAlive
         private NamespaceGenerator @namespace;
         private string output;
         private string guid;
+
+        public string GetLiveOutput()
+        {
+            BeforeLiveGeneration();
+            DefineLiveCode();
+            AfterLiveGeneration();
+            return output;
+        }
+
+        public string GetCompiledOutput()
+        {
+            BeforeCompiledGeneration();
+            DefineCompiledCode();
+            AfterCompiledGeneration();
+            return output;
+        }
 
         protected override void AfterCompiledGeneration()
         {
@@ -30,6 +47,7 @@ namespace Lasm.UAlive
         {
             if (!(string.IsNullOrEmpty(decorated.@namespace) || string.IsNullOrWhiteSpace(decorated.@namespace))) @namespace = NamespaceGenerator.Namespace(decorated.@namespace.ToString());
             @interface = InterfaceGenerator.Interface(decorated.title);
+            @interface.AddAttribute(AttributeGenerator.Attribute<IncludeInSettingsAttribute>().AddParameter(true));
             guid = decorated.GetGUID();
         }
 
@@ -37,8 +55,7 @@ namespace Lasm.UAlive
         {
             @namespace?.AddInterface(@interface);
             var usings = CodeBuilder.Using(@interface.Usings()) + "\n\n";
-            var output = (string.IsNullOrEmpty(decorated.@namespace) || string.IsNullOrWhiteSpace(decorated.@namespace)) ? usings + @interface.Generate(0) : usings + @namespace.Generate(0);
-            InterfaceExtensions.Save(guid, decorated, output);
+            output = (string.IsNullOrEmpty(decorated.@namespace) || string.IsNullOrWhiteSpace(decorated.@namespace)) ? usings + @interface.Generate(0) : usings + @namespace.Generate(0);
         }
 
         protected override void BeforeLiveGeneration()

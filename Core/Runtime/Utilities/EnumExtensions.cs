@@ -8,7 +8,7 @@ namespace Lasm.UAlive
         {
             var path = AssetDatabase.GUIDToAssetPath(guid);
             var finalPath = path.Remove(path.LastIndexOf("/") + 1, path.Length - path.LastIndexOf("/") - 1);
-            code.Save().Custom(finalPath, target.title + ".cs").Text();
+            code.Save().Custom(finalPath, target.title.LegalMemberName() + ".cs").Text();
         }
     }
 }

@@ -77,6 +77,8 @@ namespace Lasm.UAlive
 
         public static CustomType selection => Selection.activeObject as CustomType;
         public static CustomClass Class => Selection.activeObject as CustomClass;
+        public static CustomInterface Interface => Selection.activeObject as CustomInterface;
+        public static CustomEnum Enum => Selection.activeObject as CustomEnum;
 
         private bool changed = true;
 
@@ -93,7 +95,18 @@ namespace Lasm.UAlive
             {
                 if (changed && selection != null)
                 {
-                    if (Class != null) output = CustomClassGenerator.GetDecorator(Class).GetCompiledOutput();
+                    if (Class != null)
+                    {
+                        output = CustomClassGenerator.GetDecorator(Class).GetCompiledOutput();
+                    }
+                    else if (Interface != null)
+                    {
+                        output = CustomInterfaceGenerator.GetDecorator(Interface).GetCompiledOutput();
+                    }
+                    else
+                    {
+                        if (Enum != null) output = CustomEnumGenerator.GetDecorator(Enum).GetCompiledOutput();
+                    }
                     changed = false;
                 }
 

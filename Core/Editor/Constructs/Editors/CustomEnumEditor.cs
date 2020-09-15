@@ -32,21 +32,29 @@ namespace Lasm.UAlive
 
         protected override void OnGUI(Rect position, GUIContent label)
         {
-            BeginBlock(metadata, position, GUIContent.none);
-
-            HUMEditor.Vertical().Box(backgroundColor.Brighten(0.05f), Color.black, new RectOffset(4, 4, 4, 4), new RectOffset(1, 1, 1, 1), () =>
+            try
             {
-                _target.title = EditorGUILayout.TextField(new GUIContent("Enum Name"), _target.title);
-                _target.@namespace = EditorGUILayout.TextField(new GUIContent("Namespace"), _target.@namespace);
-            });
+                BeginBlock(metadata, position, GUIContent.none);
 
-            GUILayout.Space(10);
+                HUMEditor.Vertical().Box(backgroundColor.Brighten(0.05f), Color.black, new RectOffset(4, 4, 4, 4), new RectOffset(1, 1, 1, 1), () =>
+                {
+                    _target.title = EditorGUILayout.TextField(new GUIContent("Enum Name"), _target.title);
+                    _target.@namespace = EditorGUILayout.TextField(new GUIContent("Namespace"), _target.@namespace);
+                });
 
-            LudiqGUI.InspectorLayout(metadata["items"], GUIContent.none);
+                GUILayout.Space(10);
 
-            if (EndBlock(metadata))
+                LudiqGUI.InspectorLayout(metadata["items"], GUIContent.none);
+
+                if (EndBlock(metadata))
+                {
+                    metadata.RecordUndo();
+                    CSharpPreview.instance?.Changed();
+                }
+            }
+            catch (System.Exception e)
             {
-                metadata.RecordUndo();
+                Debug.Log(e);
             }
         }
     }

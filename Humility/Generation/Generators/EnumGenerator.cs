@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Lasm.UAlive
 {
@@ -29,9 +30,10 @@ namespace Lasm.UAlive
         protected override string GenerateBody(int indent)
         {
             var output = string.Empty;
-
+            
             for (int i = 0; i < items.Count; i++)
             {
+                if (string.IsNullOrEmpty(items[i].name)) { continue; }
                 output += CodeBuilder.Indent(indent) + items[i].name.LegalMemberName() + " = " + items[i].index.ToString();
                 if (i < items.Count - 1)
                 {
@@ -39,6 +41,7 @@ namespace Lasm.UAlive
                     output += "\n";
                 }
             }
+            Debug.Log(output);
 
             return output;
         }
