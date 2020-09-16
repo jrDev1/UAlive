@@ -11,7 +11,7 @@ namespace Lasm.UAlive
         
         public override string Generate(int indent)
         {
-            return type == null ? stringType + " " + name : type.As().CSharpName() + " " + name;
+            return type == null ? stringType + " " + name : type.As().CSharpName() + " " + name.LegalMemberName();
         }
 
         private ParameterGenerator()

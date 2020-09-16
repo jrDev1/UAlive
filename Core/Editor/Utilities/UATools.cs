@@ -64,6 +64,7 @@ namespace Lasm.UAlive
         string output = string.Empty;
         [SerializeField]
         private Vector2 scrollPosition;
+        private CustomType previousSelection;
 
         [MenuItem("Window/UAlive/C# Preview")]
         private static void Open()
@@ -97,6 +98,12 @@ namespace Lasm.UAlive
             {
                 HUMEditor.Vertical().Box(background, 10, () =>
                 {
+                    if (previousSelection != selection)
+                    {
+                        changed = true;
+                        previousSelection = selection;
+                    }
+
                     if (changed && selection != null)
                     {
                         if (Class != null)
