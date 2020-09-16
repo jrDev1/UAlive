@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using UnityEditor;
 using UnityEditor.ProjectWindowCallback;
 using UnityEngine;
@@ -11,7 +12,9 @@ namespace Lasm.UAlive
         {
             var macro = ScriptableObject.CreateInstance<T>();
             macro.title = macro.GetDefaultName();
-            var path = Selection.activeObject == null || Selection.assetGUIDs.Length < 2 ? HUMAssets.ProjectWindowPath() : AssetDatabase.GUIDToAssetPath(Selection.activeObject.GetGUID());
+            var isFolder = Directory.Exists(AssetDatabase.GUIDToAssetPath(Selection.activeObject?.GetGUID()) + "/");
+            var _path = AssetDatabase.GUIDToAssetPath(Selection.activeObject.GetGUID());
+            var path = Selection.activeObject == null ? HUMAssets.ProjectWindowPath() : (isFolder ? _path : _path.Remove(_path.LastIndexOf("/"), _path.Length - (_path.LastIndexOf("/"))));
             AssetDatabase.CreateAsset(macro, path + "/" + macro.GetDefaultName() + ".asset");
             var definable = macro as IDefinable;
             if (definable != null) definable.Define();
