@@ -15,6 +15,7 @@ namespace Lasm.UAlive
         public ValueInput input;
         [DoNotSerialize][PortLabelHidden]
         public ValueOutput output;
+        [Serialize]
         public Type portType = typeof(object);
 
         protected override void Definition()

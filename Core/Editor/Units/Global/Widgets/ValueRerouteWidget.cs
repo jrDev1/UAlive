@@ -13,7 +13,9 @@ namespace Lasm.UAlive
     {
         private static ValueReroute addedUnit = null;
         private static bool keyPressed;
+        private static bool keyUp;
         private int connections;
+        private int frames = 0;
 
         public ValueRerouteWidget(FlowCanvas canvas, ValueReroute unit) : base(canvas, unit)
         {
@@ -24,54 +26,51 @@ namespace Lasm.UAlive
             Ludiq.GraphGUI.Node(new Rect(position.x, position.y, _position.width, _position.height), NodeShape.Square, NodeColor.Gray, isSelected);
         }
 
-        private Type lastType;
+        private Type lastType = typeof(object);
 
         protected override bool showIcons => true;
 
         public override void Update()
         {
-            if (unit.input != null && unit.input.connection != null && unit.input.connection.sourceExists)
-            {
-                if (unit.portType != unit.input.connection.source.type)
+                if (unit.input != null && unit.input.connection != null && unit.input.connection.sourceExists)
                 {
                     unit.portType = unit.input.connection.source.type;
-                    lastType = null;
                 }
-            }
-            else
-            {
-                unit.portType = typeof(object);
-                if (lastType != typeof(object)) lastType = null;
-            }
-
-            if (lastType != unit.portType)
-            {
-                lastType = unit.portType;
-                unit.Define();
-            }
-
-            if (addedUnit == null && keyPressed && SourceIsReroute())
-            {
-                addedUnit = new ValueReroute();
-                addedUnit.position = canvas.mousePosition - new Vector2(14, 14);
-                ((FlowGraph)graph).units.Add(addedUnit);
-                unit.output.ValidlyConnectTo(addedUnit.input);
-                canvas.connectionSource = addedUnit.output;
-            }
-            else
-            {
-                if (addedUnit == null && HasSource() && HasConnections() && IsConnecting() && SourceIsReroute() && DestinationIsNotReroute())
+                else
                 {
-                    canvas.CancelConnection();
+                    unit.portType = typeof(object);
                 }
-            }
 
-            if (addedUnit != null) canvas.connectionSource = addedUnit.output;
+                if (lastType != null && unit.portType != null && lastType != unit.portType)
+                {
+                    lastType = unit.portType;
+                    unit.Define();
+                }
 
-            if (!keyPressed)
-            {
-                addedUnit = null;
-            }
+                if (addedUnit == null && keyPressed && SourceIsReroute())
+                {
+                    addedUnit = new ValueReroute();
+                    addedUnit.position = canvas.mousePosition - new Vector2(14, 14);
+                    ((FlowGraph)graph).units.Add(addedUnit);
+                    unit.output.ValidlyConnectTo(addedUnit.input);
+                    canvas.connectionSource = addedUnit.output;
+                }
+                else
+                {
+                    if (addedUnit == null && HasSource() && HasConnections() && IsConnecting() && SourceIsReroute() && DestinationIsNotReroute())
+                    {
+                        if (canvas.hoveredWidget as UnitInputPortWidget<ValueInput> != null && !keyPressed) canvas.CancelConnection();
+                    }
+                }
+
+                if (addedUnit != null) canvas.connectionSource = addedUnit.output;
+
+                if (!keyPressed)
+                {
+                    addedUnit = null;
+                }
+
+            if (frames < 10) frames++; ;
         }
 
         private bool HasSource()
@@ -83,6 +82,7 @@ namespace Lasm.UAlive
         {
             base.HandleCapture();
             keyPressed = e.keyCode == KeyCode.Space;
+            keyUp = e.IsKeyUp(KeyCode.Space);
         }
 
         private bool DestinationIsNotReroute()

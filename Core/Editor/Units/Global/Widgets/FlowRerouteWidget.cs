@@ -39,7 +39,7 @@ namespace Lasm.UAlive
             {
                 if (addedUnit == null && HasSource() && HasConnections() && IsConnecting() && SourceIsReroute() && DestinationIsNotReroute())
                 {
-                    canvas.CancelConnection();
+                    if (canvas.hoveredWidget as UnitInputPortWidget<ControlInput> != null && !keyPressed) canvas.CancelConnection();
                 }
             }
 
