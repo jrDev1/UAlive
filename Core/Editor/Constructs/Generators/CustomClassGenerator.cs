@@ -78,7 +78,7 @@ namespace Lasm.UAlive
             {
                 var variable = decorated.variables.variables[i];
                 var field = FieldGenerator.Field(AccessModifier.Public, FieldModifier.None, variable.declaration.type, variable.name);
-                field.CustomDefault(variable.declaration.defaultValue.As().Code(true) + ";");
+                field.Default(variable.declaration.defaultValue);
                 @class.AddField(field);
             }
 

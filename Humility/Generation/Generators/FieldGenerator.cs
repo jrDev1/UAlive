@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Ludiq;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Lasm.UAlive
 {
@@ -23,7 +25,7 @@ namespace Lasm.UAlive
             field.modifier = modifier;
             field.type = type;
             field.name = name;
-            field.defaultValue = null;
+            field.defaultValue = type.Default();
             return field;
         }
 
@@ -61,7 +63,7 @@ namespace Lasm.UAlive
 
             var modSpace = (modifier == FieldModifier.None) ? string.Empty : " ";
             var definition = CodeBuilder.Indent(indent) + scope.AsString() + " " + modifier.AsString() + modSpace + type.As().CSharpName() + " " + name.LegalMemberName();
-            var output = defaultValue == null && type.IsValueType ? ";" : " = " + (isString ? stringDefault : defaultValue.As().Code(true) + ";");
+            var output = !isString && (defaultValue == null || defaultValue.Equals(type.Default())) ? ";" : " = " + (isString ? stringDefault : defaultValue.As().Code(true) + ";");
             return _attributes + definition + output;
         }
 
