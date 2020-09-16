@@ -64,7 +64,7 @@ namespace Lasm.UAlive
         {
             for (int i = 0; i < variables.Count; i++)
             {
-                if (classVariable.name == variables[i].reference.name)
+                if (classVariable?.name == variables[i].reference?.name)
                 {
                     return variables[i];
                 }
@@ -77,7 +77,7 @@ namespace Lasm.UAlive
         {
             for (int i = 0; i < macro.variables.variables.Count; i++)
             {
-                if (macro.variables.variables[i].name == runtimeVariable.reference.name)
+                if (macro?.variables?.variables[i]?.name == runtimeVariable?.reference?.name)
                 {
                     return macro.variables.variables[i];
                 }

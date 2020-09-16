@@ -67,16 +67,19 @@ namespace Lasm.UAlive
             for (int i = 0; i < childProperty.Count; i++)
             {
                 var variable = ((RuntimeVariable)childProperty[i].value);
-                var _type = variable.reference.declaration.type;
+                var _type = variable?.reference?.declaration?.type;
 
-                if (_type.BaseType != null || (_type.BaseType == null && variable.value != null))
+                if (_type != null)
                 {
-                    var thisHeight = variable.value == null ? 18 : LudiqGUI.GetInspectorHeight(childProperty[i].Inspector(), childProperty[i]["value"].Cast(variable.reference.declaration.type), position.width, new GUIContent(variable.reference.name.Prettify())) + 2;
-                    _pos += thisHeight - (_type.BaseType == null ? 20 : 0);
-                }
-                else
-                {
-                    _pos += 18;
+                    if (_type.BaseType != null || (_type.BaseType == null && variable.value != null))
+                    {
+                        var thisHeight = variable.value == null ? 18 : LudiqGUI.GetInspectorHeight(childProperty[i].Inspector(), childProperty[i]["value"].Cast(variable.reference.declaration.type), position.width, new GUIContent(variable.reference.name.Prettify())) + 2;
+                        _pos += thisHeight - (_type.BaseType == null ? 20 : 0);
+                    }
+                    else
+                    {
+                        _pos += 18;
+                    }
                 }
             }
 
