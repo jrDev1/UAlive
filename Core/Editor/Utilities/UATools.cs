@@ -62,6 +62,8 @@ namespace Lasm.UAlive
         public static CSharpPreview instance;
 
         string output = string.Empty;
+        [SerializeField]
+        private Vector2 scrollPosition;
 
         [MenuItem("Window/UAlive/C# Preview")]
         private static void Open()
@@ -91,29 +93,31 @@ namespace Lasm.UAlive
 
         private void OnGUI()
         {
-            HUMEditor.Vertical().Box(background, 10, () => 
+            scrollPosition = HUMEditor.Draw().ScrollView(scrollPosition, () =>
             {
-                if (changed && selection != null)
+                HUMEditor.Vertical().Box(background, 10, () =>
                 {
-                    if (Class != null)
+                    if (changed && selection != null)
                     {
-                        output = CustomClassGenerator.GetDecorator(Class).GetCompiledOutput();
+                        if (Class != null)
+                        {
+                            output = CustomClassGenerator.GetDecorator(Class).GetCompiledOutput();
+                        }
+                        else if (Interface != null)
+                        {
+                            output = CustomInterfaceGenerator.GetDecorator(Interface).GetCompiledOutput();
+                        }
+                        else
+                        {
+                            if (Enum != null) output = CustomEnumGenerator.GetDecorator(Enum).GetCompiledOutput();
+                        }
+                        changed = false;
                     }
-                    else if (Interface != null)
-                    {
-                        output = CustomInterfaceGenerator.GetDecorator(Interface).GetCompiledOutput();
-                    }
-                    else
-                    {
-                        if (Enum != null) output = CustomEnumGenerator.GetDecorator(Enum).GetCompiledOutput();
-                    }
-                    changed = false;
-                }
 
-                GUILayout.Label(output, new GUIStyle(GUI.skin.label) { stretchWidth = true, stretchHeight = true, alignment = TextAnchor.UpperLeft, wordWrap = true });
+                    GUILayout.Label(output, new GUIStyle(GUI.skin.label) { stretchWidth = true, stretchHeight = true, alignment = TextAnchor.UpperLeft, wordWrap = true });
 
-            }, true, true);
-
+                }, true, true);
+            });
 
             Repaint();
         }
