@@ -30,6 +30,7 @@ namespace Lasm.UAlive
             if (@as.type == typeof(bool)) return "bool";
             if (@as.type == typeof(byte)) return "byte";
             if (@as.type == typeof(Lasm.UAlive.Void)) return "void";
+            if (@as.type.IsConstructedGenericType) return GenericDeclaration(@as.type);
             if (@as.type == typeof(System.Object) && @as.type.BaseType == null) return hideSystemObject ? string.Empty : "object";
 
             return fullName ? @as.type.FullName : @as.type.Name;
@@ -233,6 +234,82 @@ namespace Lasm.UAlive
         public static HUMType.Data.Types Types(this HUMType.Data.Get get)
         {
             return new HUMType.Data.Types(get);
+        }
+
+        /// <summary>
+        /// Converts a value into code form. Example: a float value of '10' would be '10f'. A string would add qoutes, ect.
+        /// </summary>
+        public static string Code(this HUMValue.Data.As @as, bool isNew)
+        {
+            Type type = @as.value?.GetType();
+            if (@as.value is Type) return "typeof(" + ((Type)@as.value).As().CSharpName() + ")";
+            if (type == null) return "null";
+            if (type == typeof(Lasm.UAlive.Void)) return "void";
+            if (type == typeof(bool)) return @as.value.ToString().ToLower();
+            if (type == typeof(float)) return @as.value.ToString() + "f";
+            if (type == typeof(string)) return @"""" + @as.value.ToString() + @"""";
+            if (type == typeof(UnityEngine.GameObject)) return "null";
+            if (type == typeof(int) || type == typeof(uint) || type == typeof(byte) || type == typeof(long) || type == typeof(short) || type == typeof(double)) return @as.value.ToString();
+            if (isNew)
+            {
+                if (type.IsClass || !type.IsClass && !type.IsInterface && !type.IsEnum)
+                {
+                    Debug.Log(type.IsConstructedGenericType);
+                    if (type.IsConstructedGenericType) return "new " + GenericDeclaration(type) + "(" + ConstructorParameters(@as.value) + ")";
+                    return "new " + type.Name + "(" + ")";
+                }
+                else
+                {
+                    if (type.IsValueType && !type.IsEnum && !type.IsPrimitive) return "new " + type.Name + "(" + ConstructorParameters(@as.value) + ")";
+                }
+            }
+
+            return @as.value.ToString();
+        }
+
+        private static string ConstructorParameters(object value)
+        {
+            var fields = value.GetType().GetFields();
+            var output = string.Empty;
+            var usableFields = new List<FieldInfo>();
+
+            for (int i = 0; i < fields.Length; i++)
+            {
+                if (!fields[i].IsLiteral)
+                {
+                    usableFields.Add(fields[i]);
+                }
+            }
+
+            for (int i = 0; i < usableFields.Count; i++)
+            {
+                output += usableFields[i].GetValue(value).As().Code(true);
+                output += i < usableFields.Count - 1 ? ", " : string.Empty;
+            }
+
+            return output;
+        }
+
+        public static string GenericDeclaration(Type type)
+        {
+            var output = string.Empty;
+
+            if (!type.IsConstructedGenericType) throw new Exception("Type is not a generic type but you are trying to declare a generic.");
+
+            output += type.Name.Remove(type.Name.IndexOf("`"), type.Name.Length - type.Name.IndexOf("`"));
+            output += "<";
+
+            var args = type.GetGenericArguments();
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                output += args[i].As().CSharpName();
+                if (i < args.Length - 1) output += ", ";
+            }
+
+            output += ">";
+
+            return output;
         }
     }
 }
