@@ -104,7 +104,7 @@ namespace Lasm.UAlive
                         previousSelection = selection;
                     }
 
-                    if (changed && selection != null)
+                    if (selection != null)
                     {
                         if (Class != null)
                         {

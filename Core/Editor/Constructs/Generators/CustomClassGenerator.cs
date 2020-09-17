@@ -1,4 +1,5 @@
-﻿using Ludiq;
+﻿using Bolt;
+using Ludiq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -87,7 +88,8 @@ namespace Lasm.UAlive
                 var nest = decorated.methods.custom[i];
                 if (CanAddMethod(nest))
                 {
-                    var method = Method(nest.name, nest.entry.declaration.scope, nest.entry.declaration.modifier, nest.entry.declaration.type);
+                    var body = nest.entry.invoke.hasAnyConnection ? (nest.entry.invoke.connection.destination?.unit as Unit).GenerateControl(nest.entry.invoke.connection.destination, 0) : string.Empty;
+                    var method = Method(nest.name, nest.entry.declaration.scope, nest.entry.declaration.modifier, nest.entry.declaration.type, body: body);
                     AddParameters(method, nest);
                     @class.AddMethod(method);
                 }
@@ -100,18 +102,22 @@ namespace Lasm.UAlive
                 var nest = decorated.methods.overrides.current[keys[i]];
                 if (CanAddMethod(nest))
                 {
+                    var body = nest.entry.invoke.hasAnyConnection? (nest.entry.invoke.connection.destination?.unit as Unit).GenerateControl(nest.entry.invoke.connection.destination, 0) : string.Empty;
+
                     var method = nest.entry.declaration.type.Is().Void() ?
                         Method(
                             nest.name.Replace(" ", string.Empty),
                             nest.entry.declaration.scope,
                             MustOverride(nest) ? MethodModifier.Override : nest.entry.declaration.modifier,
-                            nest.entry.declaration.type
+                            nest.entry.declaration.type,
+                            body: body
                             )
                         : Method(
                             nest.name.Replace(" ", string.Empty),
                             nest.entry.declaration.scope,
                             MustOverride(nest) ? MethodModifier.Override : nest.entry.declaration.modifier,
-                            nest.entry.declaration.type
+                            nest.entry.declaration.type,
+                            body: body
                             );
                     AddParameters(method, nest);
                     @class.AddMethod(method);

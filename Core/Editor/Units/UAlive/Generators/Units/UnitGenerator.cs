@@ -5,16 +5,24 @@ using UnityEngine;
 
 namespace Lasm.UAlive
 {
-    public abstract class UnitGenerator<TUnit> : Decorator<UnitGenerator<TUnit>, UnitGeneratorAttribute, TUnit> where TUnit : IUnit
+    [UnitGenerator(typeof(Unit))]
+    public class UnitGenerator : Decorator<UnitGenerator, UnitGeneratorAttribute, Unit>
     {
-        public TUnit unit;
+        public Unit unit;
 
-        public UnitGenerator(TUnit unit) { this.unit = unit; }
+        public UnitGenerator(Unit unit) { this.unit = unit; }
 
-        public abstract string GenerateValue(ValueInput input);
+        public virtual string GenerateValue(ValueInput input) { return string.Empty; }
 
-        public abstract string GenerateValue(ValueOutput output);
+        public virtual string GenerateValue(ValueOutput output) { return string.Empty; }
 
-        public abstract string GenerateControl(ControlInput input, int indent);
+        public virtual string GenerateControl(ControlInput input, int indent) { return string.Empty; }
+    }
+
+    public class UnitGenerator<TUnit> : UnitGenerator where TUnit : Unit
+    {
+        public TUnit Unit;
+
+        public UnitGenerator(Unit unit) : base (unit) { this.unit = unit; Unit = unit as TUnit; }
     }
 }

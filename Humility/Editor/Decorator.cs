@@ -28,10 +28,10 @@ namespace Lasm.UAlive
         /// </summary>
         /// <param name="decorated"></param>
         /// <returns></returns>
-        public static TDecorator GetDecorator(TDecoratedType decorated)
+        public static TDecorator GetDecorator(TDecoratedType decorated, params object[] parameters)
         {
             if (decorated == null) return null;
-            var decorator = GetDecoratorFromDecorated(decorated);
+            var decorator = GetDecoratorFromDecorated(decorated, parameters);
             if (decorator.decorated == null) decorator.decorated = decorated;
 
             return decorator;
@@ -50,7 +50,7 @@ namespace Lasm.UAlive
             return GetDecoratorType(decoratedType.BaseType);
         }
 
-        private static TDecorator GetDecoratorFromDecorated(TDecoratedType decorated)
+        private static TDecorator GetDecoratorFromDecorated(TDecoratedType decorated, params object[] parameters)
         {
             var hasDecorator = decorators.ContainsKey(decorated);
 
@@ -58,7 +58,7 @@ namespace Lasm.UAlive
             {
                 Type type = decorated.GetType();
                 Type decoratorType = GetDecoratorType(type);
-                var decorator = (TDecorator)Activator.CreateInstance(decoratorType);
+                var decorator = (TDecorator)Activator.CreateInstance(decoratorType, parameters);
                 decorator.decorated = decorated;
                 activeDecorator = decorator;
                 activeDecorated = decorated;

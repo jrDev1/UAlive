@@ -5,19 +5,19 @@ namespace Lasm.UAlive
 {
     public static class UnitGeneration
     {
-        public static string GenerateValue<T>(this T unit, ValueInput input) where T : IUnit
+        public static string GenerateValue<T>(this T unit, ValueInput input) where T : Unit
         {
-            return UnitGenerator<T>.GetDecorator(unit).GenerateValue(input);
+            return UnitGenerator<T>.GetDecorator(unit, unit).GenerateValue(input);
         }
 
-        public static string GenerateValue<T>(this T unit, ValueOutput output) where T : IUnit
+        public static string GenerateValue<T>(this T unit, ValueOutput output) where T : Unit
         {
-            return UnitGenerator<T>.GetDecorator(unit).GenerateValue(output);
+            return UnitGenerator<T>.GetDecorator(unit, unit).GenerateValue(output);
         }
 
-        public static string GenerateControl<T>(this T unit, ControlInput input, int indent) where T : IUnit
+        public static string GenerateControl<T>(this T unit, ControlInput input, int indent) where T : Unit
         {
-            return UnitGenerator<T>.GetDecorator(unit).GenerateControl(input, indent);
+            return UnitGenerator<T>.GetDecorator(unit, unit).GenerateControl(input, indent);
         }
     }
 }
