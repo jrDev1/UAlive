@@ -19,17 +19,21 @@ namespace Lasm.UAlive
                 output += "\n";
                 output += CodeBuilder.OpenBody(indent);
                 output += "\n";
-                output += (Unit.ifTrue.hasAnyConnection ? Unit.GenerateControl(Unit.ifTrue.connection.destination, indent + 1) : string.Empty);
+                output += (Unit.ifTrue.hasAnyConnection ? (Unit.ifTrue.connection.destination.unit as Unit).GenerateControl(Unit.ifTrue.connection.destination, indent + 1) : string.Empty);
                 output += "\n";
                 output += CodeBuilder.CloseBody(indent);
-                output += "\n";
-                output += CodeBuilder.Indent(indent) + "else";
-                output += "\n";
-                output += CodeBuilder.OpenBody(indent);
-                output += "\n";
-                output += (Unit.ifFalse.hasAnyConnection ? unit.GenerateControl(Unit.ifFalse.connection.destination, indent + 1) : string.Empty);
-                output += "\n";
-                output += CodeBuilder.CloseBody(indent);
+
+                if (Unit.ifFalse.hasAnyConnection)
+                {
+                    output += "\n";
+                    output += CodeBuilder.Indent(indent) + "else";
+                    output += "\n";
+                    output += CodeBuilder.OpenBody(indent);
+                    output += "\n";
+                    output += (Unit.ifFalse.hasAnyConnection ? (Unit.ifFalse.connection.destination.unit as Unit).GenerateControl(Unit.ifFalse.connection.destination, indent + 1) : string.Empty);
+                    output += "\n";
+                    output += CodeBuilder.CloseBody(indent);
+                }
             }
 
             return output;
@@ -45,12 +49,7 @@ namespace Lasm.UAlive
                 }
             }
 
-            return string.Empty;
-        }
-
-        public override string GenerateValue(ValueOutput output)
-        {
-            return string.Empty;
+            return base.GenerateValue(input);
         }
     }
 }
