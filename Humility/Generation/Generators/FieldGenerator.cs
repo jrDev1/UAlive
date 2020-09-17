@@ -62,7 +62,7 @@ namespace Lasm.UAlive
             }
 
             var modSpace = (modifier == FieldModifier.None) ? string.Empty : " ";
-            var definition = CodeBuilder.Indent(indent) + scope.AsString() + " " + modifier.AsString() + modSpace + type.As().CSharpName() + " " + name.LegalMemberName();
+            var definition = CodeBuilder.Indent(indent) + scope.AsString().ConstructHighlight() + " " + modifier.AsString().ConstructHighlight() + modSpace + type.As().CSharpName() + " " + name.LegalMemberName();
             var output = !isString && (defaultValue == null || defaultValue.Equals(type.Default())) ? ";" : " = " + (isString ? stringDefault : defaultValue.As().Code(true) + ";");
             return _attributes + definition + output;
         }

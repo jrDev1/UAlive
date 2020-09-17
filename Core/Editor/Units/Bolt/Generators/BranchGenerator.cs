@@ -15,7 +15,7 @@ namespace Lasm.UAlive
 
             if (input == Unit.enter)
             {
-                output += CodeBuilder.Indent(indent) + "if (" + GenerateValue(Unit.condition) + ")";
+                output += CodeBuilder.Indent(indent) + "if".ConstructHighlight() + " (" + GenerateValue(Unit.condition) + ")";
                 output += "\n";
                 output += CodeBuilder.OpenBody(indent);
                 output += "\n";
@@ -26,7 +26,7 @@ namespace Lasm.UAlive
                 if (Unit.ifFalse.hasAnyConnection)
                 {
                     output += "\n";
-                    output += CodeBuilder.Indent(indent) + "else";
+                    output += CodeBuilder.Indent(indent) + "else".ConstructHighlight();
                     output += "\n";
                     output += CodeBuilder.OpenBody(indent);
                     output += "\n";

@@ -81,7 +81,7 @@ namespace Lasm.UAlive
             }
 
             var canShowInherits = !(inherits == null && string.IsNullOrEmpty(stringInherits) || inherits == typeof(object) && inherits.BaseType == null);
-            output += CodeBuilder.Indent(indent) + scope.AsString() + (modifier == ClassModifier.None ? string.Empty : " " + modifier.AsString()) + " class " + name.LegalMemberName();
+            output += CodeBuilder.Indent(indent) + scope.AsString().ConstructHighlight() + (modifier == ClassModifier.None ? string.Empty : " " + modifier.AsString().ConstructHighlight()) + " class ".ConstructHighlight() + name.LegalMemberName().TypeHighlight();
             output += !canShowInherits && interfaces.Count == 0 ? string.Empty : " : ";
             output += canShowInherits ? (inherits == null ? stringInherits : inherits.As().CSharpName()) + (interfaces.Count > 0 ? ", " : string.Empty) : string.Empty;
 

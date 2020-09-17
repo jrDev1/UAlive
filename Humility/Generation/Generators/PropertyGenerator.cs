@@ -115,7 +115,7 @@ namespace Lasm.UAlive
                 }
 
                 var modSpace = (modifier == PropertyModifier.None) ? string.Empty : " ";
-                var definition = CodeBuilder.Indent(indent) + scope.AsString() + " " + modifier.AsString() + modSpace + returnTypeString + " " + name.LegalMemberName() + " " + GetterSetter();
+                var definition = CodeBuilder.Indent(indent) + scope.AsString().ConstructHighlight() + " " + modifier.AsString().ConstructHighlight() + modSpace + returnTypeString + " " + name.LegalMemberName() + " " + GetterSetter();
                 var output = defaultValue == null && returnType.IsValueType && returnType.IsPrimitive ? (hasGetter || hasSetter ? string.Empty : ";") : hasDefault ? " = " + defaultValue.As().Code(true) + ";" : string.Empty;
                 return _attributes + definition + output;
             }
@@ -129,7 +129,7 @@ namespace Lasm.UAlive
                 }
 
                 var modSpace = (modifier == PropertyModifier.None) ? string.Empty : " ";
-                var definition = CodeBuilder.Indent(indent) + scope.AsString() + " " + modifier.AsString() + modSpace + returnType.As().CSharpName() + " " + name + " " + GetterSetter();
+                var definition = CodeBuilder.Indent(indent) + scope.AsString().ConstructHighlight() + " " + modifier.AsString() + modSpace + returnType.As().CSharpName() + " " + name + " " + GetterSetter();
                 var output = defaultValue == null && stringIsValueType && stringIsPrimitive ? (hasGetter || hasSetter ? string.Empty : ";") : hasDefault ? " = " + defaultValue.As().Code(true) + ";" : string.Empty;
                 return _attributes + definition + output;
             }
@@ -152,11 +152,11 @@ namespace Lasm.UAlive
             {
                 if (multiStatementGetter)
                 {
-                    return CodeBuilder.Indent(indent + 1) + "get\n" + CodeBuilder.Indent(indent + 1) +"{\n" + CodeBuilder.Indent(indent + 2) + getterBody.Replace("\n", "\n" + CodeBuilder.Indent(indent + 2)) + "\n" + CodeBuilder.Indent(indent + 1) + "}";
+                    return CodeBuilder.Indent(indent + 1) + "get\n".ConstructHighlight() + CodeBuilder.Indent(indent + 1) +"{\n" + CodeBuilder.Indent(indent + 2) + getterBody.Replace("\n", "\n" + CodeBuilder.Indent(indent + 2)) + "\n" + CodeBuilder.Indent(indent + 1) + "}";
                 }
                 else
                 {
-                    return "get => " + getterBody.Replace("\n", "\n" + CodeBuilder.Indent(indent + 1)) + ";";
+                    return "get".ConstructHighlight() + " => " + getterBody.Replace("\n", "\n" + CodeBuilder.Indent(indent + 1)) + ";";
                 }
             }
 
@@ -164,11 +164,11 @@ namespace Lasm.UAlive
             {
                 if (multiStatementSetter)
                 {
-                    return CodeBuilder.Indent(indent + 1) + "set \n" + "{\n" + setterBody.Replace("\n", "\n" + CodeBuilder.Indent(indent + 1)) + "\n}";
+                    return CodeBuilder.Indent(indent + 1) + "set \n".ConstructHighlight() + "{\n" + setterBody.Replace("\n", "\n" + CodeBuilder.Indent(indent + 1)) + "\n}";
                 }
                 else
                 {
-                    return "set => " + setterBody.Replace("\n", "\n" + CodeBuilder.Indent(indent + 1)) + ";";
+                    return "set".ConstructHighlight() + " => " + setterBody.Replace("\n", "\n" + CodeBuilder.Indent(indent + 1)) + ";";
                 }
             }
         }

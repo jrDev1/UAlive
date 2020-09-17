@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Lasm.UAlive {
@@ -7,6 +8,12 @@ namespace Lasm.UAlive {
         public static Data.Remove Remove(this string text, string remove)
         {
             return new Data.Remove(text, remove);
+        }
+
+        public static string RemoveBetween(this string str, string startTag, string endTag)
+        {
+            Regex regex = new Regex(string.Format("{0}(.*?){1}", Regex.Escape(startTag), Regex.Escape(endTag)), RegexOptions.RightToLeft);
+            return regex.Replace(str, startTag + endTag);
         }
 
         /// <summary>
@@ -20,7 +27,7 @@ namespace Lasm.UAlive {
         /// <summary>
         /// Begins an operation that capitalizes some text.
         /// </summary>
-        public static Data.Capitalize Captialize(this string text)
+        public static Data.Capitalize Capitalize(this string text)
         {
             return new Data.Capitalize(text);
         }

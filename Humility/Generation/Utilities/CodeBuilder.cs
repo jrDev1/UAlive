@@ -7,6 +7,7 @@ using UnityEditor;
 using System.Reflection;
 using Ludiq;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Lasm.UAlive
 {
@@ -118,7 +119,7 @@ namespace Lasm.UAlive
 
             for (int i = 0; i < namespaces.Length; i++)
             {
-                output += "using " + namespaces[i] + ";" + (i < namespaces.Length - 1 ? "\n" : string.Empty);
+                output += "using ".ConstructHighlight() + namespaces[i] + ";" + (i < namespaces.Length - 1 ? "\n" : string.Empty);
             }
 
             return output;
@@ -156,7 +157,7 @@ namespace Lasm.UAlive
 
             for (int i = 0; i < usings.Count; i++)
             {
-                output += "using " + usings[i] + ";" + (i < usings.Count - 1 ? "\n" : string.Empty);
+                output += "using ".ConstructHighlight() + usings[i] + ";" + (i < usings.Count - 1 ? "\n" : string.Empty);
             }
 
             return output;
@@ -304,6 +305,64 @@ namespace Lasm.UAlive
             return output;
         }
 
-        
+        public static string Highlight(string code, Color color)
+        {
+            var output = string.Empty;
+            output += "[BeginUAPreviewHighlight]" + $"<color={color.ToHexString()}>" + "[EndUAPreviewHighlight]";
+            output += code;
+            output += "[BeginUAPreviewHighlight]" + "</color>" + "[EndUAPreviewHighlight]";
+            return output;
+        }
+
+        public static string Highlight(string code, string hex)
+        {
+            var output = string.Empty;
+            output += "[BeginUAPreviewHighlight]" + $"<color=#{hex}>" + "[EndUAPreviewHighlight]";
+            output += code;
+            output += "[BeginUAPreviewHighlight]" + "</color>" + "[EndUAPreviewHighlight]";
+            return output;
+        }
+
+        public static string ConstructHighlight(this string code)
+        {
+            return Highlight(code, "4488FF");
+        }
+
+        public static string TypeHighlight(this string code)
+        {
+            return Highlight(code, "33EEAA");
+        }
+
+        public static string StringHighlight(this string code)
+        {
+            return Highlight(code, "CC8833");
+        }
+
+        public static string NumericHighlight(this string code)
+        {
+            return Highlight(code, "CC8833");
+        }
+
+        public static string CommentHighlight(this string code)
+        {
+            return Highlight(code, "009900");
+        }
+
+        public static string SummaryHighlight(this string code)
+        {
+            return Highlight(code, "00CC00");
+        }
+
+        public static string RemoveHighlights(this string code)
+        {
+            return code.RemoveBetween("[BeginUAPreviewHighlight]", "[EndUAPreviewHighlight]");
+        }
+
+        public static string RemoveMarkdown(this string code)
+        {
+            var _code = code.Replace("[BeginUAPreviewHighlight]", string.Empty);
+            _code = _code.Replace("[EndUAPreviewHighlight]", string.Empty);
+            return _code;
+        }
     }
 }

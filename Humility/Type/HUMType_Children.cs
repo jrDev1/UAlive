@@ -19,8 +19,9 @@ namespace Lasm.UAlive
         /// <summary>
         /// Converts a type to its actual declared csharp name. Custom types return the type name. Example 'System.Int32' becomes 'int'.
         /// </summary>
-        public static string CSharpName(this HUMType.Data.As @as, bool hideSystemObject = false, bool fullName = false)
+        public static string CSharpName(this HUMType.Data.As @as, bool hideSystemObject = false, bool fullName = false, bool highlight = true)
         {
+            if (highlight == true) return @as.HighlightCSharpName(hideSystemObject, fullName);
             if (@as.type == null) return "null";
             if (@as.type == typeof(int)) return "int";
             if (@as.type == typeof(string)) return "string";
@@ -34,6 +35,23 @@ namespace Lasm.UAlive
             if (@as.type == typeof(System.Object) && @as.type.BaseType == null) return hideSystemObject ? string.Empty : "object";
 
             return fullName ? @as.type.FullName : @as.type.Name;
+        }
+
+        private static string HighlightCSharpName(this HUMType.Data.As @as, bool hideSystemObject = false, bool fullName = false)
+        {
+            if (@as.type == null) return "null".ConstructHighlight();
+            if (@as.type == typeof(int)) return "int".ConstructHighlight();
+            if (@as.type == typeof(string)) return "string".ConstructHighlight();
+            if (@as.type == typeof(float)) return "float".ConstructHighlight();
+            if (@as.type == typeof(void)) return "void".ConstructHighlight();
+            if (@as.type == typeof(double)) return "double".ConstructHighlight();
+            if (@as.type == typeof(bool)) return "bool".ConstructHighlight();
+            if (@as.type == typeof(byte)) return "byte".ConstructHighlight();
+            if (@as.type == typeof(Lasm.UAlive.Void)) return "void".ConstructHighlight();
+            if (@as.type.IsConstructedGenericType) return GenericDeclaration(@as.type);
+            if (@as.type == typeof(System.Object) && @as.type.BaseType == null) return hideSystemObject ? string.Empty : "object".ConstructHighlight();
+
+            return fullName ? @as.type.FullName.Replace(@as.type.Name, @as.type.Name.TypeHighlight()) : @as.type.Name.TypeHighlight();
         }
 
         /// <summary>
@@ -239,8 +257,9 @@ namespace Lasm.UAlive
         /// <summary>
         /// Converts a value into code form. Example: a float value of '10' would be '10f'. A string would add qoutes, ect.
         /// </summary>
-        public static string Code(this HUMValue.Data.As @as, bool isNew)
+        public static string Code(this HUMValue.Data.As @as, bool isNew, bool highlight = true)
         {
+            if (highlight) return HighlightedCode(@as, isNew);
             Type type = @as.value?.GetType();
             if (@as.value is Type) return "typeof(" + ((Type)@as.value).As().CSharpName() + ")";
             if (type == null) return "null";
@@ -261,6 +280,33 @@ namespace Lasm.UAlive
                 else
                 {
                     if (type.IsValueType && !type.IsEnum && !type.IsPrimitive) return "new " + type.Name + "(" + ConstructorParameters(@as.value) + ")";
+                }
+            }
+
+            return @as.value.ToString();
+        }
+
+        private static string HighlightedCode(this HUMValue.Data.As @as, bool isNew)
+        {
+            Type type = @as.value?.GetType();
+            if (@as.value is Type) return "typeof".ConstructHighlight() + "(" + ((Type)@as.value).As().CSharpName().TypeHighlight() + ")";
+            if (type == null) return "null".ConstructHighlight();
+            if (type == typeof(Lasm.UAlive.Void)) return "void".ConstructHighlight();
+            if (type == typeof(bool)) return @as.value.ToString().ToLower().ConstructHighlight();
+            if (type == typeof(float)) return (@as.value.ToString() + "f").NumericHighlight();
+            if (type == typeof(string)) return (@"""" + @as.value.ToString() + @"""").StringHighlight();
+            if (type == typeof(UnityEngine.GameObject)) return "null".ConstructHighlight();
+            if (type == typeof(int) || type == typeof(uint) || type == typeof(byte) || type == typeof(long) || type == typeof(short) || type == typeof(double)) return @as.value.ToString().NumericHighlight();
+            if (isNew)
+            {
+                if (type.IsClass || !type.IsClass && !type.IsInterface && !type.IsEnum)
+                {
+                    if (type.IsConstructedGenericType) return "new ".ConstructHighlight() + GenericDeclaration(type) + "(" + ConstructorParameters(@as.value) + ")";
+                    return "new ".ConstructHighlight() + type.Name.TypeHighlight() + "(" + ")";
+                }
+                else
+                {
+                    if (type.IsValueType && !type.IsEnum && !type.IsPrimitive) return "new ".ConstructHighlight() + type.Name.TypeHighlight() + "(" + ConstructorParameters(@as.value) + ")";
                 }
             }
 
@@ -296,7 +342,7 @@ namespace Lasm.UAlive
 
             if (!type.IsConstructedGenericType) throw new Exception("Type is not a generic type but you are trying to declare a generic.");
 
-            output += type.Name.Remove(type.Name.IndexOf("`"), type.Name.Length - type.Name.IndexOf("`"));
+            output += type.Name.Remove(type.Name.IndexOf("`"), type.Name.Length - type.Name.IndexOf("`")).TypeHighlight();
             output += "<";
 
             var args = type.GetGenericArguments();

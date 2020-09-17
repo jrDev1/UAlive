@@ -34,7 +34,7 @@ namespace Lasm.UAlive
             }
             var modSpace = modifier == MethodModifier.None ? string.Empty : " ";
 
-            return attributes + CodeBuilder.Indent(indent) + scope.AsString().ToLower() + " " + modifier.AsString() + modSpace + returnType.As().CSharpName() + " " + name.LegalMemberName() + CodeBuilder.Parameters(this.parameters);
+            return attributes + CodeBuilder.Indent(indent) + scope.AsString().ToLower().ConstructHighlight() + " " + modifier.AsString().ConstructHighlight() + modSpace + returnType.As().CSharpName() + " " + name.LegalMemberName() + CodeBuilder.Parameters(this.parameters);
         }
 
         protected override sealed string GenerateBody(int indent)

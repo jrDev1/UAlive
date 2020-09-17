@@ -22,7 +22,7 @@ namespace Lasm.UAlive
                 output += attributes[i].Generate(indent) + "\n";
             }
 
-            output += CodeBuilder.Indent(indent) + scope.AsString() + " enum " + typeName.LegalMemberName();
+            output += CodeBuilder.Indent(indent) + scope.AsString().ConstructHighlight() + " enum ".ConstructHighlight() + typeName.LegalMemberName().TypeHighlight();
 
             return output;
         }

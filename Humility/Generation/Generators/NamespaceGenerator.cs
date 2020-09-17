@@ -26,7 +26,7 @@ namespace Lasm.UAlive
 
         protected override string GenerateBefore(int indent)
         {
-            return "namespace " + @namespace;
+            return "namespace ".ConstructHighlight() + @namespace;
         }
 
         protected override string GenerateBody(int indent)

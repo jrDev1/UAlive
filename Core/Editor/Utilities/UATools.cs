@@ -75,8 +75,6 @@ namespace Lasm.UAlive
         }
 
         public static Color background => Styles.backgroundColor.Darken(0.1f);
-        public static Color construct => new Color(0.2f, 0.2f, 0.8f);
-        public static Color normal => new Color(0.85f, 0.85f, 0.85f);
 
         public static CustomType selection => Selection.activeObject as CustomType;
         public static CustomClass Class => Selection.activeObject as CustomClass;
@@ -123,7 +121,9 @@ namespace Lasm.UAlive
 
                     output = output.Replace("/*", "<color=#CC3333>/*");
                     output = output.Replace("*/", "*/</color>");
-                    GUILayout.Label(output, new GUIStyle(GUI.skin.label) { richText = true, stretchWidth = true, stretchHeight = true, alignment = TextAnchor.UpperLeft, wordWrap = true });
+                    var labelStyle = new GUIStyle(GUI.skin.label) { richText = true, stretchWidth = true, stretchHeight = true, alignment = TextAnchor.UpperLeft, wordWrap = true };
+                    labelStyle.normal.background = null;
+                    GUILayout.Label(output.RemoveMarkdown(), labelStyle);
 
                 }, true, true);
             });

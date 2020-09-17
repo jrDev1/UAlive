@@ -33,7 +33,9 @@ namespace Lasm.UAlive
 
         protected override void SaveCompiled()
         {
-            ClassExtensions.Save(guid, decorated, output);
+            var finalOutput = CodeBuilder.RemoveHighlights(output);
+            finalOutput = CodeBuilder.RemoveMarkdown(output);
+            ClassExtensions.Save(guid, decorated, finalOutput);
         }
 
         protected override void SaveLive()
