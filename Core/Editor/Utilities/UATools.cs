@@ -121,7 +121,9 @@ namespace Lasm.UAlive
                         changed = false;
                     }
 
-                    GUILayout.Label(output, new GUIStyle(GUI.skin.label) { stretchWidth = true, stretchHeight = true, alignment = TextAnchor.UpperLeft, wordWrap = true });
+                    output = output.Replace("/*", "<color=#CC3333>/*");
+                    output = output.Replace("*/", "*/</color>");
+                    GUILayout.Label(output, new GUIStyle(GUI.skin.label) { richText = true, stretchWidth = true, stretchHeight = true, alignment = TextAnchor.UpperLeft, wordWrap = true });
 
                 }, true, true);
             });

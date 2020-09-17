@@ -12,11 +12,11 @@ namespace Lasm.UAlive
 
         public UnitGenerator(Unit unit) { this.unit = unit; }
 
-        public virtual string GenerateValue(ValueInput input) { return string.Empty; }
+        public virtual string GenerateValue(ValueInput input) { return $"/* Port '{ input.key }' Missing Generator. */"; }
 
-        public virtual string GenerateValue(ValueOutput output) { return string.Empty; }
+        public virtual string GenerateValue(ValueOutput output) { return $"/* Port '{ output.key }' Missing Generator. */"; }
 
-        public virtual string GenerateControl(ControlInput input, int indent) { return string.Empty; }
+        public virtual string GenerateControl(ControlInput input, int indent) { return $"/* Port '{ input.key }' Missing Generator. */"; }
     }
 
     public class UnitGenerator<TUnit> : UnitGenerator where TUnit : Unit
