@@ -10,10 +10,10 @@ namespace Lasm.UAlive {
             return new Data.Remove(text, remove);
         }
 
-        public static string RemoveBetween(this string str, string startTag, string endTag)
+        public static string RemoveBetween(this string sourceString, string startTag, string endTag)
         {
             Regex regex = new Regex(string.Format("{0}(.*?){1}", Regex.Escape(startTag), Regex.Escape(endTag)), RegexOptions.RightToLeft);
-            return regex.Replace(str, startTag + endTag);
+            return regex.Replace(sourceString, startTag + endTag);
         }
 
         /// <summary>

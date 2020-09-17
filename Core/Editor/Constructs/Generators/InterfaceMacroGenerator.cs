@@ -97,12 +97,16 @@ namespace Lasm.UAlive
 
         protected override void SaveLive()
         {
-            InterfaceExtensions.Save(guid, decorated, output);
+            var finalOutput = CodeBuilder.RemoveHighlights(output);
+            finalOutput = CodeBuilder.RemoveMarkdown(finalOutput);
+            InterfaceExtensions.Save(guid, decorated, finalOutput);
         }
 
         protected override void SaveCompiled()
         {
-            InterfaceExtensions.Save(guid, decorated, output);
+            var finalOutput = CodeBuilder.RemoveHighlights(output);
+            finalOutput = CodeBuilder.RemoveMarkdown(finalOutput);
+            InterfaceExtensions.Save(guid, decorated, finalOutput);
         }
     }
 }

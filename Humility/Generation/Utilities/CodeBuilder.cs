@@ -308,7 +308,7 @@ namespace Lasm.UAlive
         public static string Highlight(string code, Color color)
         {
             var output = string.Empty;
-            output += "[BeginUAPreviewHighlight]" + $"<color={color.ToHexString()}>" + "[EndUAPreviewHighlight]";
+            output += "[BeginUAPreviewHighlight]" + $"<color=#{color.ToHexString()}>" + "[EndUAPreviewHighlight]";
             output += code;
             output += "[BeginUAPreviewHighlight]" + "</color>" + "[EndUAPreviewHighlight]";
             return output;
