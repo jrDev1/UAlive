@@ -20,8 +20,10 @@ namespace Lasm.UAlive
         [SerializeField]
         private byte[] bytes;
         [SerializeField]
+        private bool isUnityObject;
+        [SerializeField]
         private UnityEngine.Object unityObjectReference;
-        [Serialize]
+        [OdinSerialize]
         public object backingValue;
         [Inspectable]
         public object value
@@ -40,13 +42,15 @@ namespace Lasm.UAlive
 
         public void OnAfterDeserialize()
         {
-            if (unityObjectReference != null)
+            if (isUnityObject)
             {
                 backingValue = unityObjectReference;
                 unityObjectReference = null;
+                isUnityObject = false;
                 return;
             }
 
+            isUnityObject = false;
             if (bytes != null) backingValue = SerializationUtility.DeserializeValue<object>(bytes, DataFormat.JSON);
         }
 
@@ -54,10 +58,12 @@ namespace Lasm.UAlive
         {
             if (backingValue != null && backingValue.GetType().Inherits<UnityEngine.Object>())
             {
+                isUnityObject = true;
                 unityObjectReference = backingValue as UnityEngine.Object;
                 return;
             }
 
+            isUnityObject = false;
             bytes = SerializationUtility.SerializeValue<object>(backingValue, DataFormat.JSON);
         }
     }
