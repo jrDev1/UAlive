@@ -47,7 +47,6 @@ namespace Lasm.UAlive
         {
             if (!(string.IsNullOrEmpty(decorated.@namespace) || string.IsNullOrWhiteSpace(decorated.@namespace))) @namespace = NamespaceGenerator.Namespace(decorated.@namespace.ToString());
             @interface = InterfaceGenerator.Interface(decorated.title);
-            @interface.AddAttribute(AttributeGenerator.Attribute<IncludeInSettingsAttribute>().AddParameter(true));
             guid = decorated.GetGUID();
         }
 
