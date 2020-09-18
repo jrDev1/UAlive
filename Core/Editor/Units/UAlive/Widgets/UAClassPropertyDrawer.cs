@@ -10,6 +10,7 @@ namespace Lasm.UAlive
     {
         [SerializeField]
         private Rect position;
+        private CustomClass @class;
 
         public override bool CanCacheInspectorGUI(SerializedProperty property)
         {
@@ -54,6 +55,8 @@ namespace Lasm.UAlive
             var childProperty = property.FindPropertyRelative("variables").Copy();
             Metadata variablesMeta = Metadata.FromProperty(childProperty);
 
+            if (@class == null) @class = property.FindPropertyRelative("macro").objectReferenceValue as CustomClass;
+
             for (int i = 0; i < variablesMeta.Count; i++)
             {
                 var variable = ((RuntimeVariable)variablesMeta[i].value);
@@ -68,7 +71,15 @@ namespace Lasm.UAlive
                 {
                     var castedMeta = _type.BaseType == null ? variablesMeta[i]["value"].Cast(variable.value.GetType()) : variablesMeta[i]["value"].Cast(variable.reference.declaration.type);
                     var thisHeight = variable.value == null ? 20 : LudiqGUI.GetInspectorHeight(variablesMeta[i].Inspector(), castedMeta, position.width, new GUIContent(variable.reference.name.Prettify())) + 2;
-                    LudiqGUI.Inspector(castedMeta, new Rect(position.x, position.y + this.position.height, position.width, thisHeight), new GUIContent(variable.reference.name.Prettify()));
+                    var objPos = new Rect(position.x, position.y + this.position.height, position.width, thisHeight);
+                    if (_type.Inherits<UnityEngine.Object>() && @class.inheritance.type.Inherits<Component>())
+                    {
+                        variable.value = EditorGUI.ObjectField(objPos.Subtract().Height(2f), variable.reference.name.Prettify(), variable.value as UnityEngine.Object, _type, true);
+                    }
+                    else
+                    {
+                        LudiqGUI.Inspector(castedMeta, objPos, new GUIContent(variable.reference.name.Prettify()));
+                    }
                     variablesMeta[i]["backingValue"].value = variablesMeta[i]["value"].value;
                     this.position.height += thisHeight;
                 }
