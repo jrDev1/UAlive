@@ -67,8 +67,7 @@ namespace Lasm.UAlive
         private void AfterGeneration()
         {
             @namespace?.AddEnum(@enum);
-            var usings = CodeBuilder.Using(new string[] { "Ludiq" });
-            output = (string.IsNullOrEmpty(decorated.@namespace) || string.IsNullOrWhiteSpace(decorated.@namespace)) ? usings + "\n\n" + @enum.Generate(0) : usings + "\n\n" + @namespace.Generate(0);
+            output = (string.IsNullOrEmpty(decorated.@namespace) || string.IsNullOrWhiteSpace(decorated.@namespace)) ? @enum.Generate(0) : @namespace.Generate(0);
         }
 
         private void DefineCode()
