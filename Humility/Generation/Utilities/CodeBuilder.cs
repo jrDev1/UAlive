@@ -328,6 +328,16 @@ namespace Lasm.UAlive
             return Highlight(code, "4488FF");
         }
 
+        public static string InterfaceHighlight(this string code)
+        {
+            return Highlight(code, "DDFFBB");
+        }
+
+        public static string EnumHighlight(this string code)
+        {
+            return Highlight(code, "FFFFBB");
+        }
+
         public static string TypeHighlight(this string code)
         {
             return Highlight(code, "33EEAA");
@@ -340,7 +350,7 @@ namespace Lasm.UAlive
 
         public static string NumericHighlight(this string code)
         {
-            return Highlight(code, "CC8833");
+            return Highlight(code, "DDFFBB");
         }
 
         public static string CommentHighlight(this string code)

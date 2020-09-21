@@ -13,7 +13,7 @@ namespace Lasm.UAlive
         {
             if (string.IsNullOrEmpty(name)) { return string.Empty; }
 
-            var output = returnType.As().CSharpName() + " " + name.LegalMemberName() + " " + "(";
+            var output = returnType.As().CSharpName() + " " + name.LegalMemberName() + "(";
             for (int i = 0; i < parameters.Count; i++)
             {
                 output += parameters[i].Generate(indent);

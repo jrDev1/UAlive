@@ -22,7 +22,7 @@ namespace Lasm.UAlive
                 output += attributes[i].Generate(indent) + "\n";
             }
 
-            output += CodeBuilder.Indent(indent) + scope.AsString().ConstructHighlight() + " enum ".ConstructHighlight() + typeName.LegalMemberName().TypeHighlight();
+            output += CodeBuilder.Indent(indent) + scope.AsString().ConstructHighlight() + " enum ".ConstructHighlight() + typeName.LegalMemberName().EnumHighlight();
 
             return output;
         }
@@ -34,14 +34,13 @@ namespace Lasm.UAlive
             for (int i = 0; i < items.Count; i++)
             {
                 if (string.IsNullOrEmpty(items[i].name)) { continue; }
-                output += CodeBuilder.Indent(indent) + items[i].name.LegalMemberName() + " = " + items[i].index.ToString();
+                output += CodeBuilder.Indent(indent) + items[i].name.LegalMemberName() + " = " + items[i].index.ToString().NumericHighlight();
                 if (i < items.Count - 1)
                 {
                     output += ",";
                     output += "\n";
                 }
             }
-            Debug.Log(output);
 
             return output;
         }

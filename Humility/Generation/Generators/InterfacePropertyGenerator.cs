@@ -11,7 +11,7 @@ namespace Lasm.UAlive
 
         public override string Generate(int indent)
         {
-            return type.Name + " " + name.LegalMemberName() + " " + "{ " + get + " " + set + "}";
+            return type.As().CSharpName() + " " + name.LegalMemberName() + " " + "{ " + get + " " + set + "}";
         }
 
         private InterfacePropertyGenerator() { }
@@ -21,8 +21,8 @@ namespace Lasm.UAlive
             var interfaceProp = new InterfacePropertyGenerator();
             interfaceProp.name = name;
             interfaceProp.type = type;
-            interfaceProp.get = (get ? "get; " : string.Empty);
-            interfaceProp.set = (set ? "set; " : string.Empty);
+            interfaceProp.get = (get ? "get".ConstructHighlight() + "; " : string.Empty);
+            interfaceProp.set = (set ? "set".ConstructHighlight() + "; " : string.Empty);
             return interfaceProp;
         }
     }
