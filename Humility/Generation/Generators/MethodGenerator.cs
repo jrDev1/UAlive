@@ -11,7 +11,7 @@ namespace Lasm.UAlive
         public Type returnType;
         public List<ParameterGenerator> parameters = new List<ParameterGenerator>();
         public List<AttributeGenerator> attributes = new List<AttributeGenerator>();
-        private string body;
+        public string body;
 
         private MethodGenerator() { }
 
@@ -70,11 +70,16 @@ namespace Lasm.UAlive
         {
             var usings = new List<string>();
 
-            usings.Add(returnType.Namespace);
+            if (!usings.Contains(returnType.Namespace) && returnType != typeof(Lasm.UAlive.Void)) usings.Add(returnType.Namespace);
 
             for (int i = 0; i < attributes.Count; i++)
             {
                 usings.MergeUnique(attributes[i].Usings());
+            }
+
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                if (!usings.Contains(parameters[i].Using()) && parameters[i].type != typeof(Lasm.UAlive.Void)) usings.Add(parameters[i].Using());
             }
 
             return usings;

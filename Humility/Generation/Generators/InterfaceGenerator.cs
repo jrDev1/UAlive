@@ -97,13 +97,13 @@ namespace Lasm.UAlive
             for (int i = 0; i < properties.Count; i++)
             {
                 var @namespace = properties[i].type.Namespace;
-                if (!usings.Contains(@namespace)) usings.Add(@namespace);
+                if (!usings.Contains(@namespace) && properties[i].type != typeof(Lasm.UAlive.Void)) usings.Add(@namespace);
             }
 
             for (int i = 0; i < methods.Count; i++)
             {
                 var @namespace = methods[i].returnType.Namespace;
-                if (!usings.Contains(@namespace)) usings.Add(@namespace);
+                if (!usings.Contains(@namespace) && methods[i].returnType != typeof(Lasm.UAlive.Void)) usings.Add(@namespace);
             }
 
             return usings;

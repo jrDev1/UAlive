@@ -323,6 +323,11 @@ namespace Lasm.UAlive
             return output;
         }
 
+        public static string WarningHighlight(this string code)
+        {
+            return Highlight(code, "CC3333");
+        }
+
         public static string ConstructHighlight(this string code)
         {
             return Highlight(code, "4488FF");

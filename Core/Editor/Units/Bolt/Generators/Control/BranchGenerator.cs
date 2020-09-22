@@ -9,9 +9,12 @@ namespace Lasm.UAlive
         {
         }
 
-        public override string GenerateControl(ControlInput input, int indent)
+        public override string GenerateControl(ControlInput input, ControlGenerationData data, int indent)
         {
             var output = string.Empty;
+
+            var trueData = new ControlGenerationData() { mustBreak = data.mustBreak, mustReturn = data.mustReturn, returns = data.returns };
+            var falseData = new ControlGenerationData() { mustBreak = data.mustBreak, mustReturn = data.mustReturn, returns = data.returns };
 
             if (input == Unit.enter)
             {
@@ -19,7 +22,7 @@ namespace Lasm.UAlive
                 output += "\n";
                 output += CodeBuilder.OpenBody(indent);
                 output += "\n";
-                output += (Unit.ifTrue.hasAnyConnection ? (Unit.ifTrue.connection.destination.unit as Unit).GenerateControl(Unit.ifTrue.connection.destination, indent + 1) : string.Empty);
+                output += (Unit.ifTrue.hasAnyConnection ? (Unit.ifTrue.connection.destination.unit as Unit).GenerateControl(Unit.ifTrue.connection.destination, trueData, indent + 1) : string.Empty);
                 output += "\n";
                 output += CodeBuilder.CloseBody(indent);
 
@@ -30,9 +33,22 @@ namespace Lasm.UAlive
                     output += "\n";
                     output += CodeBuilder.OpenBody(indent);
                     output += "\n";
-                    output += (Unit.ifFalse.hasAnyConnection ? (Unit.ifFalse.connection.destination.unit as Unit).GenerateControl(Unit.ifFalse.connection.destination, indent + 1) : string.Empty);
+                    
+                    output += (Unit.ifFalse.hasAnyConnection ? (Unit.ifFalse.connection.destination.unit as Unit).GenerateControl(Unit.ifFalse.connection.destination, falseData, indent + 1) : string.Empty);
                     output += "\n";
                     output += CodeBuilder.CloseBody(indent);
+                }
+            }
+
+            if (data.mustBreak)
+            {
+                if (!trueData.hasBroke || !falseData.hasBroke)
+                {
+                    data.hasBroke = false;
+                }
+                else
+                {
+                    data.hasBroke = true;
                 }
             }
 

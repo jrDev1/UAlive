@@ -71,7 +71,7 @@ namespace Lasm.UAlive
         {
             var usings = new List<string>();
 
-            usings.Add(type.Namespace);
+            if (type != typeof(Lasm.UAlive.Void)) usings.Add(type.Namespace);
 
             for (int i = 0; i < attributes.Count; i++)
             {

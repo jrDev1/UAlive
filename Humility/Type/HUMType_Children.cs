@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -269,11 +270,12 @@ namespace Lasm.UAlive
             if (type == typeof(string)) return @"""" + @as.value.ToString() + @"""";
             if (type == typeof(UnityEngine.GameObject)) return "null";
             if (type == typeof(int) || type == typeof(uint) || type == typeof(byte) || type == typeof(long) || type == typeof(short) || type == typeof(double)) return @as.value.ToString();
+            if (type.IsEnum) return type.Name + "." + @as.value.ToString();
+
             if (isNew)
             {
                 if (type.IsClass || !type.IsClass && !type.IsInterface && !type.IsEnum)
                 {
-                    Debug.Log(type.IsConstructedGenericType);
                     if (type.IsConstructedGenericType) return "new " + GenericDeclaration(type) + "(" + ConstructorParameters(@as.value) + ")";
                     return "new " + type.Name + "(" + ")";
                 }
@@ -297,6 +299,7 @@ namespace Lasm.UAlive
             if (type == typeof(string)) return (@"""" + @as.value.ToString() + @"""").StringHighlight();
             if (type == typeof(UnityEngine.GameObject)) return "null".ConstructHighlight();
             if (type == typeof(int) || type == typeof(uint) || type == typeof(byte) || type == typeof(long) || type == typeof(short) || type == typeof(double)) return @as.value.ToString().NumericHighlight();
+            if (type.IsEnum) return type.Name.EnumHighlight() + "." + @as.value.ToString();
             if (isNew)
             {
                 if (type.IsClass || !type.IsClass && !type.IsInterface && !type.IsEnum)

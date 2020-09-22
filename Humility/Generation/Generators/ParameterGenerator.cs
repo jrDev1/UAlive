@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Lasm.UAlive
 {
     public sealed class ParameterGenerator : ConstructGenerator
     {
         public string name;
-        private Type type;
-        private string stringType;
-        private ParameterModifier modifier;
-        
+        public Type type;
+        public string stringType;
+        public ParameterModifier modifier;
+
         public override string Generate(int indent)
         {
             return type == null ? stringType + " " + name : type.As().CSharpName() + " " + name.LegalMemberName();
@@ -35,6 +36,11 @@ namespace Lasm.UAlive
             parameter.stringType = type;
             parameter.modifier = modifier;
             return parameter;
+        }
+
+        public string Using()
+        {
+            return type == typeof(Lasm.UAlive.Void) ? string.Empty : type.Namespace;
         }
     }
 }

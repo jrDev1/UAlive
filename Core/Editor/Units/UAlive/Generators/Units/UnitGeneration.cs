@@ -15,9 +15,9 @@ namespace Lasm.UAlive
             return UnitGenerator<T>.GetDecorator(unit, unit).GenerateValue(output);
         }
 
-        public static string GenerateControl<T>(this T unit, ControlInput input, int indent) where T : Unit
+        public static string GenerateControl<T>(this T unit, ControlInput input, ControlGenerationData data, int indent) where T : Unit
         {
-            return UnitGenerator<T>.GetDecorator(unit, unit).GenerateControl(input, indent);
+            return UnitGenerator<T>.GetDecorator(unit, unit).GenerateControl(input, data, indent);
         }
     }
 }

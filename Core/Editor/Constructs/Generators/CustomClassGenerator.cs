@@ -92,7 +92,9 @@ namespace Lasm.UAlive
                 var nest = decorated.methods.custom[i];
                 if (CanAddMethod(nest))
                 {
-                    var body = nest.entry.invoke.hasAnyConnection ? (nest.entry.invoke.connection.destination?.unit as Unit).GenerateControl(nest.entry.invoke.connection.destination, 0) : string.Empty;
+                    var controlData = new ControlGenerationData();
+                    controlData.returns = nest.entry.declaration.type;
+                    var body = nest.entry.invoke.hasAnyConnection ? (nest.entry.invoke.connection.destination?.unit as Unit).GenerateControl(nest.entry.invoke.connection.destination, controlData, 0) : string.Empty;
                     var method = Method(nest.name, nest.entry.declaration.scope, nest.entry.declaration.modifier, nest.entry.declaration.type, body: body);
                     AddParameters(method, nest);
                     @class.AddMethod(method);
@@ -106,7 +108,9 @@ namespace Lasm.UAlive
                 var nest = decorated.methods.overrides.current[keys[i]];
                 if (CanAddMethod(nest))
                 {
-                    var body = nest.entry.invoke.hasAnyConnection? (nest.entry.invoke.connection.destination?.unit as Unit).GenerateControl(nest.entry.invoke.connection.destination, 0) : string.Empty;
+                    var controlData = new ControlGenerationData();
+                    controlData.returns = nest.entry.declaration.type;
+                    var body = nest.entry.invoke.hasAnyConnection? (nest.entry.invoke.connection.destination?.unit as Unit).GenerateControl(nest.entry.invoke.connection.destination, controlData, 0) : string.Empty;
 
                     var method = nest.entry.declaration.type.Is().Void() ?
                         Method(

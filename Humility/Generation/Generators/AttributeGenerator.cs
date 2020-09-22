@@ -57,13 +57,13 @@ namespace Lasm.UAlive
             for (int i = 0; i < parameterValues.Count; i++)
             {
                 var @namespace = parameterValues[i].GetType().Namespace;
-                if (!usings.Contains(@namespace)) usings.Add(@namespace);
+                if (!usings.Contains(@namespace) && parameterValues[i].GetType() != typeof(Lasm.UAlive.Void)) usings.Add(@namespace);
             }
 
             for (int i = 0; i < parameterValuesWithLabel.Count; i++)
             {
                 var @namespace = parameterValuesWithLabel[i].Item2.GetType().Namespace;
-                if (!usings.Contains(@namespace)) usings.Add(@namespace);
+                if (!usings.Contains(@namespace) && parameterValuesWithLabel[i].Item2.GetType() != typeof(Lasm.UAlive.Void)) usings.Add(@namespace);
             }
 
             return usings;
