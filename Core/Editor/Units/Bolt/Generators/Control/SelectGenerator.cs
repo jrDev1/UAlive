@@ -20,21 +20,17 @@ namespace Lasm.UAlive
 
                 if (Unit.condition.hasValidConnection)
                 {
-                    condition = ((Unit)Unit.condition.connection.source.unit).GenerateValue(Unit.condition.connection.source);
+                    condition = GenerateValue(Unit.condition);
                 }
 
                 if (Unit.ifTrue.hasValidConnection)
                 {
-                    @true = ((Unit)Unit.ifTrue.connection.source.unit).GenerateValue(Unit.ifTrue.connection.source);
-                }
-                else
-                {
-
+                    @true = GenerateValue(Unit.ifTrue);
                 }
 
                 if (Unit.ifFalse.hasValidConnection)
                 {
-                    @false = ((Unit)Unit.ifFalse.connection.source.unit).GenerateValue(Unit.ifFalse.connection.source);
+                    @false = GenerateValue(Unit.ifFalse);
                 }
 
                 str = "(" + condition + " ? " + @true + " : " + @false + ")";
@@ -46,14 +42,26 @@ namespace Lasm.UAlive
 
         public override string GenerateValue(ValueInput input)
         {
+            var @true = base.GenerateValue(Unit.ifTrue);
+            var @false = base.GenerateValue(Unit.ifFalse);
+            var condition = base.GenerateValue(Unit.condition);
+
+            if (input == Unit.condition)
+            {
+                condition = ((Unit)Unit.condition.connection.source.unit).GenerateValue(Unit.condition.connection.source);
+                return condition;
+            }
+
             if (input == Unit.ifTrue)
             {
-
+                @true = ((Unit)Unit.ifTrue.connection.source.unit).GenerateValue(Unit.ifTrue.connection.source);
+                return @true;
             }
 
             if (input == Unit.ifFalse)
             {
-
+                @false = ((Unit)Unit.ifFalse.connection.source.unit).GenerateValue(Unit.ifFalse.connection.source);
+                return @false;
             }
 
             return base.GenerateValue(input);

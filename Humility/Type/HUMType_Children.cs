@@ -305,7 +305,7 @@ namespace Lasm.UAlive
                 if (type.IsClass || !type.IsClass && !type.IsInterface && !type.IsEnum)
                 {
                     if (type.IsConstructedGenericType) return "new ".ConstructHighlight() + GenericDeclaration(type) + "(" + ConstructorParameters(@as.value) + ")";
-                    return "new ".ConstructHighlight() + type.Name.TypeHighlight() + "(" + ")";
+                    return "new ".ConstructHighlight() + type.Name.TypeHighlight() + "(" + ConstructorParameters(@as.value) + ")";
                 }
                 else
                 {
