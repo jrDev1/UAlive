@@ -1,4 +1,5 @@
 ﻿using Bolt;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Lasm.UAlive
@@ -41,7 +42,7 @@ namespace Lasm.UAlive
                     controlData.returns = data.returns;
                     controlData.mustBreak = controlData.returns == typeof(Lasm.UAlive.Void);
                     controlData.mustReturn = !controlData.mustBreak;
-                    controlData.localNames = data.localNames.ToList();
+                    controlData.localNames = data.localNames;
 
                     if (((ControlOutput)outputs[i]).hasValidConnection)
                     {
