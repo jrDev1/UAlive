@@ -3,10 +3,10 @@ using System.Linq;
 
 namespace Lasm.UAlive
 {
-    [UnitGenerator(typeof(SwitchOnString))]
-    public sealed class SwitchOnStringGenerator : UnitGenerator<SwitchOnString>
+    [UnitGenerator(typeof(SwitchOnInteger))]
+    public sealed class SwitchOnIntegerGenerator : UnitGenerator<SwitchOnInteger>
     {
-        public SwitchOnStringGenerator(SwitchOnString unit) : base(unit)
+        public SwitchOnIntegerGenerator(SwitchOnInteger unit) : base(unit)
         {
         }
 
@@ -20,7 +20,7 @@ namespace Lasm.UAlive
                 var outputs = Unit.outputs.ToArray();
                 var isLiteral = Unit.selector.hasValidConnection && Unit.selector.connection.source.unit as Literal != null;
                 var localName = string.Empty;
-                if (isLiteral) localName = data.AddLocalName("str");
+                if (isLiteral) localName = data.AddLocalName("@int");
                 var newLiteral = isLiteral ? CodeBuilder.Indent(indent) + "var ".ConstructHighlight() + $"{localName} = " + ((Unit)Unit.selector.connection.source.unit).GenerateValue(Unit.selector.connection.source) + ";" : string.Empty;
                 var @enum = Unit.selector.hasValidConnection ? (isLiteral ? localName : ((Unit)Unit.selector.connection.source.unit).GenerateValue(Unit.selector.connection.source)) : base.GenerateControl(input, data, indent);
 
@@ -34,7 +34,7 @@ namespace Lasm.UAlive
                 {
                     var _connection = ((ControlOutput)outputs[i])?.connection;
 
-                    output += CodeBuilder.Indent(indent + 1) + "case ".ConstructHighlight() + $@" ""{values[i].Key}""".StringHighlight() + ":";
+                    output += CodeBuilder.Indent(indent + 1) + "case ".ConstructHighlight() + $" {values[i].Key}".NumericHighlight() + ":";
                     output += "\n";
 
                     var _controlData = new ControlGenerationData();
