@@ -13,7 +13,7 @@ namespace Lasm.UAlive
 
         public override string GenerateValue(ValueOutput output)
         {
-            return Unit.value.As().Code(true);
+            return Unit.value.As().Code(true, true, true, "");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ludiq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -258,9 +259,9 @@ namespace Lasm.UAlive
         /// <summary>
         /// Converts a value into code form. Example: a float value of '10' would be '10f'. A string would add qoutes, ect.
         /// </summary>
-        public static string Code(this HUMValue.Data.As @as, bool isNew, bool highlight = true)
+        public static string Code(this HUMValue.Data.As @as, bool isNew, bool isLiteral = false, bool highlight = true, string parameters = "", bool newLineLiteral = false)
         {
-            if (highlight) return HighlightedCode(@as, isNew);
+            if (highlight) return HighlightedCode(@as, isNew, isLiteral, parameters, newLineLiteral);
             Type type = @as.value?.GetType();
             if (@as.value is Type) return "typeof(" + ((Type)@as.value).As().CSharpName() + ")";
             if (type == null) return "null";
@@ -276,19 +277,19 @@ namespace Lasm.UAlive
             {
                 if (type.IsClass || !type.IsClass && !type.IsInterface && !type.IsEnum)
                 {
-                    if (type.IsConstructedGenericType) return "new " + GenericDeclaration(type) + "(" + ConstructorParameters(@as.value) + ")";
-                    return "new " + type.Name + "(" + ")";
+                    if (type.IsConstructedGenericType) return isLiteral ? Literal(@as.value, newLineLiteral) : "new " + GenericDeclaration(type) + "(" + parameters + ")";
+                    return isLiteral ? Literal(@as.value, newLineLiteral) : "new " + type.Name +  "(" + parameters + ")";
                 }
                 else
                 {
-                    if (type.IsValueType && !type.IsEnum && !type.IsPrimitive) return "new " + type.Name + "(" + ConstructorParameters(@as.value) + ")";
+                    if (type.IsValueType && !type.IsEnum && !type.IsPrimitive) return isLiteral ? Literal(@as.value, newLineLiteral) : "new " + type.Name + "(" + parameters + ")";
                 }
             }
 
             return @as.value.ToString();
         }
 
-        private static string HighlightedCode(this HUMValue.Data.As @as, bool isNew)
+        private static string HighlightedCode(this HUMValue.Data.As @as, bool isNew, bool isLiteral = false, string parameters = "", bool newLineLiteral = false)
         {
             Type type = @as.value?.GetType();
             if (@as.value is Type) return "typeof".ConstructHighlight() + "(" + ((Type)@as.value).As().CSharpName().TypeHighlight() + ")";
@@ -304,27 +305,30 @@ namespace Lasm.UAlive
             {
                 if (type.IsClass || !type.IsClass && !type.IsInterface && !type.IsEnum)
                 {
-                    if (type.IsConstructedGenericType) return "new ".ConstructHighlight() + GenericDeclaration(type) + "(" + ConstructorParameters(@as.value) + ")";
-                    return "new ".ConstructHighlight() + type.Name.TypeHighlight() + "(" + ConstructorParameters(@as.value) + ")";
+                    if (type.IsConstructedGenericType) return isLiteral ? Literal(@as.value, newLineLiteral) : "new ".ConstructHighlight() + GenericDeclaration(type) +"(" + parameters + ")";
+                    return isLiteral ? Literal(@as.value, newLineLiteral) : "new ".ConstructHighlight() + type.Name.TypeHighlight() + "(" + parameters + ")";
                 }
                 else
                 {
-                    if (type.IsValueType && !type.IsEnum && !type.IsPrimitive) return "new ".ConstructHighlight() + type.Name.TypeHighlight() + "(" + ConstructorParameters(@as.value) + ")";
+                    if (type.IsValueType && !type.IsEnum && !type.IsPrimitive) return isLiteral? Literal(@as.value, newLineLiteral) : "new ".ConstructHighlight() + type.Name.TypeHighlight() + "(" + parameters + ")";
                 }
             }
 
             return @as.value.ToString();
         }
 
-        private static string ConstructorParameters(object value)
+        private static string Literal(object value, bool newLine = false)
         {
-            var fields = value.GetType().GetFields();
+            var fields = value?.GetType().GetFields();
             var output = string.Empty;
             var usableFields = new List<FieldInfo>();
+            var isMultiLine = fields.Length > 2;
+
+            output += (newLine ? "\n" : string.Empty) + "new ".ConstructHighlight() + value.GetType().Name.TypeHighlight() + "()" + (isMultiLine ? "\n" + "{" + "\n" : " { ");
 
             for (int i = 0; i < fields.Length; i++)
             {
-                if (!fields[i].IsLiteral)
+                if (fields[i].IsPublic && !fields[i].IsStatic && !fields[i].IsInitOnly)
                 {
                     usableFields.Add(fields[i]);
                 }
@@ -332,9 +336,11 @@ namespace Lasm.UAlive
 
             for (int i = 0; i < usableFields.Count; i++)
             {
-                output += usableFields[i].GetValue(value).As().Code(true);
-                output += i < usableFields.Count - 1 ? ", " : string.Empty;
+                output += (isMultiLine ? CodeBuilder.Indent(1) : string.Empty) + usableFields[i].Name + " = " + usableFields[i].GetValue(value).As().Code(true);
+                output += i < usableFields.Count - 1 ? ", " + (isMultiLine ? "\n" : string.Empty) : string.Empty;
             }
+
+            output += isMultiLine ? "\n" + "}" : " } ";
 
             return output;
         }
