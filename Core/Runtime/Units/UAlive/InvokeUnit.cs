@@ -95,6 +95,16 @@ namespace Lasm.UAlive
                 Requirement(target, enter);
                 Succession(enter, exit);
             }
+            else
+            {
+                enter = ControlInput("enter", (flow) =>
+                {
+                    Debug.Log("Method selection is null on InvokeUnit.");
+                    return null;
+                });
+
+                exit = ControlOutput("exit");
+            }
         }
 
         public object Invoke(ref IUAClass target, Flow flow)
