@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Ludiq;
 using Bolt;
 using System.Linq;
+using UnityEngine;
 
 namespace Lasm.UAlive
 {
@@ -34,6 +35,14 @@ namespace Lasm.UAlive
                     selection.Clear();
                     selection.Add(isMethod ? list[1] : list[0]);
                     Delete();
+                    if (isMethod)
+                    {
+                        Debug.LogWarning("You cannot have more then one EntryUnit in a Method. Auto deleting.");
+                    }
+                    else
+                    {
+                        Debug.LogWarning("You cannot have an EntryUnit outside of a Method. Auto deleting.");
+                    }
                 }
                 else
                 {
