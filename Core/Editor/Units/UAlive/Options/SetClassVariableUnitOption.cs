@@ -20,7 +20,7 @@ namespace Lasm.UAlive
 
         protected override string Label(bool human)
         {
-            return (human ? LudiqGUIUtility.DimString("Get ") : string.Empty) + unit.variable?.name + (human ? string.Empty : " (get)");
+            return (human ? LudiqGUIUtility.DimString("Set ") : string.Empty) + unit.variable?.name + (human ? string.Empty : " (set)");
         }
     }
 
