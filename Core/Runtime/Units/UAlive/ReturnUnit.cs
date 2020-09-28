@@ -8,7 +8,7 @@ using System;
 namespace Lasm.UAlive
 {
     [UnitTitle("Return")]
-    [UnitCategory("Control")]
+    [UnitCategory("Control/Live")]
     [TypeIcon(typeof(Flow))]
     public sealed class ReturnUnit : Unit
     {

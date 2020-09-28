@@ -90,6 +90,7 @@ namespace Lasm.UAlive
             // Generally we end up invoking the Define behaviour on all units to ensure the data is shown.
             for (int i = 0; i < variables.variables.Count; i++)
             {
+                variables.variables[i].declaration.Class = this;
                 variables.variables[i].declaration.Changed();
             }
         }

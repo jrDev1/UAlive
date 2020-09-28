@@ -6,18 +6,13 @@ using UnityEngine;
 
 namespace Lasm.UAlive
 {
-    [UnitTitle("Set Class Variable")]
-    [UnitOrder(100)]
-    [UnitCategory("Variables")]
     [Serializable]
+    [UnitCategory("Codebase")]
     public sealed class SetClassVariableUnit : ClassVariableUnit
     {
         [Serialize]
         [Inspectable]
         public bool chain;
-
-        [Serialize] 
-        public Variable variable;
 
         [DoNotSerialize]
         [PortLabelHidden]
@@ -43,42 +38,50 @@ namespace Lasm.UAlive
 
         private object returnValue;
 
+        public SetClassVariableUnit() : base()
+        {
+        }
+
+        public SetClassVariableUnit(Variable variable, CustomClass @class) : base(variable, @class)
+        {
+        }
+
         protected override void Definition()
         {
-            base.Definition(); 
-
-            if (chain) chainTarget = ValueOutput<IUAClass>("chain", (flow) => { return flow.GetValue<IUAClass>(target); });
-
-            if (variable != null)
+            if (variable != null && variable.declaration != null)
             {
+                base.Definition(); 
+
+                if (chain) chainTarget = ValueOutput<IUAClass>("chain", (flow) => { return flow.GetValue<IUAClass>(target); });
+
                 value = ValueInput(variable.declaration.type, "value");
                 outValue = ValueOutput(variable.declaration.type, "valueOut", (flow)=> 
                 {
                     return GetTarget(flow)?.Class?.Get(variable);
                 });
-                value.SetDefaultValue(variable.declaration.type.Default());
+                value.SetDefaultValue(variable.declaration.type?.Default());
+
+                enter = ControlInput("enter", (flow) =>
+                {
+                    GetTarget(flow)?.Class?.Set(variable, flow.GetValue(value, variable.declaration.type));
+                    return exit;
+                });
+
+                exit = ControlOutput("exit");
+
+                Requirement(target, enter);
+                Succession(enter, exit);
             }
-
-            enter = ControlInput("enter", (flow) =>
-            {
-                GetTarget(flow)?.Class?.Set(variable, flow.GetValue(value, variable.declaration.type));
-                return exit;
-            });
-
-            exit = ControlOutput("exit");
-
-            Requirement(target, enter);
-            Succession(enter, exit);
         }
 
         protected override void AfterDefine()
         {
-            if (variable != null) variable.declaration.onChanged += Define;
+            if (variable != null && variable.declaration != null) variable.declaration.onChanged += Define;
         }
 
         protected override void BeforeUndefine()
         {
-            if (variable != null) variable.declaration.onChanged -= Define;
+            if (variable != null && variable.declaration != null) variable.declaration.onChanged -= Define;
         }
     }
 }

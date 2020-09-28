@@ -29,5 +29,29 @@ namespace Lasm.UAlive
 
             return EditorTexture.Single(Images.class_variable_32);
         }
+
+        protected override string DefinedTitle()
+        {
+            if (target.variable != null) return "Set " + target.Class.title + "." + target.variable.name;
+            return base.DefinedTitle();
+        }
+
+        protected override string DefaultTitle()
+        {
+            if (target.variable != null) return "Set " + target.Class.title + "." + target.variable.name;
+            return base.DefaultTitle();
+        }
+
+        protected override string DefaultShortTitle()
+        {
+            if (target.variable != null) return "Set " + target.variable.name;
+            return base.DefaultShortTitle();
+        }
+
+        protected override string DefinedShortTitle()
+        {
+            if (target.variable != null) return "Set " + target.variable.name;
+            return base.DefinedShortTitle();
+        }
     }
 }

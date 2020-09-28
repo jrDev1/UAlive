@@ -16,6 +16,30 @@ namespace Lasm.UAlive
             if (port.key == "chain" || port.key == "target") description.showLabel = false;
         }
 
+        protected override string DefinedTitle()
+        {
+            if (target.method != null) return "Invoke " + target.Class.title + "." + target.method.name;
+            return base.DefinedTitle();
+        }
+
+        protected override string DefaultTitle()
+        {
+            if (target.method != null) return "Invoke " + target.Class.title + "." + target.method.name;
+            return base.DefaultTitle();
+        }
+
+        protected override string DefaultShortTitle()
+        {
+            if (target.method != null) return "Invoke " + target.method.name;
+            return base.DefaultShortTitle();
+        }
+
+        protected override string DefinedShortTitle()
+        {
+            if (target.method != null) return "Invoke " + target.method.name;
+            return base.DefinedShortTitle();
+        }
+
         protected override EditorTexture DefaultIcon()
         {
             Images.Cache();

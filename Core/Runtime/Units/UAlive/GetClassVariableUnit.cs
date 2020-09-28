@@ -9,18 +9,22 @@ using UnityEngine;
 
 namespace Lasm.UAlive
 {
-    [UnitTitle("Get Class Variable")]
-    [UnitCategory("Variables")]
-    [UnitOrder(100)]
+    [UnitCategory("Codebase")]
     [TypeIcon(typeof(CustomClass))]
+    [Serializable]
     public sealed class GetClassVariableUnit : ClassVariableUnit
     {
-        [Serialize]
-        public Variable variable;
-         
-        [DoNotSerialize][PortLabelHidden]
+        [DoNotSerialize] [PortLabelHidden]
         public ValueOutput value;
-        
+
+        public GetClassVariableUnit() : base()
+        {
+        }
+
+        public GetClassVariableUnit(Variable variable, CustomClass @class) : base(variable, @class)
+        {
+        }
+
         protected override void Definition()
         {
             base.Definition();
@@ -38,12 +42,12 @@ namespace Lasm.UAlive
         
         protected override void AfterDefine()
         {
-            if (variable != null) variable.declaration.onChanged += Define;
+            if (graph != null && variable != null && variable.declaration != null) variable.declaration.onChanged += Define;
         }
 
         protected override void BeforeUndefine()
         {
-            if (variable != null) variable.declaration.onChanged -= Define;
+            if (graph != null && variable != null && variable.declaration != null) variable.declaration.onChanged -= Define;
         }
     }
 }  

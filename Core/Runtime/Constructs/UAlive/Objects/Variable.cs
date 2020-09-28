@@ -24,6 +24,7 @@ namespace Lasm.UAlive
             setter = Method.Create(owner);
             declaration.guid = this.GetGUID();
             declaration.classGUID = owner.GetGUID();
+            declaration.Class = owner as CustomClass;
             getter.name = "Getter";
             setter.name = "Setter";
             hideFlags = HideFlags.HideInHierarchy;

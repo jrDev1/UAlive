@@ -13,6 +13,7 @@ namespace Lasm.UAlive
 
         public string guid;
         public string classGUID;
+        public CustomClass Class;
 
         #endregion
 
@@ -49,6 +50,7 @@ namespace Lasm.UAlive
             name = other.name;
             type = other.type;
             guid = other.guid;
+            Class = other.Class;
             classGUID = other.classGUID;
         }
     }

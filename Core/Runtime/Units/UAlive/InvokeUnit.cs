@@ -10,15 +10,12 @@ using UnityEngine;
 namespace Lasm.UAlive
 {
     [UnitTitle("Invoke")]
-    [UnitCategory("Control")]
-    public sealed class InvokeUnit : ClassMemberUnit
+    [UnitCategory("Codebase")]
+    public sealed class InvokeUnit : MethodUnit
     {
         [Serialize]
         [Inspectable]
         public bool chain;
-
-        [Serialize]
-        public Method method;
 
         [DoNotSerialize]
         [PortLabelHidden]
@@ -40,6 +37,14 @@ namespace Lasm.UAlive
         public ValueOutput chainTarget;
 
         private object returnValue;
+
+        public InvokeUnit() { }
+
+        public InvokeUnit(CustomClass @class, Method method)
+        {
+            this.Class = @class;
+            this.method = method;
+        }
 
         protected override void Definition()
         {
