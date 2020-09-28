@@ -30,10 +30,14 @@ namespace Lasm.UAlive
             _target = metadata.value as CustomClass;
             generator = CustomClassGenerator.GetDecorator(_target);
         }
-
+        
         protected override void OnGUI(Rect position, GUIContent label)
         {
             BeginBlock(metadata, position, GUIContent.none);
+
+            Organization(position);
+
+            EditorGUILayout.Space(8);
 
             Declaration(position);
 
@@ -55,12 +59,52 @@ namespace Lasm.UAlive
             }
         }
 
+        private void Organization(Rect position)
+        {
+            
+        }
+
         private void Declaration(Rect position)
         {
             HUMEditor.Vertical().Box(Styles.backgroundColor.Brighten(0.05f), Color.black, new RectOffset(4, 4, 4, 4), new RectOffset(1, 1, 1, 1), () =>
             {
-                _target.title = EditorGUILayout.TextField(new GUIContent("Class Name"), _target.title);
-                _target.@namespace = EditorGUILayout.TextField(new GUIContent("Namespace"), _target.@namespace);
+                HUMEditor.Horizontal().Box(Styles.backgroundColor.Brighten(0.05f), Color.black, new RectOffset(4, 4, 4, 4), new RectOffset(1, 1, 1, 1), () =>
+                {
+                    HUMEditor.Horizontal(() => {
+                        EditorGUI.BeginChangeCheck();
+                        if (_target.editorData.icon == null) _target.editorData.icon = Images.class_32;
+                        _target.editorData.icon = (Texture2D)EditorGUILayout.ObjectField(_target.editorData.icon, typeof(Texture2D), false, GUILayout.Width(40), GUILayout.Height(40));
+                        if (EditorGUI.EndChangeCheck())
+                        {
+                            DescribeActiveUnits();
+                            _target.Define();
+                        }
+                    });
+
+
+                    HUMEditor.Horizontal(() => {
+                        HUMEditor.Vertical(() =>
+                        {
+                            GUILayout.Label("Name");
+                            GUILayout.Label("Namespace");
+                        });
+
+                        HUMEditor.Vertical(() =>
+                        {
+                            EditorGUI.BeginChangeCheck();
+                            _target.title = EditorGUILayout.TextField(GUIContent.none, _target.title, GUILayout.MinWidth(100));
+                            if (EditorGUI.EndChangeCheck())
+                            {
+                                DescribeActiveUnits();
+                                _target.Define();
+                            }
+                            _target.@namespace = EditorGUILayout.TextField(GUIContent.none, _target.@namespace, GUILayout.MinWidth(100));
+                        });
+                    });
+
+                });
+
+                EditorGUILayout.Space(6);
 
                 BeginBlock(metadata, position, GUIContent.none);
                 LudiqGUI.InspectorLayout(metadata["inheritance"]["type"]);
@@ -269,6 +313,18 @@ namespace Lasm.UAlive
                     }
                 });
             });
+        }
+
+        private void DescribeActiveUnits()
+        {
+            var graph = GraphWindow.activeReference?.graph as FlowGraph;
+            if (graph != null)
+            {
+                foreach (IUnit unit in graph.units)
+                {
+                    unit.Describe();
+                }
+            }
         }
     }
 }

@@ -1,11 +1,14 @@
 ﻿using Ludiq;
 using System;
+using UnityEngine;
 
 namespace Lasm.UAlive
 {
     [Serializable]
     public sealed class EditorClassData
     {
+        [Serialize]
+        public Texture2D icon;
         [Serialize]
         public bool customOpen;
         [Serialize]

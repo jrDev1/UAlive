@@ -59,14 +59,20 @@ namespace Lasm.UAlive
         protected override EditorTexture DefaultIcon()
         {
             Images.Cache();
-
+            if (target.Class != null && target.Class.editorData.icon != null && target.Class.editorData.icon != Images.class_32)
+            {
+                return EditorTexture.Single(target.Class.editorData.icon);
+            }
             return EditorTexture.Single(Images.invoke_32);
         }
 
         protected override EditorTexture DefinedIcon()
         {
             Images.Cache();
-
+            if (target.Class != null && target.Class.editorData.icon != null && target.Class.editorData.icon != Images.class_32)
+            {
+                return EditorTexture.Single(target.Class.editorData.icon);
+            }
             return EditorTexture.Single(Images.invoke_32);
         }
     }

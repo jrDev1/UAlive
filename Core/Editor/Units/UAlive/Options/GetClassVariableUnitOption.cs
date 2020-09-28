@@ -23,5 +23,4 @@ namespace Lasm.UAlive
             return (human ? LudiqGUIUtility.DimString("Get ") : string.Empty) + unit.variable?.name + (human ? string.Empty : " (get)");
         }
     }
-
 }
