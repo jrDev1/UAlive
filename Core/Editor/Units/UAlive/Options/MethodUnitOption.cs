@@ -12,14 +12,15 @@ namespace Lasm.UAlive
 
         protected override UnitCategory Category()
         {
+            if (string.IsNullOrEmpty(unit?.Class?.title)) return base.Category();
             var @namespace = unit?.Class?.@namespace?.Replace(".", "/").Replace(@"\", "/");
-            var cat = new UnitCategory(base.Category() + "/" + (string.IsNullOrEmpty(@namespace) ? "global" : @namespace));
+            var cat = new UnitCategory(base.Category() + "/" + (string.IsNullOrEmpty(@namespace) ? "global" : @namespace) + "/" + unit?.Class?.title);
             return unit.method == null || unit.method.entry == null ? base.Category() : cat;
         }
 
         protected override string Label(bool human)
         {
-            return LudiqGUIUtility.DimString("Invoke ") + unit.method?.name;
+            return (human ? LudiqGUIUtility.DimString("Invoke ") : string.Empty) + unit.method?.name;
         }
     }
 

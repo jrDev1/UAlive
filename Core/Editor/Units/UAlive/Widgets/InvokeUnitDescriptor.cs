@@ -18,25 +18,41 @@ namespace Lasm.UAlive
 
         protected override string DefinedTitle()
         {
-            if (target.method != null) return "Invoke " + target.Class.title + "." + target.method.name;
+            var human = LudiqCore.Configuration.humanNaming;
+            if (target.method != null) return target.Class.title + (human ? " : " : ".") + target.method.name;
             return base.DefinedTitle();
         }
 
         protected override string DefaultTitle()
         {
-            if (target.method != null) return "Invoke " + target.Class.title + "." + target.method.name;
+            var human = LudiqCore.Configuration.humanNaming;
+            if (target.method != null) return human ? target.method.name.Prettify() : target.method.name;
             return base.DefaultTitle();
+        }
+
+        protected override string DefaultSurtitle()
+        {
+            if (target.Class != null) return target.Class.title;
+            return base.DefinedSubtitle();
+        }
+
+        protected override string DefinedSurtitle()
+        {
+            if (target.Class != null) return target.Class.title;
+            return base.DefinedSubtitle();
         }
 
         protected override string DefaultShortTitle()
         {
-            if (target.method != null) return "Invoke " + target.method.name;
+            var human = LudiqCore.Configuration.humanNaming;
+            if (target.method != null) return target.method.name;
             return base.DefaultShortTitle();
         }
 
         protected override string DefinedShortTitle()
         {
-            if (target.method != null) return "Invoke " + target.method.name;
+            var human = LudiqCore.Configuration.humanNaming;
+            if (target.method != null) return human ? target.method.name.Prettify() : target.method.name;
             return base.DefinedShortTitle();
         }
 

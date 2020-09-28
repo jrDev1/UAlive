@@ -32,25 +32,41 @@ namespace Lasm.UAlive
 
         protected override string DefinedTitle()
         {
-            if (target.variable != null) return "Get " + target.Class.title + "." + target.variable.name;
+            var human = LudiqCore.Configuration.humanNaming;
+            if (target.variable != null) return (human ? "Get " : string.Empty) + target.Class.title + (human ? " : " : ".") + target.variable.name + (human ? string.Empty : " (get)");
             return base.DefinedTitle();
         }
 
         protected override string DefaultTitle()
         {
-            if (target.variable != null) return "Get " + target.Class.title + "." + target.variable.name;
+            var human = LudiqCore.Configuration.humanNaming;
+            if (target.variable != null) return (human ? "Get " : string.Empty) + target.variable.name + (human ? string.Empty : " (get)");
             return base.DefaultTitle();
+        }
+
+        protected override string DefaultSurtitle()
+        {
+            if (target.Class != null) return target.Class.title;
+            return base.DefinedSubtitle();
+        }
+
+        protected override string DefinedSurtitle()
+        {
+            if (target.Class != null) return target.Class.title;
+            return base.DefinedSubtitle();
         }
 
         protected override string DefaultShortTitle()
         {
-            if (target.variable != null) return "Get " + target.variable.name;
+            var human = LudiqCore.Configuration.humanNaming;
+            if (target.variable != null) return (human ? "Get " : string.Empty) + target.variable.name + (human ? string.Empty : " (get)");
             return base.DefaultShortTitle();
         }
 
         protected override string DefinedShortTitle()
         {
-            if (target.variable != null) return "Get " + target.variable.name;
+            var human = LudiqCore.Configuration.humanNaming;
+            if (target.variable != null) return (human ? "Get " : string.Empty) + target.variable.name + (human ? string.Empty : " (get)");
             return base.DefinedShortTitle();
         }
     }
