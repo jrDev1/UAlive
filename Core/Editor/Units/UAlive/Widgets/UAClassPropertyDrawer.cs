@@ -73,7 +73,7 @@ namespace Lasm.UAlive
                     var castedMeta = _type.BaseType == null ? variablesMeta[i]["value"].Cast(variable.value.GetType()) : variablesMeta[i]["value"].Cast(variable.reference.declaration.type);
                     var thisHeight = variable.value == null ? 20 : LudiqGUI.GetInspectorHeight(variablesMeta[i].Inspector(), castedMeta, position.width, new GUIContent(variable.reference.name.Prettify())) + 2;
                     var objPos = new Rect(position.x, position.y + this.position.height, position.width, thisHeight);
-                    if (_type.Inherits<UnityEngine.Object>() && @class.inheritance.type.Inherits<Component>())
+                    if (@class != null && _type.Inherits<UnityEngine.Object>() && @class.inheritance.type.Inherits<Component>())
                     {
                         variable.value = EditorGUI.ObjectField(objPos.Subtract().Height(2f), variable.reference.name.Prettify(), variable.value as UnityEngine.Object, _type, true);
                     }
