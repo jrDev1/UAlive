@@ -30,7 +30,7 @@ namespace Lasm.UAlive
             _target = metadata.value as CustomClass;
             generator = CustomClassGenerator.GetDecorator(_target);
         }
-        
+
         protected override void OnGUI(Rect position, GUIContent label)
         {
             BeginBlock(metadata, position, GUIContent.none);

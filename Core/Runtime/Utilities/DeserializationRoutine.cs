@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -35,9 +36,9 @@ namespace Lasm.UAlive
             if (isInitializing)
             {
                 EditorApplication.update -= DelayInitialize;
+                update.Unbind();
             }
-
-            update.Unbind();
         }
     }
 }
+#endif

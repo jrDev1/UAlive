@@ -108,15 +108,12 @@ namespace Lasm.UAlive
 
 #if UNITY_EDITOR
         public EditorClassData editorData = new EditorClassData();
-#endif
 
-        #region Messages
-        
         private void OnDisable()
         {
             DeserializationRoutine.Disable();
         }
-        #endregion
+#endif
 
     }
 }

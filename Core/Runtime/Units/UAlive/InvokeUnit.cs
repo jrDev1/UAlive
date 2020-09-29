@@ -102,13 +102,16 @@ namespace Lasm.UAlive
             }
             else
             {
-                enter = ControlInput("enter", (flow) =>
+                if (!method.entry.declaration.pure)
                 {
-                    Debug.Log("Method selection is null on InvokeUnit.");
-                    return null;
-                });
+                    enter = ControlInput("enter", (flow) =>
+                    {
+                        Debug.Log("Method selection is null on InvokeUnit.");
+                        return null;
+                    });
 
-                exit = ControlOutput("exit");
+                    exit = ControlOutput("exit");
+                }
             }
         }
 
