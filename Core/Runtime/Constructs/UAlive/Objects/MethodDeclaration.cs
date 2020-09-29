@@ -39,7 +39,7 @@ namespace Lasm.UAlive
         }
 
         [Inspectable(order = 3)]
-        public bool pure;
+        public bool pure = true;
 
         [Inspectable(order = 4)]
         [InspectorWide]

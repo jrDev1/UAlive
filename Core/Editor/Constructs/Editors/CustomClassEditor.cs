@@ -221,7 +221,16 @@ namespace Lasm.UAlive
                                     HUMEditor.Vertical().Box(HUMEditorColor.DefaultEditorBackground.Darken(0.025f), Styles.borderColor, new RectOffset(8,8,8,8), new RectOffset(1, 1, 0, 1), () =>
                                     {
                                         LudiqGUI.InspectorLayout(methods[i]["entry"]["declaration"]["type"], new GUIContent("Returns"));
-                                        LudiqGUI.InspectorLayout(methods[i]["entry"]["declaration"]["pure"], new GUIContent("Pure"));
+
+                                        if ((Type)methods[i]["entry"]["declaration"]["type"].value == typeof(Lasm.UAlive.Void))
+                                        {
+                                            GUILayout.Space(6);
+                                        }
+                                        else
+                                        {
+                                            LudiqGUI.InspectorLayout(methods[i]["entry"]["declaration"]["pure"], new GUIContent("Pure"));
+                                        }
+
                                         UAGUI.IconFoldout(ref methodsVal[i].entry.declaration.parametersOpen, "Parameters", Images.parameters_16, () =>
                                         {
                                             LudiqGUI.InspectorLayout(methods[i]["entry"]["declaration"]["parameters"], GUIContent.none);
