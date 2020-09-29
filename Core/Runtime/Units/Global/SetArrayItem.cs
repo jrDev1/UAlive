@@ -77,6 +77,13 @@ namespace Lasm.UAlive
             value = ValueInput<object>("value");
 
             exit = ControlOutput("exit");
+
+            Succession(enter, exit);
+
+            for (int i = 0; i < indexes.Count; i++)
+            {
+                Requirement(indexes[i], enter);
+            }
         }
 
         private ControlOutput SetItem(Flow flow)
