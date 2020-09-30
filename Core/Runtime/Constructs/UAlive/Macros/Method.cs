@@ -29,6 +29,12 @@ namespace Lasm.UAlive
         #endregion
 
 
+        private bool IsOverridable()
+        {
+            return entry.declaration.modifier == MethodModifier.Override ||
+                entry.declaration.isMagic;
+        }
+
         #region Initialization
 #if UNITY_EDITOR
         [SerializeField]

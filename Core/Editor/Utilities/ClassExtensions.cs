@@ -1,9 +1,24 @@
 ﻿using System;
+using UnityEditor;
 
 namespace Lasm.UAlive
 {
-    public static class RuntimeClassExtensions
+    public static class ClassExtensions
     {
+#if UNITY_EDITOR
+        public static void Save(string guid, CustomClass target, string code)
+        {
+            var path = AssetDatabase.GUIDToAssetPath(guid);
+            var finalPath = path.Remove(path.LastIndexOf("/") + 1, path.Length - path.LastIndexOf("/") - 1);
+            code.Save().Custom(finalPath, target.title.Replace(" ", string.Empty) + ".cs").Text();
+        }
+
+        public static CustomClass GetClass(ref CustomClass macro, string GUID)
+        {
+            macro = macro ?? AssetDatabase.LoadAssetAtPath<CustomClass>(AssetDatabase.GUIDToAssetPath(GUID));
+            return macro;
+        }
+#endif
         public static void Invoke(IUAClass @class, string name, Action<object> returnMethod, bool isOverride = false, params object[] parameters)
         {
             if (isOverride)
@@ -21,11 +36,7 @@ namespace Lasm.UAlive
                     return;
                 }
             }
-        }
-
-        public static void GetClass(ref CustomClass @class, string guid)
-        {
-            @class = (@class ?? RuntimeTypes.instance.references.Get(guid)) as CustomClass;
+            
         }
     }
 }

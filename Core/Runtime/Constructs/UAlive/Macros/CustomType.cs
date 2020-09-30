@@ -22,12 +22,5 @@ namespace Lasm.UAlive
         public abstract string GetDefaultName();
 
         #endregion
-
-#if UNITY_EDITOR
-        private void OnDisable()
-        {
-            DeserializationRoutine.Disable();
-        }
-#endif
     }
 }

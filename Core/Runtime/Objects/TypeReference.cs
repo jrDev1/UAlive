@@ -6,16 +6,16 @@ namespace Lasm.UAlive
     public sealed class TypeReference : SerializedScriptableObject
     {
         [OdinSerialize]
-        private Dictionary<int, CustomType> types = new Dictionary<int, CustomType>();
+        private Dictionary<string, CustomType> types = new Dictionary<string, CustomType>();
 
 #if UNITY_EDITOR
         public void Add(CustomType type)
         {
-            types.Add(type.GetGUID().ToInt(), type);
+            types.Add(type.GetGUID(), type);
         }
 #endif
 
-        public CustomType Get(int guid)
+        public CustomType Get(string guid)
         {
             return types[guid];
         }

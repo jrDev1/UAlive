@@ -10,6 +10,9 @@ namespace Lasm.UAlive
         {
         }
 
+        private ClassDefiner _definer;
+        private ClassDefiner definer => _definer = _definer ?? target.Class.Definer() as ClassDefiner;
+
         protected override void DefinedPort(IUnitPort port, UnitPortDescription description)
         {
             base.DefinedPort(port, description);
@@ -29,6 +32,7 @@ namespace Lasm.UAlive
         protected override EditorTexture DefinedIcon()
         {
             Images.Cache();
+            
             if (target.Class != null && target.Class.editorData.icon != null && target.Class.editorData.icon != Images.class_32)
             {
                 return EditorTexture.Single(target.Class.editorData.icon);

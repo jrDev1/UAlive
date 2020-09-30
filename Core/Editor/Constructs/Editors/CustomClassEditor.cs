@@ -77,7 +77,8 @@ namespace Lasm.UAlive
                         if (EditorGUI.EndChangeCheck())
                         {
                             DescribeActiveUnits();
-                            _target.Define();
+                            var definer = _target.Definer() as ClassDefiner;
+                            definer.Define();
                         }
                     });
 
@@ -96,7 +97,8 @@ namespace Lasm.UAlive
                             if (EditorGUI.EndChangeCheck())
                             {
                                 DescribeActiveUnits();
-                                _target.Define();
+                                var definer = _target.Definer() as ClassDefiner;
+                                definer.Define();
                             }
                             _target.@namespace = EditorGUILayout.TextField(GUIContent.none, _target.@namespace, GUILayout.MinWidth(100));
                         });
@@ -110,7 +112,8 @@ namespace Lasm.UAlive
                 LudiqGUI.InspectorLayout(metadata["inheritance"]["type"]);
                 if (EndBlock(metadata))
                 {
-                    _target.Define();
+                    var definer = _target.Definer() as ClassDefiner;
+                    definer.Define();
                 }
             });
         }
@@ -208,7 +211,8 @@ namespace Lasm.UAlive
                                 AssetDatabase.RemoveObjectFromAsset(meth);
                                 AssetDatabase.SaveAssets();
                                 AssetDatabase.Refresh();
-                                _target.Define();
+                                var definer = _target.Definer() as ClassDefiner;
+                                definer.Define();
                             }
                         },
                         () => 
@@ -248,7 +252,8 @@ namespace Lasm.UAlive
                         methodsVal.Add(meth);
                         AssetDatabase.SaveAssets();
                         AssetDatabase.Refresh();
-                        _target.Define();
+                        var definer = _target.Definer() as ClassDefiner;
+                        definer.Define();
                     }
                 });
             });
@@ -297,7 +302,8 @@ namespace Lasm.UAlive
                                         AssetDatabase.RemoveObjectFromAsset(variableVal);
                                         AssetDatabase.SaveAssets();
                                         AssetDatabase.Refresh();
-                                        _target.Define();
+                                        var definer = _target.Definer() as ClassDefiner;
+                                        definer.Define();
                                     }
                                 });
 
@@ -318,7 +324,8 @@ namespace Lasm.UAlive
                         var variable = Variable.Create(_target);
                         AssetDatabase.AddObjectToAsset(variable, _target);
                         variablesVal.variables.Add(variable);
-                        _target.Define();
+                        var definer = _target.Definer() as ClassDefiner;
+                        definer.Define();
                     }
                 });
             });

@@ -24,7 +24,6 @@ namespace Lasm.UAlive
             }
         }
 
-        [SerializeField]
-        private TypeReference references;
+        public TypeReference references;
     }
 }

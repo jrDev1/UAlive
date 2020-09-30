@@ -16,20 +16,6 @@ namespace Lasm.UAlive
         [Serialize]
         public CustomClass macro;
         public string GUID { get; }
-        [Serialize]
-        private int _guid;
-        public int guid
-        {
-            get
-            {
-                if (_guid == 0)
-                {
-                    _guid = GUID.ToInt();
-                }
-
-                return _guid;
-            }
-        }
 
         public UAClass(string GUID)
         {
@@ -39,7 +25,7 @@ namespace Lasm.UAlive
 #if UNITY_EDITOR
         public void EnsureInitialized(string GUID)
         {
-            ClassExtensions.GetClass(ref macro, GUID);
+            RuntimeClassExtensions.GetClass(ref macro, GUID);
         }
 #endif
 
@@ -48,7 +34,7 @@ namespace Lasm.UAlive
 #if UNITY_EDITOR
             EnsureInitialized(GUID);
 #endif
-            ClassExtensions.Invoke(@class, name, returnMethod, isOverride, parameters);
+            RuntimeClassExtensions.Invoke(@class, name, returnMethod, isOverride, parameters);
         }
 
 #if UNITY_EDITOR

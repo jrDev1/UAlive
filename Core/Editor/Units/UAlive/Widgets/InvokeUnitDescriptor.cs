@@ -10,6 +10,9 @@ namespace Lasm.UAlive
         {
         }
 
+        private ClassDefiner _definer;
+        private ClassDefiner definer => _definer = _definer ?? target.Class.Definer() as ClassDefiner;
+
         protected override void DefinedPort(IUnitPort port, UnitPortDescription description)
         {
             base.DefinedPort(port, description);
@@ -32,13 +35,13 @@ namespace Lasm.UAlive
 
         protected override string DefaultSurtitle()
         {
-            if (target.Class != null) return target.Class.title;
+            if (definer != null) return target.Class.title;
             return base.DefinedSubtitle();
         }
 
         protected override string DefinedSurtitle()
         {
-            if (target.Class != null) return target.Class.title;
+            if (definer != null) return target.Class.title;
             return base.DefinedSubtitle();
         }
 
@@ -59,7 +62,7 @@ namespace Lasm.UAlive
         protected override EditorTexture DefaultIcon()
         {
             Images.Cache();
-            if (target.Class != null && target.Class.editorData.icon != null && target.Class.editorData.icon != Images.class_32)
+            if (definer != null && target.Class.editorData.icon != null && target.Class.editorData.icon != Images.class_32)
             {
                 return EditorTexture.Single(target.Class.editorData.icon);
             }
@@ -69,7 +72,7 @@ namespace Lasm.UAlive
         protected override EditorTexture DefinedIcon()
         {
             Images.Cache();
-            if (target.Class != null && target.Class.editorData.icon != null && target.Class.editorData.icon != Images.class_32)
+            if (definer != null && target.Class.editorData.icon != null && target.Class.editorData.icon != Images.class_32)
             {
                 return EditorTexture.Single(target.Class.editorData.icon);
             }

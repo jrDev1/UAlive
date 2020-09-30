@@ -1,5 +1,4 @@
-﻿#if UNITY_EDITOR
-using System;
+﻿using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -23,14 +22,11 @@ namespace Lasm.UAlive
 
             update.Bind();
 
-#if UNITY_EDITOR
-            var macros = HUMAssets.Find().Assets().OfType<IDefinable>();
-#else
-            var macros = 
-#endif
+            var macros = HUMAssets.Find().Assets().OfType<CustomClass>();
+
             for (int i = 0; i < macros.Count; i++)
             {
-                macros[i].Define();
+                macros[i].Definer().Define();
             }
         }
         
@@ -44,4 +40,3 @@ namespace Lasm.UAlive
         }
     }
 }
-#endif

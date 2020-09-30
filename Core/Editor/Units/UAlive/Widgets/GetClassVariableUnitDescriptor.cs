@@ -10,6 +10,9 @@ namespace Lasm.UAlive
         {
         }
 
+        private ClassDefiner _definer;
+        private ClassDefiner definer => _definer = _definer ?? target.Class.Definer() as ClassDefiner;
+
         protected override void DefinedPort(IUnitPort port, UnitPortDescription description)
         {
             base.DefinedPort(port, description);
