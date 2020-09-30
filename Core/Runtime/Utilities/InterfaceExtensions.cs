@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 
 namespace Lasm.UAlive
 {
@@ -12,3 +13,4 @@ namespace Lasm.UAlive
         }
     }
 }
+#endif

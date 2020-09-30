@@ -10,7 +10,10 @@ using UnityEngine;
 namespace Lasm.UAlive
 {
     [Serializable]
-    public sealed class CustomClass : CustomType, IRefreshable, IDefinable
+    public sealed class CustomClass : CustomType
+#if UNITY_EDITOR
+        , IRefreshable, IDefinable
+#endif
     {
         #region Declaration
 
@@ -31,6 +34,8 @@ namespace Lasm.UAlive
         [Serialize]
         public Variables variables = new Variables();
         #endregion
+
+#if UNITY_EDITOR
 
         #region Definition
 
@@ -106,15 +111,10 @@ namespace Lasm.UAlive
             }
         }
 
-        #endregion
+#endregion
 
-#if UNITY_EDITOR
         public EditorClassData editorData = new EditorClassData();
 
-        private void OnDisable()
-        {
-            DeserializationRoutine.Disable();
-        }
 #endif
 
     }

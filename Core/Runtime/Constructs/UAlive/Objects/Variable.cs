@@ -7,13 +7,17 @@ using UnityEngine;
 namespace Lasm.UAlive
 {
     [Serializable]
-    public sealed class Variable : LudiqScriptableObject, IUnityInitializable
+    public sealed class Variable : LudiqScriptableObject
+#if UNITY_EDITOR
+        , IUnityInitializable
+#endif
     {
         [SerializeReference] 
         public VariableDeclaration declaration = new VariableDeclaration();
 
+#if UNITY_EDITOR
         #region Initialization
-         
+
         [Serialize]
         private bool _isInitialized;
         public bool isInitialized { get => _isInitialized; private set => _isInitialized = value; }
@@ -41,6 +45,7 @@ namespace Lasm.UAlive
         }
 
         #endregion
+#endif
 
         [Serialize] 
         public Method getter;

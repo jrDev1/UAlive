@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
@@ -99,3 +100,4 @@ namespace Lasm.UAlive
         }
     }
 }
+#endif

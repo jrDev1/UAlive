@@ -30,6 +30,10 @@ namespace Lasm.UAlive
             return value;
         }
 
+        public static int ToInt(this string str)
+        {
+            return int.Parse(str);
+        }
         /// <summary>
         /// Turns a range from one minimum and maximum, to another. The current value in the range is mapped accordingly.
         /// </summary>

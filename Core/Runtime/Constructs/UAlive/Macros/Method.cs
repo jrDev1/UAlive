@@ -9,7 +9,10 @@ using UnityEditor;
 namespace Lasm.UAlive
 {
     [Serializable]
-    public class Method : Macro<FlowGraph>, IUnityInitializable
+    public class Method : Macro<FlowGraph>
+#if UNITY_EDITOR
+        , IUnityInitializable
+#endif
     {
         [Serialize]
         public EntryUnit entry = new EntryUnit();
@@ -27,7 +30,7 @@ namespace Lasm.UAlive
 
 
         #region Initialization
-
+#if UNITY_EDITOR
         [SerializeField]
         private bool _isInitialized;
         public bool isInitialized { get => _isInitialized; private set => _isInitialized = value; }
@@ -47,9 +50,10 @@ namespace Lasm.UAlive
             method.Initialize(owner, returnMethod); 
             return method;    
         }
+#endif
 
         #endregion
-         
+
         public void Invoke(IUAClass @class, Action<object> returnMethod, params object[] parameters)
         {
             entry.returnMethod = returnMethod;

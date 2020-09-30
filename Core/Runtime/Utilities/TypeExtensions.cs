@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using System;
 using System.IO;
 using UnityEditor;
 using UnityEditor.ProjectWindowCallback;
@@ -23,3 +24,4 @@ namespace Lasm.UAlive
         }
     }
 }
+#endif

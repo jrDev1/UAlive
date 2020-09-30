@@ -9,15 +9,21 @@ using UnityEngine;
 namespace Lasm.UAlive
 {
     [Serializable]
-    public sealed class Methods : IRefreshable, IDefinable
+    public sealed class Methods
+#if UNITY_EDITOR
+        : IRefreshable, IDefinable
+#endif
     {
-        #region Definition
 
         [Serialize]
         public MethodDictionary overrides = new MethodDictionary();
 
         [OdinSerialize]
         public List<Method> custom = new List<Method>();
+
+#if UNITY_EDITOR
+
+        #region Definition
 
         public event Action definitionChanged = () => { };
         public event Action refreshed = () => { };
@@ -54,12 +60,10 @@ namespace Lasm.UAlive
 
         public bool changed => defineAdded || defineRemoved;
 
-#if UNITY_EDITOR
         private CustomType GetRootAsset(CustomClass instance)
         {
             return AssetDatabase.LoadAssetAtPath<CustomType>(AssetDatabase.GUIDToAssetPath(HUMAssets.GetGUID(instance)));
         }
-#endif
 
         public void Refresh()
         {
@@ -104,5 +108,6 @@ namespace Lasm.UAlive
 
             return _method;
         }
+#endif
     }
 }

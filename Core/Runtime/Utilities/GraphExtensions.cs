@@ -1,4 +1,5 @@
-﻿using Bolt;
+﻿#if UNITY_EDITOR
+using Bolt;
 using Ludiq;
 using System.Linq;
 
@@ -41,3 +42,4 @@ namespace Lasm.UAlive
         }
     }
 }
+#endif

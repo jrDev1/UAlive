@@ -5,6 +5,7 @@ namespace Lasm.UAlive
 {
     public static class ClassExtensions
     {
+#if UNITY_EDITOR
         public static void Save(string guid, CustomClass target, string code)
         {
             var path = AssetDatabase.GUIDToAssetPath(guid);
@@ -17,7 +18,7 @@ namespace Lasm.UAlive
             macro = macro ?? AssetDatabase.LoadAssetAtPath<CustomClass>(AssetDatabase.GUIDToAssetPath(GUID));
             return macro;
         }
-
+#endif
         public static void Invoke(IUAClass @class, string name, Action<object> returnMethod, bool isOverride = false, params object[] parameters)
         {
             if (isOverride)

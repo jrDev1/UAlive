@@ -1,7 +1,6 @@
 ﻿using Ludiq;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Lasm.UAlive
 {
@@ -17,23 +16,42 @@ namespace Lasm.UAlive
         [Serialize]
         public CustomClass macro;
         public string GUID { get; }
+        [Serialize]
+        private int _guid;
+        public int guid
+        {
+            get
+            {
+                if (_guid == 0)
+                {
+                    _guid = GUID.ToInt();
+                }
+
+                return _guid;
+            }
+        }
 
         public UAClass(string GUID)
         {
             this.GUID = GUID;
         }
 
+#if UNITY_EDITOR
         public void EnsureInitialized(string GUID)
         {
             ClassExtensions.GetClass(ref macro, GUID);
         }
+#endif
 
         public void Invoke(IUAClass @class, string name, Action<object> returnMethod, bool isOverride = false, params object[] parameters)
         {
+#if UNITY_EDITOR
             EnsureInitialized(GUID);
+#endif
             ClassExtensions.Invoke(@class, name, returnMethod, isOverride, parameters);
         }
 
+#if UNITY_EDITOR
         public void Refresh(CustomClass macro)
         {
             var macroVariables = macro.variables.variables;
@@ -42,7 +60,7 @@ namespace Lasm.UAlive
             {
                 if (GetRuntimeVariable(macroVariables[i]) == null)
                 {
-                    variables.Add(new RuntimeVariable() { referenceGUID = macroVariables[i].GetGUID(), value = macroVariables[i].declaration.defaultValue, reference = macroVariables[i], classReference = macro });
+                    variables.Add(new RuntimeVariable() { referenceGUID = macroVariables[i].declaration.guid, value = macroVariables[i].declaration.defaultValue, reference = macroVariables[i], classReference = macro });
                 }
             }
 
@@ -59,6 +77,7 @@ namespace Lasm.UAlive
 
             if (removed != null) variables.Remove(removed);
         }
+#endif
 
         public RuntimeVariable GetRuntimeVariable(Variable classVariable)
         {
@@ -103,11 +122,13 @@ namespace Lasm.UAlive
 
         public object Get(Variable variable)
         {
+#if UNITY_EDITOR
             EnsureInitialized(GUID);
+#endif
             var runtimeVariable = GetRuntimeVariable(variable);
             if (runtimeVariable == null)
             {
-                runtimeVariable = new RuntimeVariable() { referenceGUID = variable.GetGUID(), value = variable.declaration.defaultValue, reference = variable, classReference = macro };
+                runtimeVariable = new RuntimeVariable() { referenceGUID = variable.declaration.guid, value = variable.declaration.defaultValue, reference = variable, classReference = macro };
                 variables.Add(runtimeVariable);
                 return runtimeVariable.value;
             }
@@ -125,7 +146,7 @@ namespace Lasm.UAlive
             var runtimeVariable = GetRuntimeVariable(variable);
             if (runtimeVariable == null)
             {
-                runtimeVariable = new RuntimeVariable() { referenceGUID = variable.GetGUID(), value = variable.declaration.defaultValue, reference = variable, classReference = macro };
+                runtimeVariable = new RuntimeVariable() { referenceGUID = variable.declaration.guid, value = variable.declaration.defaultValue, reference = variable, classReference = macro };
                 variables.Add(runtimeVariable);
             }
 

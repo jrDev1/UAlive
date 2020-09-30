@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 using UnityEngine;
 
 namespace Lasm.UAlive
@@ -105,3 +106,4 @@ namespace Lasm.UAlive
         }
     }
 }
+#endif

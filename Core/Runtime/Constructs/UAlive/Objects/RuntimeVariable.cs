@@ -16,6 +16,20 @@ namespace Lasm.UAlive
         [HideInInspector]
         public string referenceGUID;
         [SerializeField]
+        private int _guid;
+        public int guid
+        {
+            get
+            {
+                if (_guid == 0)
+                {
+                    _guid = referenceGUID.ToInt();
+                }
+
+                return _guid;
+            }
+        }
+        [SerializeField]
         [HideInInspector]
         public Variable reference;
         [SerializeField]

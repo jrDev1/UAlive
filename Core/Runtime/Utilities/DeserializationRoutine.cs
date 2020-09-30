@@ -23,8 +23,11 @@ namespace Lasm.UAlive
 
             update.Bind();
 
+#if UNITY_EDITOR
             var macros = HUMAssets.Find().Assets().OfType<IDefinable>();
-
+#else
+            var macros = 
+#endif
             for (int i = 0; i < macros.Count; i++)
             {
                 macros[i].Define();
