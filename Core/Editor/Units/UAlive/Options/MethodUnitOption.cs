@@ -6,9 +6,13 @@ namespace Lasm.UAlive
     [FuzzyOption(typeof(MethodUnit))]
     public sealed class MethodUnitOption : UnitOption<MethodUnit>
     {
+        public MethodUnitOption() : base() { }
+
         public MethodUnitOption(MethodUnit unit) : base(unit)
-        {
+        { 
         }
+
+        public override bool favoritable => false;
 
         protected override UnitCategory Category()
         {

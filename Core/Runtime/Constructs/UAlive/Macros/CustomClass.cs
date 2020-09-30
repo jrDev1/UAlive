@@ -91,6 +91,8 @@ namespace Lasm.UAlive
             for (int i = 0; i < variables.variables.Count; i++)
             {
                 variables.variables[i].declaration.Class = this;
+                variables.variables[i].declaration.guid = variables.variables[i].GetGUID();
+                variables.variables[i].declaration.classGUID = this.GetGUID();
                 variables.variables[i].declaration.Changed();
             }
         }

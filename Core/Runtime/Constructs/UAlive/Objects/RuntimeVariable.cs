@@ -39,7 +39,7 @@ namespace Lasm.UAlive
             {
                 if (backingValue != null)
                 {
-                    if (backingValue.GetType() != reference.declaration.type) backingValue = reference.declaration.defaultValue;
+                    if (reference != null && backingValue.GetType() != reference.declaration.type) backingValue = reference.declaration.defaultValue;
                     if (backingValue.GetType().Inherits<UnityEngine.Object>()) _value = backingValue as UnityEngine.Object;
                 }
 

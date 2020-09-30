@@ -36,6 +36,7 @@ namespace Lasm.UAlive
             }
         }
         
+        [SerializeReference]
         public object defaultValue = 0;
 
         public event Action onChanged = new Action(() => { });

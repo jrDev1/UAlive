@@ -5,7 +5,6 @@ namespace Lasm.UAlive
 {
     [UnitTitle("This")]
     [TypeIcon(typeof(Self))]
-    [UnitCategory("Live")]
     public sealed class ThisUnit : Unit
     {
         [DoNotSerialize]

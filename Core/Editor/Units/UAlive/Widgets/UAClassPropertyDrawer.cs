@@ -13,11 +13,6 @@ namespace Lasm.UAlive
         private Rect position;
         private CustomClass @class;
 
-        public override bool CanCacheInspectorGUI(SerializedProperty property)
-        {
-            return false;
-        }
-
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             var childProperty = property.FindPropertyRelative("variables").Copy();
@@ -28,16 +23,19 @@ namespace Lasm.UAlive
             {
                 var variable = ((RuntimeVariable)variablesMeta[i].value);
 
-                var _type = variable.reference.declaration.type;
+                if (variable.reference != null)
+                {
+                    var _type = variable.reference.declaration.type;
 
-                if (_type.BaseType != null || (_type.BaseType == null && variable.value != null))
-                {
-                    var thisHeight = variable.value == null ? 20 : LudiqGUI.GetInspectorHeight(variablesMeta[i].Inspector(), variablesMeta[i]["value"].Cast(variable.reference.declaration.type), position.width, new GUIContent(variable.reference.name.Prettify())) + 2;
-                    _pos += thisHeight - (_type.BaseType == null ? 20 : 0);
-                }
-                else
-                {
-                    _pos += 18;
+                    if (_type.BaseType != null || (_type.BaseType == null && variable.value != null))
+                    {
+                        var thisHeight = variable.value == null ? 20 : LudiqGUI.GetInspectorHeight(variablesMeta[i].Inspector(), variablesMeta[i]["value"].Cast(variable.reference.declaration.type), position.width, new GUIContent(variable.reference.name.Prettify())) + 2;
+                        _pos += thisHeight - (_type.BaseType == null ? 20 : 0);
+                    }
+                    else
+                    {
+                        _pos += 18;
+                    }
                 }
             }
             return _pos;
@@ -61,33 +59,36 @@ namespace Lasm.UAlive
             for (int i = 0; i < variablesMeta.Count; i++)
             {
                 var variable = ((RuntimeVariable)variablesMeta[i].value);
-                if ((variable.value == null && variable.reference.declaration.type != typeof(UnityEngine.Object)) || variable.reference.declaration.type != variable.value.GetType())
+                if (variable.reference != null)
                 {
-                    variable.value = variable.reference.declaration.defaultValue;
-                }
-
-                var _type = variable.reference.declaration.type;
-
-                if (_type.BaseType != null || (_type.BaseType == null && variable.value != null))
-                {
-                    var castedMeta = _type.BaseType == null ? variablesMeta[i]["value"].Cast(variable.value.GetType()) : variablesMeta[i]["value"].Cast(variable.reference.declaration.type);
-                    var thisHeight = variable.value == null ? 20 : LudiqGUI.GetInspectorHeight(variablesMeta[i].Inspector(), castedMeta, position.width, new GUIContent(variable.reference.name.Prettify())) + 2;
-                    var objPos = new Rect(position.x, position.y + this.position.height, position.width, thisHeight);
-                    if (@class != null && _type.Inherits<UnityEngine.Object>() && @class.inheritance.type.Inherits<Component>())
+                    if ((variable.value == null && variable.reference.declaration.type != typeof(UnityEngine.Object)) || variable.reference.declaration.type != variable.value.GetType())
                     {
-                        variable.value = EditorGUI.ObjectField(objPos.Subtract().Height(2f), variable.reference.name.Prettify(), variable.value as UnityEngine.Object, _type, true);
+                        variable.value = variable.reference.declaration.defaultValue;
+                    }
+
+                    var _type = variable.reference.declaration.type;
+
+                    if (_type.BaseType != null || (_type.BaseType == null && variable.value != null))
+                    {
+                        var castedMeta = _type.BaseType == null ? variablesMeta[i]["value"].Cast(variable.value.GetType()) : variablesMeta[i]["value"].Cast(variable.reference.declaration.type);
+                        var thisHeight = variable.value == null ? 20 : LudiqGUI.GetInspectorHeight(variablesMeta[i].Inspector(), castedMeta, position.width, new GUIContent(variable.reference.name.Prettify())) + 2;
+                        var objPos = new Rect(position.x, position.y + this.position.height, position.width, thisHeight);
+                        if (@class != null && _type.Inherits<UnityEngine.Object>() && @class.inheritance.type.Inherits<Component>())
+                        {
+                            variable.value = EditorGUI.ObjectField(objPos.Subtract().Height(2f), variable.reference.name.Prettify(), variable.value as UnityEngine.Object, _type, true);
+                        }
+                        else
+                        {
+                            LudiqGUI.Inspector(castedMeta, objPos, new GUIContent(variable.reference.name.Prettify()));
+                        }
+                        variablesMeta[i]["backingValue"].value = variablesMeta[i]["value"].value;
+                        this.position.height += thisHeight;
                     }
                     else
                     {
-                        LudiqGUI.Inspector(castedMeta, objPos, new GUIContent(variable.reference.name.Prettify()));
+                        EditorGUI.LabelField(new Rect(position.x, position.y + this.position.height, position.width, 14), variable.reference.name.Prettify());
+                        this.position.height += 18;
                     }
-                    variablesMeta[i]["backingValue"].value = variablesMeta[i]["value"].value;
-                    this.position.height += thisHeight;
-                }
-                else
-                {
-                    EditorGUI.LabelField(new Rect(position.x, position.y + this.position.height, position.width, 14), variable.reference.name.Prettify());
-                    this.position.height += 18;
                 }
             } 
 

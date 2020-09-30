@@ -6,9 +6,13 @@ namespace Lasm.UAlive
     [FuzzyOption(typeof(GetClassVariableUnit))]
     public sealed class GetClassVariableUnitOption : UnitOption<GetClassVariableUnit>
     {
+        public GetClassVariableUnitOption() : base() { }
+
         public GetClassVariableUnitOption(GetClassVariableUnit unit) : base(unit)
         {
         }
+
+        public override bool favoritable => false;
 
         protected override UnitCategory Category()
         {

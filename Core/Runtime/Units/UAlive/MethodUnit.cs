@@ -4,8 +4,6 @@ using System;
 
 namespace Lasm.UAlive
 {
-    [Serializable]
-    [UnitCategory("Codebase")]
     public abstract class MethodUnit : ClassMemberUnit
     {
         [Serialize]

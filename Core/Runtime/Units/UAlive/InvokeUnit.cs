@@ -102,7 +102,7 @@ namespace Lasm.UAlive
             }
             else
             {
-                if (!method.entry.declaration.pure)
+                if (method != null && method.entry != null && method.entry.declaration != null && !method.entry.declaration.pure)
                 {
                     enter = ControlInput("enter", (flow) =>
                     {
