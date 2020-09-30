@@ -24,10 +24,23 @@ namespace Lasm.UAlive
 
             var macros = HUMAssets.Find().Assets().OfType<CustomClass>();
 
+            var references = HUMAssets.Find().Assets().OfType<TypeReference>();
+            var reference = references.Count == 0 ? null : references[0];
+
+            if (references.Count == 0)
+            {
+                reference = TypeReference.CreateInstance<TypeReference>();
+                AssetDatabase.CreateAsset(reference, UAPaths.Generated + "TypeReferences.asset");
+            }
+
+            RuntimeTypes.instance.references = reference;
+
             for (int i = 0; i < macros.Count; i++)
             {
+                reference.Add(macros[i]);
                 macros[i].Definer().Define();
             }
+
         }
         
         public static void Disable()

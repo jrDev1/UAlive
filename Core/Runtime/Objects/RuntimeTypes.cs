@@ -18,6 +18,10 @@ namespace Lasm.UAlive
                         obj = new GameObject("RuntimeTypes");
                         _instance = obj.AddComponent<RuntimeTypes>();
                     }
+                    else
+                    {
+                        _instance = obj.GetComponent<RuntimeTypes>();
+                    }
                 }
 
                 return _instance;

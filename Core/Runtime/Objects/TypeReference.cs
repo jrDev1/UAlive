@@ -11,7 +11,8 @@ namespace Lasm.UAlive
 #if UNITY_EDITOR
         public void Add(CustomType type)
         {
-            types.Add(type.GetGUID(), type);
+            var guid = type.GetGUID();
+            if (!types.ContainsKey(guid)) types.Add(guid, type);
         }
 #endif
 

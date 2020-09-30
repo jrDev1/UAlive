@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66640b68358fcc548a35bb29bd57eec6, type: 3}
+  m_Name: TypeReferences
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 0
+    SerializedBytes: 01000500000074797065732f00000000007600000053797374656d2e436f6c6c656374696f6e732e47656e657269632e44696374696f6e61727960325b5b53797374656d2e537472696e672c206d73636f726c69625d2c5b4c61736d2e55416c6976652e437573746f6d547970652c20417373656d626c792d4353686172705d5d2c206d73636f726c696200000000010008000000636f6d70617265722f01000000005900000053797374656d2e436f6c6c656374696f6e732e47656e657269632e47656e65726963457175616c697479436f6d706172657260315b5b53797374656d2e537472696e672c206d73636f726c69625d5d2c206d73636f726c696201000000050600000000000000000705
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
