@@ -1,6 +1,7 @@
 ﻿using Bolt;
 using Ludiq;
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -19,9 +20,21 @@ namespace Lasm.UAlive
 
             if (unit.method != null)
             {
-                if (GraphWindow.active != null)
+                window.reference = GraphReference.New(unit.method, true);
+            }
+        }
+
+        protected override IEnumerable<DropdownOption> contextOptions
+        {
+            get
+            {
+                var reference = GraphReference.New(unit.method, true);
+                yield return new DropdownOption((Action)(() => window.reference = reference), "Open");
+                yield return new DropdownOption((Action)(() => GraphWindow.OpenTab(reference)), "Open in new window");
+
+                foreach (var baseOption in base.contextOptions)
                 {
-                    GraphWindow.OpenActive(GraphReference.New(unit.method, true));
+                    yield return baseOption;
                 }
             }
         }
