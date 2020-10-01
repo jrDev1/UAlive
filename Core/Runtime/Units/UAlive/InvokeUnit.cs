@@ -11,7 +11,7 @@ namespace Lasm.UAlive
 {
     [UnitTitle("Invoke")]
     [UnitCategory("Codebase")]
-    public sealed class InvokeUnit : MethodUnit
+    public sealed class InvokeUnit : MethodUnit, IGraphParentElement
     {
         [Serialize]
         [Inspectable]
@@ -37,6 +37,12 @@ namespace Lasm.UAlive
         public ValueOutput chainTarget;
 
         private object returnValue;
+
+        public IGraph childGraph => method.graph;
+
+        public bool isSerializationRoot => false;
+
+        public UnityEngine.Object serializedObject => method;
 
         public InvokeUnit() { }
 
@@ -157,6 +163,11 @@ namespace Lasm.UAlive
             {
                 method.entry.onChanged -= Define;
             }
+        }
+
+        public IGraph DefaultGraph()
+        {
+            throw new NotImplementedException();
         }
     }
 }

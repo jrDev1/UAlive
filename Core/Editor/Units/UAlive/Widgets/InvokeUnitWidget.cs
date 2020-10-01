@@ -16,11 +16,27 @@ namespace Lasm.UAlive
 
         protected override void OnDoubleClick()
         {
-            base.OnDoubleClick();
-
-            if (unit.method != null)
+            if (unit.graph.zoom == 1)
             {
-                window.reference = GraphReference.New(unit.method, true);
+                if (unit.method != null)
+                {
+                    var childReference = window.reference.ChildReference(unit, false);
+                    if (childReference != null)
+                    {
+                        if (e.ctrlOrCmd)
+                        {
+                            GraphWindow.OpenTab(childReference);
+                        }
+                        else
+                        {
+                            window.reference = childReference;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                base.OnDoubleClick();
             }
         }
 
@@ -28,9 +44,9 @@ namespace Lasm.UAlive
         {
             get
             {
-                var reference = GraphReference.New(unit.method, true);
-                yield return new DropdownOption((Action)(() => window.reference = reference), "Open");
-                yield return new DropdownOption((Action)(() => GraphWindow.OpenTab(reference)), "Open in new window");
+                var childReference = reference.ChildReference(unit, false);
+                yield return new DropdownOption((Action)(() => window.reference = childReference), "Open");
+                yield return new DropdownOption((Action)(() => GraphWindow.OpenTab(GraphReference.New(unit.method, true))), "Open in new window");
 
                 foreach (var baseOption in base.contextOptions)
                 {
