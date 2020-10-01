@@ -81,7 +81,7 @@ namespace Lasm.UAlive
                 }
             }
 
-            if (method != null && method.entry != null && !method.entry.declaration.pure)
+            if (method != null && method.entry != null && (!method.entry.declaration.pure || method.entry.declaration.type == typeof(Lasm.UAlive.Void)))
             {
                 enter = ControlInput("enter", (flow) =>
                 {
