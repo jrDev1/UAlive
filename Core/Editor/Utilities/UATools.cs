@@ -15,7 +15,7 @@ namespace Lasm.UAlive
         [SerializeField]
         private bool explorerIsOpen;
         private bool autoSave;
-        private int autoSaveRate;
+        private int autoSaveRate = 120;
 
         [MenuItem("Window/UAlive/Tools")]
         public static void Open()
@@ -30,6 +30,7 @@ namespace Lasm.UAlive
             EnsurePref("UAlive_AutoSaveRate", PrefType.Int);
             autoSave = EditorPrefs.GetBool("UAlive_AutoSave");
             autoSaveRate = EditorPrefs.GetInt("UAlive_AutoSaveRate");
+            if (autoSaveRate == 0) autoSaveRate = 120;
         }
 
         private void OnGUI()
@@ -76,7 +77,7 @@ namespace Lasm.UAlive
         private void GlobalSettings()
         {
             autoSave = GUILayout.Toggle(autoSave, "Auto Save");
-            autoSaveRate = EditorGUILayout.IntSlider("Save Rate (Ticks)", autoSaveRate, 100, 50000);
+            autoSaveRate = EditorGUILayout.IntSlider("Save Rate (Seconds)", autoSaveRate, 10, 600);
             if (EditorPrefs.GetBool("UAlive_AutoSave") != autoSave) EditorPrefs.SetBool("UAlive_AutoSave", autoSave);
             if (EditorPrefs.GetInt("UAlive_AutoSaveRate") != autoSaveRate) EditorPrefs.SetInt("UAlive_AutoSaveRate", autoSaveRate);
         }

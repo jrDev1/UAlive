@@ -8,15 +8,15 @@ namespace Lasm.UAlive
     {
         private bool isInitialized;
         public static event Action processes = ()=> { };
-        public static int autoSaveRate;
-        private static int autoSaveCount = 0;
+        public static float startTime;
+        public static float currentTime;
 
         public void Bind()
         {
             if (!isInitialized)
             {
                 EditorApplication.update += UpdateProcess;
-
+                startTime = (float)EditorApplication.timeSinceStartup;
                 processes += AutoSaveProcess;
                 isInitialized = true;
             }
@@ -29,23 +29,25 @@ namespace Lasm.UAlive
                 EditorApplication.update -= UpdateProcess;
                 processes -= AutoSaveProcess;
                 isInitialized = false;
-            }
+            } 
         }
 
         private void UpdateProcess()
         {
-            //processes();
+            processes();
         }
 
         private void AutoSaveProcess()
         {
             if (EditorPrefs.GetBool("UAlive_AutoSave"))
             {
-                HUMFlow.AfterTicks(ref autoSaveCount, autoSaveRate, true, () =>
+                var elapsed = EditorApplication.timeSinceStartup - startTime;
+                if (elapsed > EditorPrefs.GetInt("UAlive_AutoSaveRate"))
                 {
                     AssetDatabase.SaveAssets();
                     AssetDatabase.Refresh();
-                });
+                    startTime = (float)EditorApplication.timeSinceStartup;
+                }
             }
         }
     }
