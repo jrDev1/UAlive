@@ -42,7 +42,7 @@ namespace Lasm.UAlive
         {
             var finalOutput = CodeBuilder.RemoveHighlights(output);
             finalOutput = CodeBuilder.RemoveMarkdown(finalOutput);
-            ClassExtensions.Save(guid, decorated, finalOutput);
+            ClassExtensions.Save(guid, decorated, finalOutput, (type)=> { Debug.Log(type); decorated.inheritance.compiledName = type; });
         }
 
         protected override void BeforeLiveGeneration()
@@ -136,18 +136,6 @@ namespace Lasm.UAlive
         protected override void DefineLiveCode()
         {
             var keys = decorated.methods.overrides.Keys().ToArray();
-
-            // FORCE COMPILE SHELL
-            //HUMQuery.For(keys, (list, index) => 
-            //{
-            //    var nest = decorated.overrideMethods[keys[index]];
-            //    if (CanAddMethod(nest))
-            //    {
-            //        var method = Method(nest.name, nest.scope, nest.modifier, nest.returnType);
-            //        AddParameters(method, nest);
-            //        @class.AddMethod(method);
-            //    }
-            //});
 
             for (int i = 0; i < keys.Length; i++)
             { 

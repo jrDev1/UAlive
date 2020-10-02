@@ -9,11 +9,10 @@ namespace Lasm.UAlive
         [Serialize]
         public Method method;
 
-        public MethodUnit() { }
+        public MethodUnit() : base() { }
 
-        public MethodUnit(CustomClass @class, Method method)
+        public MethodUnit(CustomClass @class, Method method) : base(@class)
         {
-            this.Class = @class;
             this.method = method;
         }
     }

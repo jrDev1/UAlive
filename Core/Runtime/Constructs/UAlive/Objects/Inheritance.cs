@@ -22,6 +22,22 @@ namespace Lasm.UAlive
             }
         }
 
+        private Type _compiledType;
+        public Type compiledType
+        {
+            get
+            {
+                if (_compiledType == null && !string.IsNullOrEmpty(compiledName))
+                {
+                    _compiledType = Type.GetType(compiledName);
+                }
+
+                return _compiledType;
+            }
+        }
+
+        public string compiledName;
+
         public event Action<Type> OnTypeChanged = (type) => { };
         public event Action OnChanged = () => { };
 

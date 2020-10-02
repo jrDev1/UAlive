@@ -38,22 +38,35 @@ namespace Lasm.UAlive
 
         private object returnValue;
 
+        public string TypeName;
+
         public SetClassVariableUnit() : base()
         {
         }
 
         public SetClassVariableUnit(Variable variable, CustomClass @class) : base(variable, @class)
         {
+            TypeName = variable.declaration.type.FullName;
         }
 
         protected override void Definition()
         {
+            base.Definition();
+
+            if (chain)
+            {
+                if (castedType == null)
+                {
+                    chainTarget = ValueOutput<IUAClass>("chain", (flow) => { return flow.GetValue<IUAClass>(target); });
+                }
+                else
+                {
+                    chainTarget = ValueOutput(castedType, "target");
+                }
+            }
+
             if (variable != null && variable.declaration != null)
             {
-                base.Definition(); 
-
-                if (chain) chainTarget = ValueOutput<IUAClass>("chain", (flow) => { return flow.GetValue<IUAClass>(target); });
-
                 value = ValueInput(variable.declaration.type, "value");
                 outValue = ValueOutput(variable.declaration.type, "valueOut", (flow)=> 
                 {

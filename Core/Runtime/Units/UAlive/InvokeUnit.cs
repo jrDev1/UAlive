@@ -44,12 +44,10 @@ namespace Lasm.UAlive
 
         public UnityEngine.Object serializedObject => method;
 
-        public InvokeUnit() { }
+        public InvokeUnit() : base() { }
 
-        public InvokeUnit(CustomClass @class, Method method)
+        public InvokeUnit(CustomClass @class, Method method) : base (@class, method)
         {
-            this.Class = @class;
-            this.method = method;
         }
 
         protected override void Definition()
@@ -58,7 +56,17 @@ namespace Lasm.UAlive
 
             parameters.Clear();
 
-            if (chain) chainTarget = ValueOutput<IUAClass>("chain", (flow) => { return flow.GetValue<IUAClass>(target); });
+            if (chain)
+            {
+                if (castedType == null)
+                {
+                    chainTarget = ValueOutput<IUAClass>("chain", (flow) => { return flow.GetValue<IUAClass>(target); });
+                }
+                else
+                {
+                    chainTarget = ValueOutput(castedType, "target");
+                }
+            }
 
             if (method != null)
             {

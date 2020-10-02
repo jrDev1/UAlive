@@ -5,17 +5,19 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 namespace Lasm.UAlive
 {
     [UnitCategory("Codebase")]
     [TypeIcon(typeof(CustomClass))]
-    [Serializable]
     public sealed class GetClassVariableUnit : ClassVariableUnit
     {
         [DoNotSerialize] [PortLabelHidden]
         public ValueOutput value;
+        public string TypeName;
+        private Type type;
 
         public GetClassVariableUnit() : base()
         {
@@ -23,31 +25,44 @@ namespace Lasm.UAlive
 
         public GetClassVariableUnit(Variable variable, CustomClass @class) : base(variable, @class)
         {
+            TypeName = variable.declaration.type.FullName;
         }
 
         protected override void Definition()
         {
             base.Definition();
 
-            if (variable?.declaration?.type != null) 
-            {
-                value = ValueOutput(variable.declaration.type, "value", (flow) =>
-                {
-                    return GetTarget(flow)?.Class?.Get(variable); 
-                });
+            type = variable.declaration.type;
 
-                Requirement(target, value);
-            }
+            value = ValueOutput(type, "value", (flow) =>
+            {
+                return GetTarget(flow)?.Class?.Get(variable); 
+            });
+
+            Requirement(target, value);
         }
         
+        public void UpdateType()
+        {
+            TypeName = variable.declaration.type.FullName;
+        }
+
         protected override void AfterDefine()
         {
-            if (graph != null && variable != null && variable.declaration != null) variable.declaration.onChanged += Define;
+            if (graph != null && variable != null && variable.declaration != null)
+            {
+                variable.declaration.onChanged += UpdateType;
+                variable.declaration.onChanged += Define;
+            }
         }
 
         protected override void BeforeUndefine()
         {
-            if (graph != null && variable != null && variable.declaration != null) variable.declaration.onChanged -= Define;
+            if (graph != null && variable != null && variable.declaration != null)
+            {
+                variable.declaration.onChanged -= UpdateType;
+                variable.declaration.onChanged -= Define;
+            }
         }
     }
 }  
