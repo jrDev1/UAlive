@@ -196,8 +196,13 @@ namespace Lasm.UAlive
                         methodsVal[i].isOpen = HUMEditor.Foldout(methodsVal[i].isOpen, Styles.backgroundColor.Brighten(0.05f), Styles.borderColor, 1,
                         () => 
                         {
+                            BeginBlock(metadata["name"], position);
                             meth.name = GUILayout.TextField(meth.name);
                             meth.entry.declaration.name = meth.name;
+                            if (EndBlock(metadata["name"]))
+                            {
+                                meth.entry.declaration.Changed();
+                            }
 
                             if (GUILayout.Button("Edit", GUILayout.Width(42)))
                             {
@@ -281,11 +286,15 @@ namespace Lasm.UAlive
                             {
                                 HUMEditor.Horizontal(() =>
                                 {
+                                    BeginBlock(metadata["name"], position);
                                     HUMEditor.Vertical(() =>
                                     {
                                         LudiqGUI.InspectorLayout(variable["name"], GUIContent.none);
                                     });
-
+                                    if (EndBlock(metadata["name"]))
+                                    {
+                                        variableVal.declaration.Changed();
+                                    }
                                     GUILayout.Label(GUIContent.none, new GUIStyle() { fixedWidth = 4 });
 
                                     HUMEditor.Vertical(() =>

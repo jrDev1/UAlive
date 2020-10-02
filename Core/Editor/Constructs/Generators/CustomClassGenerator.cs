@@ -42,7 +42,7 @@ namespace Lasm.UAlive
         {
             var finalOutput = CodeBuilder.RemoveHighlights(output);
             finalOutput = CodeBuilder.RemoveMarkdown(finalOutput);
-            ClassExtensions.Save(guid, decorated, finalOutput, (type)=> { Debug.Log(type); decorated.inheritance.compiledName = type; });
+            ClassExtensions.Save(guid, decorated, finalOutput, (type)=> { decorated.inheritance.compiledName = type; });
         }
 
         protected override void BeforeLiveGeneration()

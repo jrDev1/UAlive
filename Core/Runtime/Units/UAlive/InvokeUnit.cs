@@ -162,6 +162,10 @@ namespace Lasm.UAlive
             if (method != null && method.entry != null)
             {
                 method.entry.onChanged += Define;
+
+#if UNITY_EDITOR
+                method.entry.declaration.changed += this.Describe;
+#endif
             }
         } 
 
@@ -170,6 +174,10 @@ namespace Lasm.UAlive
             if (method != null && method.entry != null)
             {
                 method.entry.onChanged -= Define;
+
+#if UNITY_EDITOR
+                method.entry.declaration.changed -= this.Describe;
+#endif
             }
         }
 

@@ -46,7 +46,7 @@ namespace Lasm.UAlive
 
         public SetClassVariableUnit(Variable variable, CustomClass @class) : base(variable, @class)
         {
-            TypeName = variable.declaration.type.FullName;
+            TypeName = variable.declaration.type.AssemblyQualifiedName;
         }
 
         protected override void Definition()
@@ -87,14 +87,34 @@ namespace Lasm.UAlive
             }
         }
 
+        public void UpdateType()
+        {
+            TypeName = variable.declaration.type.AssemblyQualifiedName;
+        }
+
         protected override void AfterDefine()
         {
-            if (variable != null && variable.declaration != null) variable.declaration.onChanged += Define;
+            if (variable != null && variable.declaration != null)
+            {
+                variable.declaration.onChanged -= UpdateType;
+                variable.declaration.onChanged += Define;
+
+#if UNITY_EDITOR
+                variable.declaration.onChanged += this.Describe;
+#endif
+            }
         }
 
         protected override void BeforeUndefine()
         {
-            if (variable != null && variable.declaration != null) variable.declaration.onChanged -= Define;
+            if (variable != null && variable.declaration != null)
+            {
+                variable.declaration.onChanged -= Define;
+
+#if UNITY_EDITOR
+                variable.declaration.onChanged -= this.Describe;
+#endif
+            }
         }
     }
 }
