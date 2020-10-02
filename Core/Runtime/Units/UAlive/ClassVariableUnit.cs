@@ -8,6 +8,7 @@ namespace Lasm.UAlive
     [UnitCategory("Codebase")]
     public abstract class ClassVariableUnit : ClassMemberUnit
     {
+        [Serialize]
         public Variable variable;
 
         public ClassVariableUnit() : base() { }
