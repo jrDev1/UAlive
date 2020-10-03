@@ -13,10 +13,10 @@
         }
 
         public static string Core => Root + "Core/";
-        public static string Generated => Root + "Generated/";
+        public static string Generated => Root.Replace("UAlive/", string.Empty) + "UAlive.Generated/";
 
         public static string Resources => Core + "Editor/Resources/";
         public static string Logos => Resources + "Logos/";
-        public static string Icons => Resources + "Icons/";
+        public static string Icons => Resources + "Icons/"; 
     }
 }

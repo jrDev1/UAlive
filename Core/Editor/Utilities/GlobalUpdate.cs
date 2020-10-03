@@ -1,5 +1,6 @@
 ﻿#if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 
 namespace Lasm.UAlive
@@ -8,16 +9,14 @@ namespace Lasm.UAlive
     {
         private bool isInitialized;
         public static event Action processes = ()=> { };
-        public static float startTime;
-        public static float currentTime;
+        private static List<GlobalProcess> instances = new List<GlobalProcess>();
 
         public void Bind()
         {
             if (!isInitialized)
             {
                 EditorApplication.update += UpdateProcess;
-                startTime = (float)EditorApplication.timeSinceStartup;
-                processes += AutoSaveProcess;
+                InitProcesses();
                 isInitialized = true;
             }
         }
@@ -27,7 +26,7 @@ namespace Lasm.UAlive
             if (isInitialized)
             {
                 EditorApplication.update -= UpdateProcess;
-                processes -= AutoSaveProcess;
+                ClearProcesses();
                 isInitialized = false;
             } 
         }
@@ -39,15 +38,27 @@ namespace Lasm.UAlive
 
         private void AutoSaveProcess()
         {
-            if (EditorPrefs.GetBool("UAlive_AutoSave"))
+            
+        }
+
+        private void InitProcesses()
+        {
+            var _processes = typeof(GlobalProcess).Get().Derived();
+
+            for (int i = 0; i < _processes.Length; i++)
             {
-                var elapsed = EditorApplication.timeSinceStartup - startTime;
-                if (elapsed > EditorPrefs.GetInt("UAlive_AutoSaveRate"))
-                {
-                    AssetDatabase.SaveAssets();
-                    AssetDatabase.Refresh();
-                    startTime = (float)EditorApplication.timeSinceStartup;
-                }
+                var process = (GlobalProcess)Activator.CreateInstance(_processes[i]);
+                instances.Add(process);
+                processes += process.Process;
+                process.OnBind();
+            }
+        }
+
+        private void ClearProcesses()
+        {
+            for (int i = 0; i < instances.Count; i++)
+            {
+                processes -= instances[i].Process;
             }
         }
     }

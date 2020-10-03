@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -19,36 +20,27 @@ namespace Lasm.UAlive
         private static void DelayInitialize()
         {
             isInitializing = true;
-
             update.Bind();
-
-            var macros = HUMAssets.Find().Assets().OfType<CustomClass>();
-
-            var references = HUMAssets.Find().Assets().OfType<TypeReference>();
-            var reference = references.Count == 0 ? null : references[0];
-
-            if (references.Count == 0)
-            {
-                reference = TypeReference.CreateInstance<TypeReference>();
-                AssetDatabase.CreateAsset(reference, UAPaths.Generated + "TypeReferences.asset");
-            }
-
-            RuntimeTypes.instance.references = reference;
-
-            for (int i = 0; i < macros.Count; i++)
-            {
-                reference.Add(macros[i]);
-                macros[i].Definer().Define();
-            }
-
+            RunRoutines();
         }
-        
+
         public static void Disable()
         {
             if (isInitializing)
             {
                 EditorApplication.update -= DelayInitialize;
                 update.Unbind();
+            }
+        }
+
+        private static void RunRoutines()
+        {
+            var routines = typeof(DeserializedRoutine).Get().Derived();
+
+            for (int i = 0; i < routines.Length; i++)
+            {
+                var routine = (DeserializedRoutine)Activator.CreateInstance(routines[i]);
+                routine.Run();
             }
         }
     }
