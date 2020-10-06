@@ -133,11 +133,6 @@ namespace Lasm.UAlive
         {
             target = flow.GetValue<IUAClass>(this.target);
 
-            if (target == null && targetType.Inherits<MonoBehaviour>())
-            {
-                target = flow.stack.component as IUAClass;
-            }
-
             var parameterList = new List<object>();
 
             for (int i = 0; i < parameters.Count; i++)

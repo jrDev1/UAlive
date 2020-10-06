@@ -41,13 +41,6 @@ namespace Lasm.UAlive
                 else
                 {
                     target = ValueInput(castedType, "target").AllowsNull();
-
-                    if (castedType.Inherits<MonoBehaviour>())
-                    {
-                        target.SetDefaultValue(null);
-                        target.NullMeansSelf();
-                    }
-                    target.SetDefaultValue(castedType.Default());
                 }
 
                 return;
