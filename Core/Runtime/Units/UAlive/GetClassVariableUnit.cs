@@ -32,14 +32,17 @@ namespace Lasm.UAlive
         {
             base.Definition();
 
-            type = variable.declaration.type;
-
-            value = ValueOutput(type, "value", (flow) =>
+            if (variable != null && variable.declaration != null)
             {
-                return GetTarget(flow)?.Class?.Get(variable); 
-            });
+                type = variable.declaration.type;
 
-            Requirement(target, value);
+                value = ValueOutput(type, "value", (flow) =>
+                {
+                    return GetTarget(flow)?.Class?.Get(variable);
+                });
+
+                Requirement(target, value);
+            }
         }
         
         public void UpdateType()

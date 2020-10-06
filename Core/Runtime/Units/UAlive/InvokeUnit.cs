@@ -77,7 +77,7 @@ namespace Lasm.UAlive
                         result = ValueOutput(method.entry.declaration.type, "result", (flow) =>
                         {
                             IUAClass _target = null;
-                            return Invoke(ref _target, flow);
+                            return Invoke(ref _target, castedType, flow);
                         });
                     }
 
@@ -100,7 +100,7 @@ namespace Lasm.UAlive
                 enter = ControlInput("enter", (flow) =>
                 {
                     IUAClass _target = null; 
-                    Invoke(ref _target, flow);
+                    Invoke(ref _target, castedType, flow);
                     return exit;
                 }); 
 
@@ -129,15 +129,13 @@ namespace Lasm.UAlive
             }
         }
 
-        public object Invoke(ref IUAClass target, Flow flow)
+        public object Invoke(ref IUAClass target, Type targetType, Flow flow)
         {
-            if (this.target.hasValidConnection)
+            target = flow.GetValue<IUAClass>(this.target);
+
+            if (target == null && targetType.Inherits<MonoBehaviour>())
             {
-                target = flow.GetValue<IUAClass>(this.target);
-            }
-            else
-            {
-                target = (IUAClass)flow.variables.Get("#secret_uaclass_instance");
+                target = flow.stack.gameObject.GetComponent(targetType.Name) as IUAClass;
             }
 
             var parameterList = new List<object>();
