@@ -96,12 +96,8 @@ namespace Lasm.UAlive
         {
             if (variable != null && variable.declaration != null)
             {
-                variable.declaration.onChanged -= UpdateType;
+                variable.declaration.onChanged += UpdateType;
                 variable.declaration.onChanged += Define;
-
-#if UNITY_EDITOR
-                variable.declaration.onChanged += this.Describe;
-#endif
             }
         }
 
@@ -109,11 +105,8 @@ namespace Lasm.UAlive
         {
             if (variable != null && variable.declaration != null)
             {
+                variable.declaration.onChanged -= UpdateType;
                 variable.declaration.onChanged -= Define;
-
-#if UNITY_EDITOR
-                variable.declaration.onChanged -= this.Describe;
-#endif
             }
         }
     }

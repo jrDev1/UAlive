@@ -10,8 +10,8 @@ using UnityEngine;
 
 namespace Lasm.UAlive
 {
+    [Serializable]
     [UnitCategory("Codebase")]
-    [TypeIcon(typeof(CustomClass))]
     public sealed class GetClassVariableUnit : ClassVariableUnit
     {
         [DoNotSerialize] [PortLabelHidden]
@@ -53,10 +53,6 @@ namespace Lasm.UAlive
             {
                 variable.declaration.onChanged += UpdateType;
                 variable.declaration.onChanged += Define;
-
-#if UNITY_EDITOR
-                variable.declaration.onChanged += this.Describe;
-#endif
             }
         }
 
@@ -66,10 +62,6 @@ namespace Lasm.UAlive
             {
                 variable.declaration.onChanged -= UpdateType;
                 variable.declaration.onChanged -= Define;
-
-#if UNITY_EDITOR
-                variable.declaration.onChanged -= this.Describe;
-#endif
             }
         }
     }

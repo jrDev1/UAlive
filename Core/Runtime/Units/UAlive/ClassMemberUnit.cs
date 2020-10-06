@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Lasm.UAlive
 {
     public abstract class ClassMemberUnit : Unit
-    {  
+    {
         [DoNotSerialize]
         [AllowsNull]
         [NullMeansSelf]
