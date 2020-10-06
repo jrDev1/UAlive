@@ -135,7 +135,7 @@ namespace Lasm.UAlive
 
             if (target == null && targetType.Inherits<MonoBehaviour>())
             {
-                target = flow.stack.gameObject.GetComponent(targetType.Name) as IUAClass;
+                target = flow.stack.component as IUAClass;
             }
 
             var parameterList = new List<object>();
