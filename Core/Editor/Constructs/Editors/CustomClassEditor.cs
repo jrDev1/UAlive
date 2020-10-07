@@ -73,7 +73,7 @@ namespace Lasm.UAlive
                     HUMEditor.Horizontal(() => {
                         EditorGUI.BeginChangeCheck();
                         if (_target.editorData.icon == null) _target.editorData.icon = Images.class_32;
-                        _target.editorData.icon = (Texture2D)EditorGUILayout.ObjectField(_target.editorData.icon, typeof(Texture2D), false, GUILayout.Width(40), GUILayout.Height(40));
+                        _target.editorData.icon = (Texture2D)EditorGUILayout.ObjectField(GUIContent.none, _target.editorData.icon, typeof(Texture2D), false, GUILayout.Width(40), GUILayout.Height(40));
                         if (EditorGUI.EndChangeCheck())
                         {
                             DescribeActiveUnits();

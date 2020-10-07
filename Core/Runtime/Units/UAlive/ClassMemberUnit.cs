@@ -12,7 +12,6 @@ namespace Lasm.UAlive
     {
         [DoNotSerialize]
         [AllowsNull]
-        [NullMeansSelf]
         public ValueInput target;
         [Serialize]
         public CustomClass Class;

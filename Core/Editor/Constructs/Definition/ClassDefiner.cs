@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bolt;
+using System;
 using System.Reflection;
 
 namespace Lasm.UAlive
@@ -36,7 +37,8 @@ namespace Lasm.UAlive
         private void Definition()
         {
             // Define all overrides based on data from the reflected Method Info.
-            foreach (MethodInfo method in decorated.inheritance.type.GetMethods())
+            foreach (MethodInfo method in decorated.inheritance.type.GetMethods(BindingFlags.Instance | BindingFlags.Static |
+                                               BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)) 
             {
                 if (method.Overridable())
                 {
