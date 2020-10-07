@@ -47,11 +47,6 @@ namespace Lasm.UAlive
                 }
             }
 
-            // Add all special methods for different UnityEngine.Object types that have special "Magic" methods. Aka Messages.
-            if (MagicMethods.TryAddMonoBehaviour(decorated.methods, decorated, decorated.inheritance)) return;
-            if (MagicMethods.TryAddScriptableObject(decorated.methods, decorated, decorated.inheritance)) return;
-            if (MagicMethods.TryAddEditorWindow(decorated.methods, decorated, decorated.inheritance)) return;
-
             // Ensures all the variables of this class have notified observers that they have changed.
             // Generally we end up invoking the Define behaviour on all units to ensure the data is shown.
             for (int i = 0; i < decorated.variables.variables.Count; i++)
@@ -61,6 +56,11 @@ namespace Lasm.UAlive
                 decorated.variables.variables[i].declaration.classGUID = decorated.GetGUID();
                 decorated.variables.variables[i].declaration.Changed();
             }
+
+            // Add all special methods for different UnityEngine.Object types that have special "Magic" methods. Aka Messages.
+            if (MagicMethods.TryAddMonoBehaviour(decorated.methods, decorated, decorated.inheritance)) return;
+            if (MagicMethods.TryAddScriptableObject(decorated.methods, decorated, decorated.inheritance)) return;
+            if (MagicMethods.TryAddEditorWindow(decorated.methods, decorated, decorated.inheritance)) return;
         }
 
         public override void Refresh()

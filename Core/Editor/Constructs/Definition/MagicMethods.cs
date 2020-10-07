@@ -73,7 +73,7 @@ namespace Lasm.UAlive
 
         public static bool TryAddScriptableObject(Methods methods, CustomClass @class, Inheritance inheritance)
         {
-            if (inheritance.Inherits<ScriptableObject>())
+            if (inheritance.Inherits<ScriptableObject>() && !inheritance.Inherits<EditorWindow>())
             {
                 var definer = methods.Definer() as MethodDefiner;
                 var Awake = definer.SetMethod(@class, new MethodDeclaration("Awake", AccessModifier.Private, MethodModifier.None, typeof(void), new ParameterDeclaration[] { }, true));
